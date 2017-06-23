@@ -1,0 +1,265 @@
+%-----Por hacer-----
+%Math operators
+%Paired delimeters
+%Referencias de colores
+%Encabezados chachis
+
+
+\ProvidesPackage{style}
+
+%Margen personalizado.
+\usepackage[a4paper,margin=3cm]{geometry}
+
+%Idioma (el argumento es-tabla permite que los caption de tablas aparezcan como "tabla" y no como "cuadro").
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+
+%Tablas e imágenes.
+\usepackage{float}
+
+%Generación de múltiples índices (ver wiki correspondiente).
+\usepackage{imakeidx}
+
+%Generación del índice general.
+\makeindex[name=general,title=Índice general,intoc,columns=2]
+
+%Generación del índice de topologías (comentar).
+%\makeindex[name=topologias,title=Índice de topologías,intoc,columns=2]
+
+%Referencias cruzadas (declarar después del resto de paquetes que lo usen).
+\usepackage[linktoc=all]{hyperref}
+
+%Inserción de imágenes.
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{subfigure}
+
+%Símbolos adicionales.
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{mathrsfs}
+\usepackage{mathtools}
+\usepackage{marvosym} %rayos de dificultad.
+
+%Cajas.
+\usepackage{fancybox}
+
+%Diagramas.
+\usepackage[all]{xy}
+
+%Colores.
+\usepackage{color}
+
+%Enumeraciones customizadas.
+\usepackage{enumitem}
+
+%Condicionales. Habilita estructuras if-then-else dentro del propio código latex (nada visual). Ver el comando \tbi.
+\usepackage{ifthen}
+
+%Espaciado de comandos sin argumentos. Mirar http://tex.stackexchange.com/questions/17730/newcommand-and-spacing
+\usepackage{xspace}
+
+%Varias columnas.
+\usepackage{multicol}
+
+%Tikz (dibujos).
+\usepackage{tikz}
+\usetikzlibrary{decorations.markings,calc}
+
+%Tikz (cosas específicas).
+\usepackage{pgfplots}
+\usepgfplotslibrary{polar}
+\pgfplotsset{compat=newest}
+
+%Entornos.
+\usepackage{amsthm}
+%Entornos personalizados.
+\usepackage{thmtools}
+
+%Entornos especiales (con rombo al final).
+\declaretheoremstyle[
+  spaceabove=\topsep, spacebelow=\topsep,
+  notefont=\mdseries, notebraces={(}{)},
+  bodyfont=\normalfont,
+  postheadspace=1em,
+  qed={$\diamondsuit$}]{examplestyle}
+
+%Ejemplos con rombo.
+\declaretheorem[style=examplestyle,name=Ejemplo,numberwithin=section]{exa}
+%Observaciones con rombo.
+\declaretheorem[style=examplestyle,name=Observación,numberwithin=section]{obs}
+%Construcciones con rombo.
+\declaretheorem[style=examplestyle,name=Construcción,numberwithin=section]{const}
+
+%Entornos especiales (con cuadrado blanco al final).
+\declaretheoremstyle[
+spaceabove=\topsep, spacebelow=\topsep,
+notefont=\mdseries, notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=1em,
+qed={$\square$}]{solustyle}
+%Soluciones a ejercicios con rombo.
+\declaretheorem[style=solustyle,name=Solución,numberwithin=section]{solu}
+
+%Entornos sin cursiva no especiales.
+\theoremstyle{definition}
+\newtheorem{defi}{Definición}[section]
+\newtheorem{prob}{Problema}[chapter]
+\newtheorem{exerc}{Ejercicio}[chapter]
+\newtheorem{impor}[defi]{Importante}
+
+%Entornos con cursiva.
+\theoremstyle{plain}
+\newtheorem{theo}{Teorema}[section]
+\newtheorem{lem}[theo]{Lema}
+\newtheorem{prop}[theo]{Proposición}
+\newtheorem{cor}[theo]{Corolario}
+\newtheorem{conjet}[theo]{Conjetura}
+
+%Tachar.
+\usepackage{cancel}
+\usepackage{centernot}
+
+%Cuadrado negro relleno como QED por defecto.
+\renewcommand\qedsymbol{$\blacksquare$}
+
+%Conjuntos usuales.
+\newcommand{\K}{\mathbb{K}} %cuerpo.
+\newcommand{\R}{\mathbb{R}} %reales.
+\newcommand{\N}{\mathbb{N}} %naturales.
+\newcommand{\C}{\mathbb{C}} %complejos.
+\newcommand{\Q}{\mathbb{Q}} %racionales.
+\newcommand{\Z}{\mathbb{Z}} %enteros.
+
+%Implicaciones largas (solo usaremos estas).
+\newcommand{\ra}{\implies}
+\newcommand{\la}{\impliedby}
+\newcommand{\sii}{\iff}
+\newcommand{\siidef}{\stackrel{\textrm{def.}}{\sii}}
+
+%Igualdades espaciales (abreviatura \stackrel).
+\newcommand{\equals}[1]{\stackrel{\textrm{#1}}{=}}
+
+%Implicaciones y contenidos con recuadros (para demostraciones de doble implicación/contención).
+\newcommand{\bra}{\fbox{$\ra$}}
+\newcommand{\bla}{\fbox{$\la$}}
+\newcommand{\bsubset}{\fbox{$\subset$}}
+\newcommand{\bsupset}{\fbox{$\supset$}}
+
+%Diversos tipos de letra (abreviaturas).
+\newcommand{\tb}[1]{\textbf{#1}}
+\newcommand{\ti}[1]{\textit{#1}}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\mb}[1]{\mathbb{#1}}
+\newcommand{\mf}[1]{\mathfrak{#1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+
+%Negrita y cursiva a la vez para introducir términos novedosos. Además, añade el término automáticamente al índice general (mirar la wiki para más detalle).
+\newcommand{\tbi}[2][]{\ifthenelse{\equal{#1}{}}{\tb{\ti{#2}}\index[general]{#2}}{\tb{\ti{#2}}\index[general]{#1}}}
+\newcommand{\tbitop}[2][]{\tb{\ti{topología #2}}\indext[#1]{#2}}
+
+
+%Añadir topologías al índice de topologías (mirar la wiki para más detalle).
+\newcommand{\indext}[2][]{\index[general]{topología!#2}\index[topologias]{#2@#2\protect\ifthenelse{\protect\equal{#1}{}}{}{, \protect#1}}}
+\newcommand{\indexg}[1]{\index[general]{#1}}
+
+%Abreviaturas con el 0 y el conjunto vacío.
+\newcommand{\smz}{\setminus\{0\}}
+\newcommand{\zset}{\{0\}}
+
+%Nuevo alfabeto matemático (en el que está la T de topología, la B de base de abiertos y la V de base de entornos).
+\DeclareMathAlphabet{\matheuler}{U}{eus}{m}{n}
+
+%Restricción de funciones (para que quede bien pegadito).
+\renewcommand{\restriction}{\mathord{\upharpoonright}}
+
+%Valor absoluto y norma.
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\card{\lvert}{\rvert}
+
+% : para definir conjuntos (más separado, queda mejor).
+\newcommand{\midc}{\ensuremath\;:\;}
+\newcommand{\tq}{\midc}
+
+%-----Cosas específicas (Geometría Lineal)-----
+
+%Clase de un vector.
+\newcommand{\class}[1]{	 \left [ #1 \right ]}
+%P de espacio proyectivo.
+\newcommand{\proy}{\mathbb{P}}
+%H de haz.
+\newcommand{\haz}{\mathscr{H}}
+%V de variedad proyectiva engendrada.
+\newcommand{\engen}[1]{\mc{V}(#1)}
+%L de variedad lineal engendrada.
+\newcommand{\lengen}[1]{\mc{L}(#1)}
+%an de anulador. (Consensuar una forma de hacer esto en general).
+\newcommand{\an}[1]{\text{an}(#1)}
+%A de espacio afín.
+\newcommand{\afin}{\mathcal{A}}
+
+%-----Cosas específicas (Topología)-----
+
+%T de topología.
+\newcommand{\T}{\matheuler{T}}
+%B de base de abiertos.
+\newcommand{\B}{\matheuler{B}}
+%V de base de entornos.
+\newcommand{\Va}[1]{\matheuler{V}_{#1}}
+%C de componente conexa.
+\newcommand{\Co}{\mc{C}}
+%X de espacios topológicos.
+\newcommand{\X}{\mc{X}}
+%Y de subespacios topológicos (u otros espacios).
+\newcommand{\Y}{\mc{Y}}
+%U de abiertos.
+\newcommand{\U}{\mc{U}}
+%V de entornos.
+\newcommand{\V}{\mc{V}}
+%W auxiliar (abiertos o entornos).
+\newcommand{\W}{\mc{W}}
+%F de cerrados.
+\newcommand{\F}{\mc{F}}
+%A de cubrimientos (suele usarse \Gamma también).
+\newcommand{\A}{\mc{A}}
+%S de esfera.
+\newcommand{\esfera}{\mb{S}}
+\newcommand{\Sfe}{\esfera}
+%Hash de isomorfismo índice.
+\newcommand{\indice}{\mathrm{\#}}
+%P de partes de un conjunto.
+\newcommand{\partes}{\mc{P}}
+%T de toro.
+\newcommand{\toro}{\mb{T}}
+%Tipos de separabilidad.
+\newcommand{\kolmogorov}{$\mathrm{T_0}$\xspace}
+\newcommand{\frechet}{$\mathrm{T_1}$\xspace}
+\newcommand{\hausdorff}{$\mathrm{T_2}$\xspace}
+%A homeomorfo a B
+\newcommand{\homeo}{\approx}
+%\sigma homótopo a \tau. El argumento opcional son los extremos fijos si los hay. ¡Cuidado con el interlineado!
+\newcommand{\homot}[1][]{\mathrel{\smash{\underset{#1}{\simeq}}}}
+%Homotopía de extremos fijos.
+\newcommand{\homotef}{\homot[\text{e.f.}]}
+%Producto de caminos.
+\newcommand{\pathp}{\mathbin{*}}
+%Bolas.
+\DeclareMathOperator{\bola}{B}
+%Interior.
+\DeclareMathOperator{\Int}{\mathrm{Int}}
+\newcommand{\inter}[1]{\mathring{#1}}
+%Adherencia.
+\DeclareMathOperator{\Adh}{\mathrm{Adh}}
+\newcommand{\adher}[1]{\overline{#1}}
+%Frontera.
+\DeclareMathOperator{\Fr}{\mathrm{Fr}}
+%Identidad.
+\DeclareMathOperator{\Id}{\mathrm{id}}
+%Traza.
+\DeclareMathOperator{\Tr}{\mathrm{tr}}
+%Categorías.
+\newcommand{\Topp}{\ensuremath{\mathbf{Top}_\ast}}
+\newcommand{\Grp}{\ensuremath{\mathbf{Grp}}}
