@@ -23,11 +23,12 @@
 %Generación del índice general.
 \makeindex[name=general,title=Índice general,intoc,columns=2]
 
-%Generación del índice de topologías (comentar).
-%\makeindex[name=topologias,title=Índice de topologías,intoc,columns=2]
+%Generación del índice de topologías.
+\makeindex[name=topologias,title=Índice de topologías,intoc,columns=2]
 
 %Referencias cruzadas (declarar después del resto de paquetes que lo usen).
 \usepackage[linktoc=all]{hyperref}
+\hypersetup{colorlinks=true,linkcolor=darkgray}
 
 %Inserción de imágenes.
 \usepackage{graphicx}
@@ -101,7 +102,7 @@ bodyfont=\normalfont,
 postheadspace=1em,
 qed={$\square$}]{solustyle}
 %Soluciones a ejercicios con rombo.
-\declaretheorem[style=solustyle,name=Solución,numberwithin=section]{solu}
+\declaretheorem[style=solustyle,name=Solución,numberwithin=chapter]{solu}
 
 %Entornos sin cursiva no especiales.
 \theoremstyle{definition}

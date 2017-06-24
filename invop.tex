@@ -8,11 +8,25 @@
 \date{\today}
 
 \begin{document}
-	%Título e índice.
+	\frontmatter
 	\maketitle
 	\tableofcontents
-	%Capítulos.
 	\include{./tex/Prefacio}
 	\addcontentsline{toc}{chapter}{Prefacio}
+	
+	\mainmatter
+	\part{Programación lineal}
+	\include{./tex/FundamentosTeoricos}
+	\include{./tex/Simplex}
+	\include{./tex/Dualidad}
+	\part{Programación entera}
+	\include{./tex/Modelizacion}
+	\include{./tex/RamificacionAcotacion}
+	
+	\part{Programación no lineal}
+	\appendix
+	\part{Anexos}
+	
+	\backmatter
 	\printindex[general]
 \end{document}
