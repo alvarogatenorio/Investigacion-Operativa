@@ -3,7 +3,51 @@
 \label{fund}
 %Introducción por hacer (pensarlo bien).
 \section{Planteamiento del problema}
-\subsection{Preliminares. Funciones lineales}
+De ahora en adelante consideraremos fijadas las bases canónicas tanto de $\R^n$ como de $\R$, a no ser que se especifique lo contrario.
+
+Antes de plantear formalmente el problema de la programación lineal, introduzcamos unas definiciones.
+
+\begin{defi}[Vector no negativo]
+	Un vector $x=(x_1,\dots,x_n)\in\R^n$ se dice \tbi[vector!no negativo]{no negativo} si todas sus componentes son, como su propio nombre indica, no negativas. Es decir, $x_i\geq 0$ para todo $i\in\{1,\dots,n\}$.
+\end{defi}
+Al hilo de esta definición, vamos a generalizar ese concepto que lleva presente en nuestras vidas desde que aquel docente de primaria nos dibujó dos rectas perpendiculares en la pizarra, los cuadrantes.
+
+\begin{defi}[$2^n$--ante positivo]
+	Definimos el \tbi{$2^n$--ante positivo} de $\R^n$ como el conjunto de los vectores no negativos de $\R^n$.
+	
+	Se deja como ejercicio al lector justificar el nombre de $2^n$--ante.
+\end{defi}
+Dicho esto, ya podemos formular el problema de la programación lineal.
+\begin{prob}[Formulación general]
+	La disciplina de la \tbi[programación!lineal]{programación lineal} estudia procedimientos (implementables en ordenador) para calcular los extremos absolutos de una aplicación lineal $f:\R^n\to\R$ cuando restringimos su dominio una variedad afín de $\R^n$ cortada con el $2^n$--ante positivo.
+	
+	\begin{figure}[h!]
+		\centering
+		\label{fund_img_problemaGeneral}
+		\includegraphics[scale = 0.75]{img/problemaGeneral}
+		\caption{Ilustración del problema de programación lineal.}
+	\end{figure}
+	En el caso de la ilustración \ref{fund_img_problemaGeneral} suponemos que $f$ es una aplicación lineal definida sobre todo el plano a la cual restringimos el dominio a la variedad afín $\mc{L}$ cortada con el cuadrante positivo (línea azul). Nuestro deber es encontrar los puntos (si los hay) sobre la línea azul en los cuales $f$ alcanza un máximo o un mínimo absoluto.
+\end{prob} 
+En esta sección nos dedicaremos simplemente a formular de diversas maneras el problema de la programación lineal, observando que todas son equivalentes entre sí. Comencemos pues, sin más dilación nuestro viaje por lo desconocido, un viaje del que probablemente no regresemos.
+
+A continuación vemos una sencilla caracterización de las aplicaciones lineales $f:\R^n\to\R$ a partir de su expresión analítica.
+\begin{obs}[Expresión analítica]
+	Consideremos una aplicación lineal $f:\R^n\to\R$.
+	
+	Por ser $f$ una aplicación lineal, tendrá una única matriz asociada $C$. Como salta a la vista, $C$ será fila con $n$ columnas.
+	
+	Entonces, dado un vector $x\in\R^n$ se tiene que
+	\begin{equation}
+	\label{fund_eq_lineales}
+	f(x)=f(x_1,\dots,x_n)= CX=\begin{pmatrix}
+	c_1 & \cdots & c_n
+	\end{pmatrix}\begin{pmatrix}
+	x_1\\ \cdots \\x_n
+	\end{pmatrix}=c_1x_1+\cdots+c_nx_n
+	\end{equation}
+	De esta forma se concluye que toda aplicación lineal $f:\R^n\to\R$ tiene una expresión analítica de la forma de la ecuación \eqref{fund_eq_lineales}. Recíprocamente, basta con leer como los árabes.
+\end{obs}
 \subsection{Forma estándar y formas canónicas}
 \section{Programación lineal y conjuntos convexos}
 \subsection{Conjuntos convexos. Definición y terminología}
