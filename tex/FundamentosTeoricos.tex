@@ -8,7 +8,7 @@ De ahora en adelante consideraremos fijadas las bases canónicas tanto de $\R^n$
 Antes de plantear formalmente el problema de la programación lineal, introduzcamos unas definiciones.
 
 \begin{defi}[Vector no negativo]
-	Un vector $x=(x_1,\dots,x_n)\in\R^n$ se dice \tbi[vector!no negativo]{no negativo} si todas sus componentes son, como su propio nombre indica, no negativas. Es decir, $x_i\geq 0$ para todo $i\in\{1,\dots,n\}$.
+	Un vector $x=(x_1,\dots,x_n)\in\R^n$ se dice \tbi[vector!no negativo]{no negativo} si todas sus componentes son, como su propio nombre indica, no negativas. Es decir, $x_i\geq 0$ para todo $i\in\{1,\dots,n\}$. Si un vector $x$ es no negativo escribiremos $x\geq 0$.
 \end{defi}
 Al hilo de esta definición, vamos a generalizar ese concepto que lleva presente en nuestras vidas desde que aquel docente de primaria nos dibujó dos rectas perpendiculares en la pizarra, los cuadrantes.
 
@@ -19,6 +19,7 @@ Al hilo de esta definición, vamos a generalizar ese concepto que lleva presente
 \end{defi}
 Dicho esto, ya podemos formular el problema de la programación lineal.
 \begin{prob}[Formulación general]
+	\label{fund_prob_formulacionGeneral}
 	La disciplina de la \tbi[programación!lineal]{programación lineal} estudia procedimientos (implementables en ordenador) para calcular los extremos absolutos de una aplicación lineal $f:\R^n\to\R$ cuando restringimos su dominio una variedad afín de $\R^n$ cortada con el $2^n$--ante positivo.
 	
 	\begin{figure}[h!]
@@ -46,9 +47,53 @@ A continuación vemos una sencilla caracterización de las aplicaciones lineales
 	x_1\\ \cdots \\x_n
 	\end{pmatrix}=c_1x_1+\cdots+c_nx_n
 	\end{equation}
-	De esta forma se concluye que toda aplicación lineal $f:\R^n\to\R$ tiene una expresión analítica de la forma de la ecuación \eqref{fund_eq_lineales}. Recíprocamente, basta con leer como los árabes.
+	De esta forma se concluye que toda aplicación lineal $f:\R^n\to\R$ tiene una expresión analítica de la forma de la ecuación \eqref{fund_eq_lineales}. Recíprocamente, toda función $g:\R^n\to\R$ con una expresión analítica como la de \eqref{fund_eq_lineales} es una ecuación lineal, para demostrarlo, basta con leer como los árabes la ecuación \eqref{fund_eq_lineales}.
+\end{obs}
+Antes de continuar es importante hacer un inciso acerca de la notación.
+\begin{obs}[Notación matricial]
+	Siempre que escribamos matrices fila o columna lo haremos con letras minúsculas. Asimismo, siempre que estemos escribiendo una matriz final añadiremos el símbolo de trasposición, para dejarlo claro implícitamente. De esta manera, a las funciones lineales las denotaremos por
+	\begin{equation*}
+		f(x_1\dots,x_n)=c^tx
+	\end{equation*}
+	donde $c^t$ es la matriz asociada a $f$ y $x$ es el vector columna con las coordenadas de $x$ respecto de la base canónica.
 \end{obs}
 \subsection{Forma estándar y formas canónicas}
+
+Sea $f(x_1,\dots,x_n)=c_1x_1+\cdots+c_nx_n=c^tx$ una función lineal  a la que a partir de ahora llamaremos \tbi[función!objetivo]{función objetivo}. A la matriz $c$ se la denomina \tbi[vector!de coeficientes de la función objetivo]{vector de coeficientes de la función objetivo}, mientras que $x$ recibe el nombre de \tbi[vector!de variables de decisión]{vector de variables de decisión}.
+
+Consideremos asimismo la variedad afín de $\R^n$ dada por el conjunto de soluciones al sistema no necesariamente homogéneo $Ax=b$. Escrito de forma desarrollada
+\begin{equation*}
+\begin{array}{cc}
+\left\{\begin{array}{cccc}
+a_{11}x_1&+\cdots+&a_{1n}x_n&=b_1\\
+\vdots &\ddots &\vdots &\vdots\\
+a_{1m}x_1&+\cdots+&a_{mn}x_n&=b_m
+\end{array}\right.\qquad&\qquad\begin{pmatrix}
+a_{11} & \cdots & a_{1n}\\
+\vdots & \ddots & \vdots\\
+a_{m1} & \cdots & a_{mn}
+\end{pmatrix}\begin{pmatrix}
+x_1\\
+\vdots\\
+x_n
+\end{pmatrix}=\begin{pmatrix}
+b_1\\
+\vdots\\
+b_m
+\end{pmatrix}
+\end{array}
+\end{equation*}
+A la matriz $A\in\mathfrak{M}_{m\times n}(\R)$ usualmente la llamaremos \tbi[matriz!de coeficientes de las restricciones]{matriz de coeficientes de las restricciones}. Asimismo el vector $b$ será conocido como \tbi[vector!de términos independientes]{vector de términos independientes}.
+\begin{prob}[Forma estándar]
+El problema de programación lineal en \tbi[forma!estándar]{forma estándar} consiste en hallar los vectores $x\geq 0$ tales que sean solución de $Ax=b$ y además sean mínimos absolutos de la función $f$. Usualmente se escribe de forma sintética (aunque no lo usaremos mucho)
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad Ax=b,\qquad x\geq 0
+\end{array}
+\end{equation*}
+Nótese que la formulación del problema en forma estándar es exactamente la misma que la formulación general \ref{fund_prob_formulacionGeneral} con la única diferencia de que ya no buscamos extremos absolutos en general, sino únicamente mínimos. 
+\end{prob}
 \section{Programación lineal y conjuntos convexos}
 \subsection{Conjuntos convexos. Definición y terminología}
 \subsection{Puntos extremos}
