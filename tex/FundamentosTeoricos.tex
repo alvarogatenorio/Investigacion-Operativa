@@ -20,7 +20,7 @@ Al hilo de esta definición, vamos a generalizar ese concepto que lleva presente
 Dicho esto, ya podemos formular el problema de la programación lineal.
 \begin{prob}[Formulación general]
 	\label{fund_prob_formulacionGeneral}
-	La disciplina de la \tbi[programación!lineal]{programación lineal} estudia procedimientos (implementables en ordenador) para calcular los extremos absolutos de una aplicación lineal $f:\R^n\to\R$ cuando restringimos su dominio una variedad afín de $\R^n$ cortada con el $2^n$--ante positivo.
+	La disciplina de la \tbi[programación!lineal]{programación lineal} estudia procedimientos (implementables en ordenador) para calcular los extremos absolutos de una aplicación lineal $f:\R^n\to\R$ cuando restringimos su dominio a una variedad afín de $\R^n$ cortada con el $2^n$--ante positivo.
 	
 	\begin{figure}[h!]
 		\centering
@@ -30,13 +30,13 @@ Dicho esto, ya podemos formular el problema de la programación lineal.
 	\end{figure}
 	En el caso de la ilustración \ref{fund_img_problemaGeneral} suponemos que $f$ es una aplicación lineal definida sobre todo el plano a la cual restringimos el dominio a la variedad afín $\mc{L}$ cortada con el cuadrante positivo (línea azul). Nuestro deber es encontrar los puntos (si los hay) sobre la línea azul en los cuales $f$ alcanza un máximo o un mínimo absoluto.
 \end{prob} 
-En esta sección nos dedicaremos simplemente a formular de diversas maneras el problema de la programación lineal, observando que todas son equivalentes entre sí. Comencemos pues, sin más dilación nuestro viaje por lo desconocido, un viaje del que probablemente no regresemos.
+En esta sección nos dedicaremos simplemente a formular de diversas maneras el problema de la programación lineal, observando que todas son equivalentes entre sí. Comencemos pues, sin más dilación nuestro viaje por lo desconocido, un viaje del que probablemente no regresaremos.
 
 A continuación vemos una sencilla caracterización de las aplicaciones lineales $f:\R^n\to\R$ a partir de su expresión analítica.
 \begin{obs}[Expresión analítica]
 	Consideremos una aplicación lineal $f:\R^n\to\R$.
 	
-	Por ser $f$ una aplicación lineal, tendrá una única matriz asociada $C$. Como salta a la vista, $C$ será fila con $n$ columnas.
+	Por ser $f$ una aplicación lineal, tendrá una única matriz asociada $C$. Como salta a la vista, $C$ será una matriz fila con $n$ columnas.
 	
 	Entonces, dado un vector $x\in\R^n$ se tiene que
 	\begin{equation}
@@ -51,11 +51,11 @@ A continuación vemos una sencilla caracterización de las aplicaciones lineales
 \end{obs}
 Antes de continuar es importante hacer un inciso acerca de la notación.
 \begin{obs}[Notación matricial]
-	Siempre que escribamos matrices fila o columna lo haremos con letras minúsculas. Asimismo, siempre que estemos escribiendo una matriz final añadiremos el símbolo de trasposición, para dejarlo claro implícitamente. De esta manera, a las funciones lineales las denotaremos por
+	Siempre que escribamos matrices fila o columna lo haremos con letras minúsculas. Asimismo, siempre que estemos escribiendo una matriz fila añadiremos el símbolo de trasposición, para dejarlo claro implícitamente. De esta manera, a las funciones lineales las denotaremos por
 	\begin{equation*}
 		f(x_1\dots,x_n)=c^tx
 	\end{equation*}
-	donde $c^t$ es la matriz asociada a $f$ y $x$ es el vector columna con las coordenadas de $x$ respecto de la base canónica.
+	donde $c^t$ es la matriz asociada a $f$ y $x$ es el vector columna con las coordenadas de $x$ respecto de la base canónica (nótese el pequeño abuso de notación).
 \end{obs}
 \subsection{Forma estándar y formas canónicas}
 
@@ -83,7 +83,7 @@ b_m
 \end{pmatrix}
 \end{array}
 \end{equation*}
-A la matriz $A\in\mathfrak{M}_{m\times n}(\R)$ usualmente la llamaremos \tbi[matriz!de coeficientes de las restricciones]{matriz de coeficientes de las restricciones}. Asimismo el vector $b$ será conocido como \tbi[vector!de términos independientes]{vector de términos independientes}.
+A la matriz $A\in\mathfrak{M}_{m\times n}(\R)$ usualmente la llamaremos \tbi[matriz!de coeficientes de las restricciones]{matriz de coeficientes de las restricciones}, además, a cada una de las ecuaciones del sistema las llamaremos \tbi{restricciones}. Asimismo el vector $b$ será conocido como \tbi[vector!de términos independientes]{vector de términos independientes}.
 
 Expongamos ahora la llamada ``\ti{formulación estándar}'' del problema de la programación lineal.
 
@@ -97,8 +97,180 @@ El problema de programación lineal en \tbi[forma!estándar]{forma estándar} co
 \end{equation*}
 Nótese que la formulación del problema en forma estándar es exactamente la misma que la formulación general \ref{fund_prob_formulacionGeneral} con la única diferencia de que ya no buscamos extremos absolutos en general, sino únicamente mínimos. 
 \end{prob}
+La formulación estándar del problema de programación lineal puede parecer muy inflexible, en el sentido de que, a simple vista, no parece ser demasiado útil para modelizar problemas reales. Es esta aparente rigidez la que lleva a plantearse otras formulaciones más laxas del problema de programación lineal. Las llamadas ``\ti{formulaciones canónicas}'' que exponemos a continuación.
+\begin{prob}[Primera forma canónica]
+	Esta nueva formulación a la que llamamos \tbi[forma!canónica primera]{primera forma canónica} plantea el problema de hallar los vectores $x\geq 0$ tales que satisfagan la ecuación $Ax\leq b$ y que además sean máximos absolutos de la función objetivo $f$. Escrito de forma compacta
+	\begin{equation*}
+	\begin{array}{c}
+	\max c^tx\\
+	\text{Sujeto a:}\qquad Ax\leq b,\qquad x\geq 0
+	\end{array}
+	\end{equation*}
+\end{prob}
+\begin{prob}[Segunda forma canónica]
+	El problema de programación lineal en \tbi[forma!canónica segunda]{segunda forma canónica} consiste en encontrar los vectores $x\geq 0$ tales que satisfagan la ecuación $Ax\geq b$ y que además sean mínimos absolutos de la función objetivo $f$. En resumen
+	\begin{equation*}
+	\begin{array}{c}
+	\min c^tx\\
+	\text{Sujeto a:}\qquad Ax\geq b,\qquad x\geq 0
+	\end{array}
+	\end{equation*}
+\end{prob}
+Una vez vistas todas las formulaciones hagamos una pequeña reflexión. Sería la apoteosis del tedio tener que demostrar resultados teóricos para cada una de las formulaciones. No obstante, no hay que dejar nunca de confiar en los dioses olímpicos, pues a veces son benévolos con nosotros. Esta benevolencia consiste en que todas los formulaciones son equivalentes en el sentido que veremos a continuación.
+\subsubsection{Maximización y minimización}
+Si se nos plantea el problema de hallar el máximo absoluto de una función objetivo $f$ podemos transformar este problema en uno equivalente de forma que el objetivo de el nuevo problema sea hallar el mínimo de otra función objetivo $g$.
+
+La utilidad de este hecho es que podemos transformar un problema de programación lineal en primera forma canónica (que surgen de forma natural a la hora de modelizar problemas reales) en un problema más parecido a la formulación estándar.
+\begin{lem}[Maximización--minimización]
+	Sea $A$ un conjunto arbitrario y una función $f:A\to\R$ que alcanza el máximo y el mínimo. Entonces se cumple
+	\begin{equation*}
+		\max f=-\min (-f)
+	\end{equation*}
+\end{lem}
+\begin{proof}
+	Sea $\xi$ el máximo de $f$, es decir, el único número de $f(A)$ que verifica que $f(x)\leq \xi$ para todo $x\in A$. Consideremos ahora la función $g\equiv -f$, que, por las propiedades de los números reales alcanza el mínimo, al que llamaremos $\eta$.
+	
+	Evidentemente $\eta$ verifica que $g(x)\geq \eta$ para todo $x\in A$, o equivalentemente $-g(x)\leq -\eta$ para todo $x\in A$. Pero $-g(x)=f(x)$, luego $f(x)\leq -\eta$ para todo $x\in A$. Por unicidad del máximo $-\eta =\xi$, como queríamos demostrar.
+\end{proof}
+\begin{obs}[Aplicación]
+	Si tenemos un problema de programación lineal formulado en términos de maximización bastará con cambiar la función objetivo $f$ por la función objetivo $-f$ para obtener un problema equivalente en términos de minimización cuyas soluciones deben ser cambiadas de signo.
+\end{obs}
+\subsubsection{Igualdades y desigualdades}
+Una vez visto el apartado anterior, vamos a aprender a trasformar restricciones de tipo desigualdad a restricciones de tipo igualdad, con lo cual ya podremos transformar cualquier problema planteado en alguna forma canónica a un problema equivalente planteado en forma estándar.
+\begin{lem}[Variables de holgura]
+	Sea una restricción de la forma
+	\begin{equation}
+	\label{fund_eq_rest1}
+		a_{i1}x_1+\dots+a_{in}x_n\stackrel{(\geq)}{\leq} b_i
+	\end{equation}
+	entonces la restricción
+	\begin{equation}
+	\label{fund_eq_rest2}
+		a_{i1}x_1+\dots+a_{in}x_n\stackrel{(-)}{+}x_i^h=b_i
+	\end{equation}
+	es equivalente, en el sentido de que hay una biyección ``natural'' entre los conjuntos de vectores \tb{no negativos} que verifican cada una de las restricciones.
+	
+	A la variable $x_i^h$ añadida en la restricción \eqref{fund_eq_rest2} se la denomina \tbi[variable!de holgura]{variable de holgura}.
+\end{lem}
+\begin{proof}
+	Sean los conjuntos $\mc{S}$ y $\mc{S}'$ de vectores que verifican las restricciones \eqref{fund_eq_rest1} y \eqref{fund_eq_rest2} respectivamente. Consideremos la aplicación
+	\begin{equation*}
+		\begin{array}{cc}
+		\varphi:&\mc{S}\to\mc{S}'\\
+		& (x_1,\dots,x_n)\mapsto (x_1,\dots,x_n,z)
+		\end{array}
+	\end{equation*}
+	donde $z=b_i-a_{i1}x_1+\dots+a_{in}x_n$. Veamos que es una biyección.
+	
+	La inyectividad es clara por definición, si dos vectores compartieran imagen todas sus componentes coinciden.
+	
+	En cuanto a la sobreyectividad, dado un vector $(x_1,\dots,x_n,x_{n+1})$ que verifica la restricción \eqref{fund_eq_rest2}, es claro que el vector resultante de eliminar la última componente, $(x_1,\dots,x_n)$, cumple la restricción \eqref{fund_eq_rest1}.
+	
+	La demostración para el caso $\geq$ es totalmente simétrica.
+\end{proof}
+Veamos que utilidad tiene lo que acabamos de demostrar.
+\begin{obs}[Aplicación]
+	Si a la hora de modelizar un problema nos aparecen restricciones de tipo $\geq$ o $\leq$ basta con sustituirlas por restricciones equivalentes añadiendo variables de holgura.
+	
+	Además, debemos cambiar la función objetivo $f$, extendiéndola de la siguiente manera
+	\begin{equation*}
+		\begin{array}{cc}
+		\widehat{f}:&\R^{n+m}\to \R\\
+		& (x_1,\dots,x_n,x_{n+1},\dots,x_{n+m})\mapsto f(x_1,\dots,x_n)
+		\end{array}
+	\end{equation*}
+	donde $n$ es el número total de restricciones originales y $m$ el número de restricciones de tipo $\geq$ o $\leq$. De esta forma obtenemos un problema equivalente cuya solución será el vector solución del nuevo problema quitando las componentes correspondientes a variables de holgura (¡compruébese!).
+\end{obs}
+Con lo que sabemos hasta el momento podemos transformar cualquier problema escrito en cualquiera de las formas canónicas en un problema en forma estándar.
+\subsubsection{Positividad y negatividad}
+Otro caso que se presenta de manera usual es que al modelizar un problema concreto sea necesario permitir que algunas componentes de los vectores candidatos a ser solución sean negativas. Esta es una situación que no contempla la formulación estándar, sin embargo, con un simple truco podemos meter esta clase de problemas dentro de nuestro marco de actuación.
+\begin{obs}[Truco]
+	Si tenemos un problema en el que la componente $i$--ésima de los vectores puede ser negativa tomamos todas las restricciones
+	\begin{equation*}
+	a_{j1}x_1+\dots+a_{ji}x_i+\dots+a_{jn}x_n=b_j
+	\end{equation*}
+	que involucren a la componente $x_i$ y las sustituimos por las restricciones
+	\begin{equation*}
+	a_{j1}x_1+\dots+a_{ji}(x_i^+-x_i^-)+\dots+a_{jn}x_n=b_j
+	\end{equation*}
+	con $x_i^+$ y $x_i^-$ no negativos.
+	
+	Es claro que si un vector $(x_1,\dots,x_i,\dots,x_n)$ (donde $x_i$ es negativo) verifica las restricciones originales, entonces el vector $(x_1,\dots,0,-x_i,\dots,x_n)$ (por ejemplo) verifica las restricciones nuevas. Análogamente si $x_i$ es positivo. Asimismo, si el vector $(x_1,\dots,x_i^+,x_i^-,\dots,x_n)$ cumple las restricciones nuevas, el vector $(x_1,\dots,x_i^+-x_i^-,\dots,x_n)$ cumplirá las viejas, pudiendo concluir así que las restricciones viejas y nuevas son equivalentes en un sentido un poco más laxo que en el apartado anterior, ya que únicamente se tiene la sobreyectividad (pero esto es irrelevante).
+	
+	De esta forma, si cambiamos la función objetivo $f$ por la función
+	\begin{equation*}
+		\begin{array}{cc}
+		\overline{f}:&\R^{n+1}\to \R\\
+		& (x_1\dots,x_i^+,x_i^-,\dots,x_n)\mapsto f(x_1,\dots,x_i^+-x_i^-,\dots,x_n)
+		\end{array}
+	\end{equation*}
+	obtenemos un problema equivalente cuya solución será el vector $(x_1,\dots,x_i^+-x_i^-,\dots,x_n)$ donde $(x_1\dots,x_i^+,x_i^-,\dots,x_n)$ es el vector solución del problema con las restricciones nuevas.
+\end{obs}
+Hechas todas estas disquisiciones iniciales cabe mencionar que a la hora de modelizar problemas, siempre que tanto la función objetivo como las restricciones sean lineales, podremos realizar transformaciones (las vistas en esta sección) para que el problema quede planteado en forma estándar, pudiendo ser así resuelto mediante el uso de toda la artillería teórica que veremos a continuación.
+\subsection{Terminología y casuística}
+Dado un problema de programación lineal en forma estándar que tiene a $A$ como matriz de coeficientes de las restricciones y a $b$ como vector de términos independientes. Exponemos las siguientes definiciones.
+\begin{defi}[Soluciones]
+	Llamamos \tbi{solución} del problema $P$ a cualquier vector $x\in\R^n$ (no necesariamente no negativo) que verifique $Ax=b$.
+	
+	Sacando un poco de punta al asunto, diremos que si $x\in\R^n$ es solución del problema y además $x\geq 0$ entonces $x$ es una \tbi[solución!factible]{solución factible}.
+	
+	Llamaremos \tbi[región!factible]{región factible} al conjunto de todas las soluciones factibles del problema. Normalmente la denotaremos con la letra $\mc{S}$.
+\end{defi}
+Una vez resuelto el problema se pueden dar las siguientes situaciones
+\begin{itemize}
+	\item La región factible posee al menos un punto en el cual la función objetivo alcanza el mínimo. En esta situación diremos que el problema posee \tbi[solución!óptima]{solución óptima}.
+	\item La región factible del problema es el conjunto vacío. En este caso se dirá que el problema es \tbi[problema!infactible]{infactible}.
+	\item La función objetivo alcanza valores tan bajos como queramos en la región factible. En este caso se dice que el problema posee una solución \tbi[solución!no acotada]{no acotada}.
+\end{itemize}
+Teniendo en cuenta estas pequeñas observaciones podemos empezar a estudiar cómo son las regiones factibles, lo cual nos será muy útil para resolver el problema de programación lineal.
 \section{Programación lineal y conjuntos convexos}
-\subsection{Conjuntos convexos. Definición y terminología}
+En esta sección demostraremos que las regiones factibles de un problema de programación lineal en forma estándar son siempre conjuntos convexos. 
+
+Asimismo, estudiaremos en profundidad las propiedades de estos conjuntos, explotándolas para obtener un procedimiento robusto con el cual resolver estos problemas.
+\subsection{Conjuntos convexos. Definición y propiedades}
+Comenzamos definiendo el concepto de conjunto convexo.
+\begin{defi}[Convexos]
+	Sea $\mc{S}$ un subconjunto de $\R^n$, se dice \tbi[conjunto!convexo]{convexo} si para cada par de puntos $x,y\in \mc{S}$ el segmento que tiene por extremos a $x$ e $y$ está contenido en $\mc{S}$. Es decir
+	\begin{equation*}
+		\lambda x + (1-\lambda)y\in\mc{S}
+	\end{equation*}
+	para todo $\lambda\in[0,1]$. Nótese que el conjunto vacío se considera convexo.
+\end{defi}
+Una cuestión importante a destacar es que la intersección arbitraria de conjuntos convexos es convexo, tal y como muestra el siguiente lema.
+\begin{lem}[Intersección]
+	Sea $\mc{F}$ una familia de conjuntos convexos. La intersección de la familia es un conjunto convexo.
+\end{lem}
+\begin{proof}
+	Sean $x$ e $y$ dos puntos de la intersección de la familia, luego $x$ e $y$ están en todos los conjuntos de la familia. Como estos conjuntos son convexos, el segmento que une $x$ e $y$ estará contenido en todos los conjuntos de la familia simultáneamente, luego también en la intersección de la familia.
+\end{proof}
+Un concepto por el que merece la pena pasar es el de ``envoltura convexa'' de un conjunto $\mc{S}$ de $\R^n$, que viene a ser el menor conjunto convexo que contiene a $\mc{S}$.
+
+Esta idea es especialmente recurrente en las matemáticas, por ejemplo, en álgebra lineal teníamos el subespacio generado por un subconjunto, en teoría de grupos el subgrupo generado por un subconjunto, en topología tenemos la adherencia de un conjunto,\dots La lista es interminable.
+\begin{obs}[Justificación]
+	Es fácil darse cuenta de que, como la intersección arbitraria de convexos es convexa, el menor conjunto convexo que contiene a uno dado (al que llamaremos $\mc{S}$) puede ser construido de la siguiente manera
+	\begin{equation*}
+	\text{Conv}(\mc{S}):=\bigcap_{\mc{F}\supset \mc{S}}\mc{F}
+	\end{equation*}
+	En efecto, es un conjunto que contiene a $\mc{S}$, ya que todos los conjuntos de la familia a intersecar contienen a $\mc{S}$, además, es el menor de ellos, ya que, de haber uno más pequeño, pertenecería a la familia que se está intersecando, lo cual es absurdo (¡compruébese!).
+	
+	De esta forma queda justificada la existencia del menor conjunto convexo que contiene a $\mc{S}$, no obstante, la construcción que hemos realizado nos da escasa información acerca de los elementos de la envoltura convexa.
+\end{obs}
+Veamos a continuación una caracterización útil de la envoltura convexa de un conjunto, para la cual necesitamos introducir una definición.
+\begin{defi}[Combinaciones convexas]
+	Sea $\{z_1,\dots,z_r\}$ un conjunto finito de puntos. Diremos que $z$ es \tbi[combinación!lineal convexa]{combinación lineal convexa} de dichos puntos si
+	\begin{equation*}
+		z=\lambda_1 z_1+\dots+\lambda_r z_r
+	\end{equation*}
+	donde $\lambda_i>0$ para $i\in\{1,\dots,r\}$ y se cumple que $\sum_{i=1}^{r}\lambda_i=1$.
+\end{defi}
+\begin{prop}[Caracterización]
+	Dado un conjunto $\mc{S}$, su envoltura convexa es el conjunto de puntos que son una combinación lineal convexa de puntos de $\mc{S}$.
+\end{prop}
+\begin{proof}
+	Llamemos $\mc{H}(\mc{S})$ al conjunto de puntos que son combinación lineal convexa de puntos de $\mc{S}$. Veamos en primer lugar que $\mc{H}(\mc{S})$ contiene a $\mc{S}$. Esto es claro, ya que todo punto $x$ de $\mc{S}$ es combinación lineal convexa de puntos de $\mc{S}$, en efecto, $x=1\cdot x$.
+	
+	Veamos ahora que $\mc{H}(\mc{S})$ es convexo.
+\end{proof}
 \subsection{Puntos extremos}
 \subsection{Direcciones extremas}
 \section{Teoremas fundamentales}
