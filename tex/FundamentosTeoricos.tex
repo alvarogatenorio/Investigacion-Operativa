@@ -346,15 +346,113 @@ Que no asuste la longitud de la demostración de la proposición pues realmente 
 	Por hipótesis de inducción, tanto el primer sumando como el segundo (excluyendo los factores que los multiplican) son elementos de $\mc{C}$, y como $\mc{C}$ es convexo $z\in\mc{C}$, como queríamos.
 \end{proof}
 \subsection{Puntos extremos}
+De ahora en adelante será de utilidad tener en mente un polígono regular cuando se nos hable de conjuntos convexos, pues nos dará una idea bastante intuitiva.
+
+Para estrenar esta nueva buena costumbre se presenta la siguiente definición.
+\begin{defi}[Punto extremo]
+	Sea $\mc{C}$ un conjunto convexo. Diremos que $\overline{x}\in\mc{C}$ es un \tbi[punto!extremo]{punto extremo} de $\mc{C}$ si se verifica que para cualquier par de puntos $x_1,x_2\in\mc{C}$, $\overline{x}$ \tb{no} está en el segmento generado por dichos puntos (excluyendo los extremos). Es decir
+	\begin{equation*}
+		\overline{x}=\lambda x_1+(1-\lambda)x_2\sii\begin{cases}
+		\lambda\in\{0,1\}\\
+		x_1=x_2
+		\end{cases}
+	\end{equation*}
+\end{defi}
+La ilustración \ref{fund_img_puntosExtremos} marga en negro los puntos extremos de un polígono regular, para coger una idea intuitiva. A lo largo de este capítulo veremos la importancia que tienen estos puntos en la resolución del problema de programación lineal.
+\begin{figure}[h!]
+	\centering
+	\label{fund_img_puntosExtremos}
+	\includegraphics[scale = 0.75]{img/puntosExtremos}
+	\caption{Ilustración de los puntos extremos de un heptágono regular.}
+\end{figure}
+El teorema \ref{fund_teo_caracterizacionExtremos} nos da una caracterización de los puntos extremos de una región factible que, aunque muy potente, resulta poco intuitiva. Antes de enunciarlo recordemos un viejo resultado de álgebra lineal.
+\begin{obs}[Rango y submatrices]
+	\label{fund_obs_rango}
+	Es conocido desde tiempos inmemoriales que $A\in\mf{M}_{m\times n}(\K)$ con $m\leq n$ y $\mathrm{rg}(A)=m$ entonces habrá al menos una submatriz cuadrada $B\in\mf{M}_{m}(\K)$ de $A$ tal que $\mathrm{rg}(B)=m$. De esta forma, reordenando las columnas de $A$ si fuera necesario, podemos hacer la siguiente división por bloques de $A$.
+	\begin{equation*}
+		A=(B|N)
+	\end{equation*}
+	Nótese que la igualdad se da solo cuando ya hemos reordenado $A$.
+\end{obs}
+A partir de ahora trabajaremos con matrices en las condiciones de la observación \ref{fund_obs_rango} a no ser que se especifique lo contrario. Nótese que esto no supone ninguna pérdida de generalidad en lo que se refiere al estudio de los problemas de programación lineal ya que si se nos presentara una matriz con más filas que columnas habrá restricciones redundantes.
+\begin{defi}[Bases]
+	Dado un problema en forma estándar que tiene a $A$ por matriz de coeficientes de las restricciones, llamaremos \tbi{base} de $A$ a toda submatriz suya cuadrada y de rango máximo.
+\end{defi}
+\begin{theo}[Caracterización]
+	\label{fund_teo_caracterizacionExtremos}
+	Dada una región factible $\mc{S}$, $\overline{x}$ es un punto extremo de $\mc{S}$ si y solo si hay alguna reordenación de las columnas de $A$ de forma que
+	\begin{equation*}
+	\begin{array}{ccc}
+	A=(B|N) \qquad&\qquad \overline{x}=\begin{pmatrix}
+	\overline{x_B}\\
+	\overline{x_N}
+	\end{pmatrix}\text{ con } \overline{x_N}=0
+	\end{array}
+	\end{equation*}
+	donde $B$ es una base de $A$ y $\overline{x_B}$ y $\overline{x_N}$ son los ``trozos'' de $\overline{x}$ acordes con la descomposición en bloques de $A$, es decir
+	\begin{equation*}
+		A\overline{x}=(B|N)\begin{pmatrix}
+		\overline{x_B}\\
+		\overline{x_N}
+		\end{pmatrix}=B\overline{x_B}+N\overline{x_N}
+	\end{equation*}
+\end{theo}
+\begin{proof}
+	Veamos las dos implicaciones
+	\begin{itemize}
+		\item[\bla] Supongamos que $\overline{x}$ no es punto extremo, entonces habrá dos puntos distintos $x_1,x_2\in\mc{S}$ tales que $\overline{x}=\lambda x_1+(1-\lambda)x_2$ con $\lambda\in(0,1)$. Desplegando la descomposición por bloques tendríamos que
+		\begin{equation*}
+			(\overline{x_B}|\overline{x_N})^t=\lambda(x_B^1|x_N^1)^t+(1-\lambda)(x_B^2|x_N^2)^t
+		\end{equation*}
+		Como por hipótesis $\overline{x_N}=0$ y tanto $\lambda$ como $1-\lambda$ son estrictamente positivos se tiene que $x_N^1=x_N^2=0$, ya que $x_1$ y $x_2$ deben ser no negativos.
+		
+		Como $x_1,x_2\in\mc{S}$, entonces $Ax_i=b$ para $i\in\{1,2\}$, por tanto
+		\begin{equation*}
+			(B|N)(x_B^i|x_N^i)^t=(B|N)(x_B^i|0)^t=Bx_B^i=b\ra x_B^i=B^{-1}b
+		\end{equation*}
+		Con lo que se concluye que $x_1=x_2$, lo cual es absurdo.
+		\item[\bra] Sea $\overline{x}$ un punto extremo. Reordenemos el vector de forma que todas sus componentes nulas queden al final, reordenando solidariamente las columnas de la matriz $A$.
+		
+		Podemos suponer pues que el vector $\overline{x}$ tiene $p$ componentes no nulas. Vamos a demostrar que las $p$ primeras columnas de $A$ (ya reordenada) son linealmente independientes. 
+		
+		A partir de ahora denotaremos a la matriz $A$ por sus columnas, es decir $A=(a_1\cdots a_n)$ donde $a_i$ representa la $i$--ésima columna de $A$.
+		
+		Procedamos por reducción al absurdo, es decir, supongamos que hay ciertos números reales no todos nulos $\lambda_i$ tales que $\sum_{i=1}^{p}\lambda_ia_i=0$.
+		
+		Definimos el vector $\lambda:=(\lambda_1,\dots,\lambda_p,0,\dots,0)\in\R^n$. A continuación consideramos los vectores \tb{no negativos} $x_1:=\overline{x}+\alpha\lambda$ y $x_2:=\overline{x}-\alpha\lambda$ tomando un $\alpha$ lo suficientemente pequeño para que ambos vectores sean precisamente no negativos, lo cual siempre puede hacerse al ser $\overline{x}$ no negativo.
+		
+		Los vectores $x_1$ y $x_2$ tienen la particularidad de que con ellos podemos obtener $\overline{x}$ como combinación lineal convexa. En efecto $\overline{x}=\frac{1}{2}x_1+\frac{1}{2}x_2$. Si resultara que $x_1$ y $x_2$ son puntos de la región factible estaríamos entrando en contradicción con la ``extremalidad'' de $\overline{x}$, y eso es exactamente lo que vamos a hacer. En efecto, con $i\in\{1,2\}$ tenemos
+		\begin{equation*}
+			Ax_i=A\overline{x}\pm \alpha A\lambda\stackrel{!}{=}A\overline{x}=b\ra x_i\in\mc{S}
+		\end{equation*}
+		donde la igualdad de la exclamación se debe a la composición de $\lambda$ y la dependencia lineal de las $p$ primeras columnas de $A$ (por hipótesis). Con esto llegamos a un absurdo y concluimos que las $p$ primeras columnas de $A$ son linealmente independientes.
+		
+		Además, de paso podemos concluir que $p\leq m$, ya que $m$ es el rango máximo de $A$. Si además $p=m$ ya tenemos una base $B=(a_1\cdots a_p)$ que cumple lo que queremos (¡compruébese!). En el caso de que $p<m$ la observación \ref{fund_obs_rango} nos dice que siempre podemos escoger columnas adicionales de $A$ para completar una base y, tras una nueva reordenación de $A$ si fuera necesario tendríamos lo que necesitamos.\qedhere
+	\end{itemize}
+\end{proof}
+\begin{cor}[Parte básica]
+	Dado un punto extremo $\overline{x}=(\overline{x_B}|0)^t$ de una región factible $\mc{S}$ se cumple que $\overline{x_B}=B^{-1}b$.
+\end{cor}
+\begin{proof}
+	Basta con echar las cuentas. Como $\overline{x}\in\mc{S}$ es claro que $A\overline{x}=b$, luego
+	\begin{equation*}
+		A\overline{x}=(B|N)(\overline{x_B}|0)^t=B\overline{x_B}=b
+	\end{equation*}
+	y despejando se tiene que $\overline{x_B}=B^{-1}b$.
+\end{proof}
+Al hilo de este teorema surge la siguiente definición.
+\begin{defi}[Soluciones básicas]
+	A los puntos extremos de una región factible se les suele llamar \tbi[solución!básica factible]{soluciones básicas factibles}. Esto es debido a que, por el teorema \ref{fund_teo_caracterizacionExtremos}, están ``asociados'' a una base de la matriz asociada a la región factible del problema.
+\end{defi}
+\begin{obs}[Procedimiento constructivo]
+	Nótese que si nos dan un punto extremo de una región factible y nos piden hallar la base asociada a dicho punto extremo no tenemos más que seguir la demostración de la implicación a la derecha del teorema \ref{fund_teo_caracterizacionExtremos} para encontrarla.
+\end{obs}
+Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo.
+\begin{theo}[Existencia]
+	Toda región factible no vacía posee al menos un punto extremo.
+\end{theo}
+\begin{theo}[Optimalidad]
+	Si un problema de programación lineal en forma estándar tiene solución óptima, esta se alcanza en un punto extremo.
+\end{theo}
 \subsection{Direcciones extremas}
 \section{Teoremas fundamentales}
-\section{Algoritmo del Símplex}
-\subsection{Fundamentos teóricos}
-\subsection{Recapitulación}
-\section{Ejercicios resueltos}
-\begin{exerc}
-	contenidos...
-\end{exerc}
-\begin{solu}
-	contenidos...
-\end{solu}
