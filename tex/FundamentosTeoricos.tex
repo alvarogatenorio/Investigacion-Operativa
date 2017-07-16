@@ -1,7 +1,9 @@
 %Para este capítulo se usará la abreviatura "fund".
 \chapter{Fundamentos teóricos}
 \label{fund}
-%Introducción por hacer (pensarlo bien).
+La disciplina de la programación lineal cogió fuerza en la segunda guerra mundial, pues era necesario optimizar los escasos recursos de los que se disponían para realizar operaciones militares. En un principio fue impulsada por el ejército británico, con un grupo de investigación dirigido por \ti{\tb{Blackett}}, quien más adelante ganaría el premio Nobel de física.
+
+Cabe destacar la gran importancia que tuvo la programación lineal en países como Albania, debido, entre otras cosas, a su utilidad a la hora de optimizar los procesos de producción de carbón. 
 \section{Planteamiento del problema}
 De ahora en adelante consideraremos fijadas las bases canónicas tanto de $\R^n$ como de $\R$, a no ser que se especifique lo contrario.
 
@@ -236,6 +238,17 @@ Comenzamos definiendo el concepto de conjunto convexo.
 	\end{equation*}
 	para todo $\lambda\in[0,1]$. Nótese que el conjunto vacío se considera convexo.
 \end{defi}
+La región factible de un problema de programación lineal en forma estándar es un conjunto convexo.
+\begin{lem}[Región convexa]
+	El conjunto de los vectores no negativos $x\in\R^n$ que verifican la condición $Ax=b$ para cierta matriz $A$ y cierto vector $b$ es un conjunto convexo.
+\end{lem}
+\begin{proof}
+	Si la región factible $\mc{S}$ es el conjunto vacío ya hemos terminado. En otro caso, basta considerar dos vectores $x$ e $y$ de la región factible y ver que $\alpha x + (1-\alpha) y\in \mc{S}$ para todo $\alpha\in[0,1]$, pero esto es inmediato ya que
+	\begin{equation*}
+		A(\alpha x + (1-\alpha) y)=\alpha Ax + (1-\alpha)Ay=\alpha b + (1-\alpha)b = b \qedhere
+	\end{equation*}
+\end{proof}
+
 Una cuestión importante a destacar es que la intersección arbitraria de conjuntos convexos es convexo, tal y como muestra el siguiente lema.
 \begin{lem}[Intersección]
 	Sea $\mc{F}$ una familia de conjuntos convexos. La intersección de la familia es un conjunto convexo.
@@ -255,6 +268,9 @@ Esta idea es especialmente recurrente en las matemáticas, por ejemplo, en álge
 	
 	De esta forma queda justificada la existencia del menor conjunto convexo que contiene a $\mc{S}$, no obstante, la construcción que hemos realizado nos da escasa información acerca de los elementos de la envoltura convexa.
 \end{obs}
+\begin{obs}[Curiosidad]
+	A modo de curiosidad comentamos que el problema de calcular la envoltura convexa de un conjunto finito de $n$ puntos en el plano o el espacio es uno de los problemas centrales de la \tbi[geometría!computacional]{geometría computacional} por sus múltiples aplicaciones.
+\end{obs}
 Veamos a continuación una caracterización útil de la envoltura convexa de un conjunto, para la cual necesitamos introducir una definición.
 \begin{defi}[Combinaciones convexas]
 	Sea $\{z_1,\dots,z_r\}$ un conjunto finito de puntos. Diremos que $z$ es \tbi[combinación!lineal convexa]{combinación lineal convexa} de dichos puntos si
@@ -263,13 +279,71 @@ Veamos a continuación una caracterización útil de la envoltura convexa de un 
 	\end{equation*}
 	donde $\lambda_i>0$ para $i\in\{1,\dots,r\}$ y se cumple que $\sum_{i=1}^{r}\lambda_i=1$.
 \end{defi}
+Que no asuste la longitud de la demostración de la proposición pues realmente es muy sencilla.
 \begin{prop}[Caracterización]
 	Dado un conjunto $\mc{S}$, su envoltura convexa es el conjunto de puntos que son una combinación lineal convexa de puntos de $\mc{S}$.
 \end{prop}
 \begin{proof}
 	Llamemos $\mc{H}(\mc{S})$ al conjunto de puntos que son combinación lineal convexa de puntos de $\mc{S}$. Veamos en primer lugar que $\mc{H}(\mc{S})$ contiene a $\mc{S}$. Esto es claro, ya que todo punto $x$ de $\mc{S}$ es combinación lineal convexa de puntos de $\mc{S}$, en efecto, $x=1\cdot x$.
 	
-	Veamos ahora que $\mc{H}(\mc{S})$ es convexo.
+	Veamos ahora que $\mc{H}(\mc{S})$ es convexo. Esto lo haremos simplemente usando la definición. Sean $x$ e $y$ dos puntos de $\mc{H}(\mc{S})$, veamos que $\alpha x + (1-\alpha)y\in \mc{H}(\mc{S})$ para todo $\alpha\in[0,1]$.
+	
+	Por definición de $\mc{H}(\mc{S})$
+	\begin{equation*}
+	\begin{array}{cc}
+	x=\sum_{i=1}^{r}\lambda_ix_i \qquad&\qquad 
+	y=\sum_{j=1}^{s}\mu_jy_j
+	\end{array}
+	\end{equation*}
+	por tanto, si sustituimos esto en $\alpha x + (1-\alpha)y$ obtenemos
+	\begin{equation*}
+		\alpha x + (1-\alpha)y=\sum_{i=1}^{r}(\alpha\lambda_i)x_i+\sum_{j=1}^{s}[(1-\alpha)\mu_j]y_j
+	\end{equation*}
+	Haciendo los siguientes cambios de nombre
+	\begin{equation*}
+	\begin{array}{cc}
+	\xi_k:=\begin{cases}
+	\alpha\lambda_k & \text{si } k\in\{1,\dots,r\}\\
+	(1-\alpha)\mu_{k-r} & \text{si } k\in\{r+1,\dots,r+s\}
+	\end{cases}
+	\qquad
+	&
+	\qquad
+	z_k:=\begin{cases}
+	x_k & \text{si } k\in\{1,\dots,r\}\\
+	y_{k-r} & \text{si } k\in\{r+1,\dots,r+s\}
+	\end{cases}
+	\end{array}
+	\end{equation*}
+	nos queda que
+	\begin{equation*}
+		\alpha x + (1-\alpha)y=\sum_{k=1}^{r+s}\xi_kz_k
+	\end{equation*}
+	luego por definición de $\mc{H}(\mc{S})$ solo queda comprobar que $\sum_{k=1}^{r+s}\xi_k=1$, pero esto es evidente ya que
+	\begin{equation*}
+		\sum_{k=1}^{r+s}\xi_k=\alpha\sum_{i=1}^r\lambda_i+(1-\alpha)\sum_{j=1}^{s}\mu_j=\alpha+(1-\alpha)=1
+	\end{equation*}
+	Queda por ver pues que $\mc{H}(\mc{S})$ es el menor conjunto convexo que contiene a $\mc{S}$. Para ello, consideramos $\mc{C}$ un conjunto convexo arbitrario que contiene a $\mc{S}$. Demostremos que $\mc{H}(\mc{S})\subset C$ por inducción sobre la ``longitud'' de la combinación lineal convexa de sus elementos.
+	
+	El caso base es evidente, ya que los elementos de $\mc{H}(\mc{S})$ que son combinaciones lineales convexas de longitud unitaria son también elementos de $\mc{S}$ y por tanto de $\mc{C}$. Supongamos cierto que los elementos de $\mc{H}(\mc{S})$ que son combinaciones lineales convexas de longitud $n$ viven también en $\mc{C}$, y demostremos que lo mismo sucederá para los elementos que sean combinaciones de longitud $n+1$.
+	
+	Consideremos $z\in\mc{H}(\mc{S})$ un elemento que es combinación de longitud $n+1$, es decir
+	\begin{equation*}
+	\begin{array}{ccc}
+		z=\sum_{i=1}^{n+1}\lambda_iz_i & \text{con} & \sum_{i=1}^{n+1}\lambda_i=1
+	\end{array}
+	\end{equation*}
+	Vamos a apañar la expresión de $z$ para poder aplicar la hipótesis de inducción
+	\begin{equation*}
+		z=\sum_{i=1}^{n}\lambda_iz_i + \lambda_{n+1}z_{n+1}
+	\end{equation*}
+	Es claro que $z_{n+1}\in\mc{C}$ por ser una combinación de longitud uno. Sin embargo, el primer sumando no es una combinación lineal convexa ya que $\sum_{i=1}^{n}\lambda_i=1-\lambda_{n+1}\not=1$. Para arreglar esto vamos a multiplicar y a  dividir el primer sumando por $1-\lambda_{n+1}$
+	\begin{equation*}
+		z=(1-\lambda_{n+1})\sum_{i=1}^{n}\frac{\lambda_i}{1-\lambda_{n+1}}z_i+\lambda_{n+1}z_{n+1}
+	\end{equation*}
+	De esta forma el primer sumando (excluyendo el factor que lo multiplica) es una combinación lineal convexa de longitud $n$, ya que $\frac{1}{1\lambda_{n+1}}\sum_{i=1}^{n}\lambda_i=\frac{1-\lambda_{n+1}}{1-\lambda_{n+1}}=1$.
+	
+	Por hipótesis de inducción, tanto el primer sumando como el segundo (excluyendo los factores que los multiplican) son elementos de $\mc{C}$, y como $\mc{C}$ es convexo $z\in\mc{C}$, como queríamos.
 \end{proof}
 \subsection{Puntos extremos}
 \subsection{Direcciones extremas}
