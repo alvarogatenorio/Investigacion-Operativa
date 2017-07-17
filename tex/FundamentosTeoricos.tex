@@ -413,7 +413,7 @@ A partir de ahora trabajaremos con matrices en las condiciones de la observació
 		Con lo que se concluye que $x_1=x_2$, lo cual es absurdo.
 		\item[\bra] Sea $\overline{x}$ un punto extremo. Reordenemos el vector de forma que todas sus componentes nulas queden al final, reordenando solidariamente las columnas de la matriz $A$.
 		
-		Podemos suponer pues que el vector $\overline{x}$ tiene $p$ componentes no nulas. Vamos a demostrar que las $p$ primeras columnas de $A$ (ya reordenada) son linealmente independientes. 
+		Podemos suponer pues que el vector $\overline{x}$ tiene $p\not=0$ componentes no nulas (si $p=0$ el resultado es evidente). Vamos a demostrar que las $p$ primeras columnas de $A$ (ya reordenada) son linealmente independientes. 
 		
 		A partir de ahora denotaremos a la matriz $A$ por sus columnas, es decir $A=(a_1\cdots a_n)$ donde $a_i$ representa la $i$--ésima columna de $A$.
 		
@@ -445,14 +445,93 @@ Al hilo de este teorema surge la siguiente definición.
 	A los puntos extremos de una región factible se les suele llamar \tbi[solución!básica factible]{soluciones básicas factibles}. Esto es debido a que, por el teorema \ref{fund_teo_caracterizacionExtremos}, están ``asociados'' a una base de la matriz asociada a la región factible del problema.
 \end{defi}
 \begin{obs}[Procedimiento constructivo]
-	Nótese que si nos dan un punto extremo de una región factible y nos piden hallar la base asociada a dicho punto extremo no tenemos más que seguir la demostración de la implicación a la derecha del teorema \ref{fund_teo_caracterizacionExtremos} para encontrarla.
+	Nótese que si nos dan un punto extremo de una región factible y nos piden hallar la base asociada a dicho punto extremo no tenemos más que seguir la demostración de la implicación a la derecha del teorema \ref{fund_teo_caracterizacionExtremos} para encontrarla, es decir, tomar las columnas de $A$ asociadas a las componentes no nulas del punto extremo y, en su caso, completar la base.
+	
+	Esto nos lleva a deducir de forma evidente que cada punto extremo puede estar asociado a más de una base (salvo reordenaciones).
 \end{obs}
 Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo.
+\begin{obs}[Finitud]
+	Una región factible tiene un número finito de puntos extremos, esto es debido a que $A$ tiene más bases que puntos extremos, ya que cada base $B$ está asociada a un único candidato a punto extremo, el punto que tiene a $B^{-1}b$ como parte básica. Además, cada matriz tiene a lo sumo $\binom{n}{m}$ bases.
+\end{obs}
 \begin{theo}[Existencia]
+	\label{fund_teo_existenciaExtremos}
 	Toda región factible no vacía posee al menos un punto extremo.
 \end{theo}
+\begin{proof}
+	Sea $\overline{x}$ un punto arbitrario de la región factible. Reordenemos sus componentes de forma que las componentes nulas queden al final, asimismo reordenemos $A$ de forma coherente con la reordenación de $\overline{x}$. Supongamos que $\overline{x}$ posee $p$ componentes no nulas (las $p$ primeras tras la reordenación).
+	
+	Ahora consideramos las columnas de $A$ correspondientes a las $p$ componentes no nulas de $\overline{x}$. Si estas columnas son linealmente independientes, por el teorema \ref{fund_teo_caracterizacionExtremos} habríamos terminado.
+	
+	Si, por el contrario, las columnas (que serán las $p$ primeras tras la reordenación) son linealmente dependientes, entonces existirán ciertos números reales $\lambda_i$ no todos nulos tales que $\sum_{i=1}^{p}\lambda_ia_i=0$, donde $a_i$ representa a la $i$--ésima columna de $A$.
+	
+	Lo que vamos a hacer es cambiar ligeramente el punto $\overline{x}$ de forma que siga siendo de la región factible y conserve un subconjunto estrictamente menor de las componentes no nulas de $\overline{x}$.
+	
+	En primer lugar cabe mencionar que siempre podemos suponer que existe al menos un $r\in\{1,\dots,p\}$ de forma que $\lambda_p >0$, ya que en caso de que todos los números de la combinación lineal fueran negativos podemos considerar la combinación lineal alternativa $\sum_{i=1}^{p}-\lambda_ia_i=0$, en la cual todos los escalares son positivos.
+	
+	Definimos ahora el vector $\lambda:=(\lambda_1,\dots,\lambda_p,0,\dots,0)\in\R^n$ y consideramos el puntos $\overline{x}':=\overline{x}-\alpha\lambda$ para cierto $\alpha>0$ que definiremos más adelante.
+	
+	El punto $\overline{x}'$ verifica la condición $Ax=b$, en efecto
+	\begin{equation*}
+		A\overline{x}'=A\overline{x}-\alpha A\lambda=A\overline{x}=b
+	\end{equation*}
+	Luego únicamente queda elegir un $\alpha$ adecuado para que $\overline{x}'\geq 0$. Para ello elegiremos
+	\begin{equation*}
+		\alpha:=\min\left\{\frac{\overline{x}_j}{\lambda_j}\midc \lambda_j>0\right\}=\frac{\overline{x}_l}{\lambda_l}
+	\end{equation*}
+	Veamos que $\overline{x}'$ es no negativo. Para ello distinguiremos casos componente a componente.
+	\begin{itemize}
+		\item Si $\lambda_j > 0$ tenemos que $\overline{x}_j'=\overline{x}_j-\frac{\overline{x}_l}{\lambda_l}\lambda_j=\frac{\overline{x}_j}{\lambda_j}\lambda_j-\frac{\overline{x}_l}{\lambda_l}\lambda_j=\lambda_j\left(\frac{\overline{x}_j}{\lambda_j}-\frac{\overline{x}_l}{\lambda_l}\right)$ y este número es no negativo por definición de $\alpha$.
+		\item Si $\lambda_j\leq 0$ evidentemente $\overline{x}_j'=\overline{x}_j-\alpha\lambda_j$ es no negativo por ser la suma de números no negativos.
+	\end{itemize}
+	Cabe destacar que si $\overline{x}_j=0$ entonces $\overline{x}_j'=0$, además $\overline{x}_l>0$ mientras que $\overline{x}_l'=0$, luego $\overline{x}'$ tiene a lo sumo $p-1$ componentes no nulas, con lo que, al volver al principio de la demostración el conjunto de columnas que queremos que sean linealmente independientes se ha visto reducido en una columna como poco. Por tanto, tras un número finito de pasos encontraremos un punto extremo. Esto proporciona un algoritmo para encontrar un punto extremo de una región factible.
+\end{proof}
+Culminamos este teorema con una pequeña observación.
+\begin{obs}[Extremalidad del $0$]
+	Si una región factible contiene al vector $0$, este es siempre un punto extremo, basta con aplicar el teorema \ref{fund_teo_existenciaExtremos} para comprobarlo (el conjunto vacío es linealmente independiente). 
+\end{obs}
+El siguiente teorema termina de mostrar la brutal importancia de los puntos extremos de las regiones factibles en los problemas de programación lineal, y es que, si un problema tiene solución óptima, esta se alcanza en un punto extremo o solución básica factible.
 \begin{theo}[Optimalidad]
 	Si un problema de programación lineal en forma estándar tiene solución óptima, esta se alcanza en un punto extremo.
 \end{theo}
+\begin{proof}
+	Procedemos de análogamente a como hicimos en la demostración del teorema \ref{fund_teo_existenciaExtremos}.
+	
+	Consideremos $\overline{x}$ un punto donde se alcanza la solución óptima al problema en cuestión. Reordenemos las coordenadas de $\overline{x}$ dejando las componentes nulas al final, reordenando también $A$ solidariamente.
+	
+	Suponiendo que $\overline{x}$ tiene $p$ componentes no nulas y que las columnas de $A$ correspondientes a dichas columnas son linealmente dependientes (en caso contrario hemos terminado), entonces habrá ciertos números reales no todos nulos (de hecho podemos suponer que alguno será positivo) tales que $\sum_{i=1}^{n}\lambda_ia_i=0$. Definimos el vector $\lambda\in\R^n$ de la manera usual y consideramos los puntos
+	\begin{equation*}
+		\begin{array}{cc}
+		x_1=\overline{x}+\alpha_1\lambda\qquad&\qquad x_2=\overline{x}-\alpha_2\lambda
+		\end{array}
+	\end{equation*}
+	siendo $\alpha_1$ y $\alpha_2$ coeficientes positivos lo suficientemente pequeños para que $x_1$ y $x_2$ sean no negativos.
+	
+	Es evidente que tanto $x_1$ como $x_2$ cumplen la condición $Ax=b$, esto se debe a la dependencia lineal de las $p$ primeras columnas y a la definición de $\lambda$, como ya hemos hecho en otras ocasiones.
+	
+	Evaluemos los puntos $x_1$ y $x_2$ por la función objetivo
+	\begin{equation*}
+		\begin{array}{c}
+		c^tx_1=c^t\overline{x}+\alpha_1c^t\lambda\\
+		c^tx_2=c^t\overline{x}-\alpha_2c^t\lambda
+		\end{array}
+	\end{equation*}
+	Por la optimalidad de $\overline{x}$ se tiene que
+	\begin{gather}
+		\label{fund_eq_teoOptimExtrem1}c^t\overline{x}\leq c^t\overline{x}+\alpha_1c^t\lambda\\
+		\label{fund_eq_teoOptimExtrem2}c^t\overline{x}\leq c^t\overline{x}-\alpha_2c^t\lambda
+	\end{gather}
+	De la ecuación \eqref{fund_eq_teoOptimExtrem1} se deduce que $c^t\lambda\geq 0$ y de la ecuación \eqref{fund_eq_teoOptimExtrem2} se desprende que $c^t\lambda\leq 0$, luego $c^t\lambda=0$, por tanto tanto $x_1$ como $x_2$ son puntos en los que también se alcanza la solución óptima. Centrémonos en $x_2$. Si tomamos $\alpha_2$ como
+	\begin{equation*}
+		\alpha_2:=\min\left\{\frac{\overline{x}_j}{\lambda_j}\midc \lambda_j>0\right\}
+	\end{equation*}
+	sabemos que $x_2$ sigue perteneciendo a la región factible (como demostramos en el teorema \ref{fund_teo_existenciaExtremos}) luego es una elección válida. Además, por las mismas razones que en el teorema \ref{fund_teo_existenciaExtremos}, el vector $x_2$ tiene a lo sumo $p-1$ componentes positivas, luego, tras un número finito de pasos encontraremos un punto extremo en el cual se alcance la solución óptima.
+\end{proof}
 \subsection{Direcciones extremas}
+\begin{defi}[Dirección]
+	Dado un conjunto convexo $\mc{C}$ y un vector $d\in\R^n$ diremos que $d$ es una \tbi{dirección} de $\mc{C}$ si para todo punto $x\in\mc{C}$ se verifica que
+	\begin{equation*}
+		x+\lambda d\in \mc{C}
+	\end{equation*}
+	para todo $\lambda$ no negativo. Asimismo, dadas dos direcciones $d_1$ y $d_2$ diremos que son \tbi[dirección!equivalente]{equivalentes} si son vectores proporcionales.
+\end{defi}
 \section{Teoremas fundamentales}
