@@ -527,6 +527,7 @@ El siguiente teorema termina de mostrar la brutal importancia de los puntos extr
 	sabemos que $x_2$ sigue perteneciendo a la región factible (como demostramos en el teorema \ref{fund_teo_existenciaExtremos}) luego es una elección válida. Además, por las mismas razones que en el teorema \ref{fund_teo_existenciaExtremos}, el vector $x_2$ tiene a lo sumo $p-1$ componentes positivas, luego, tras un número finito de pasos encontraremos un punto extremo en el cual se alcance la solución óptima.
 \end{proof}
 \subsection{Direcciones extremas}
+El siguiente es el último concepto relativo a convexidad que veremos, se trata del concepto de ``dirección''. En palabras llanas podríamos decir que una ``dirección'' de un conjunto convexo es una flecha tal que si partimos de cualquier punto del conjunto y la seguimos nunca saldremos del conjunto. la siguiente definición formaliza este concepto.
 \begin{defi}[Dirección]
 	Dado un conjunto convexo $\mc{C}$ y un vector $d\in\R^n$ diremos que $d$ es una \tbi{dirección} de $\mc{C}$ si para todo punto $x\in\mc{C}$ se verifica que
 	\begin{equation*}
@@ -534,4 +535,57 @@ El siguiente teorema termina de mostrar la brutal importancia de los puntos extr
 	\end{equation*}
 	para todo $\lambda$ no negativo. Asimismo, dadas dos direcciones $d_1$ y $d_2$ diremos que son \tbi[dirección!equivalente]{equivalentes} si son vectores proporcionales.
 \end{defi}
+\begin{obs}[No acotación]
+	Nótese que si un conjunto convexo es acotado no puede tener direcciones (compruébese). Luego cuando hablemos de direcciones será recomendable tener en mente conjuntos como el que representa la ilustración \ref{fund_img_direcciones} (que continúa infinitamente hacia arriba y hacia la derecha).
+\end{obs}
+Veamos a continuación un concepto análogo al de los puntos extremos pero en el ámbito de las direcciones.
+\begin{defi}[Dirección extrema]
+	Sea $d$ una dirección. Diremos que $d$ es una \tbi[dirección!extrema]{dirección extrema} si no puede escribirse como combinación lineal positiva de dos direcciones no equivalentes. De forma sintética
+	\begin{equation*}
+		d=\lambda d_1+\mu d_2\text{ con }\lambda,\mu>0\sii d_1\sim d_2
+	\end{equation*}
+	donde $\sim$ denota la equivalencia de direcciones.
+\end{defi}
+\begin{figure}[h!]
+	\centering
+	\label{fund_img_direcciones}
+	\includegraphics[scale = 0.75]{img/direcciones}
+	\caption{Ilustración de una dirección y una dirección extrema}
+\end{figure}
+Veamos una caracterización muy sencilla de las direcciones extremas para regiones factibles.
+\begin{lem}[Caracterización débil]
+	Dada una región factible $\mc{S}$, $d$ es una dirección de $\mc{S}$ si y solo si $d$ es un vector no negativo y no nulo que verifica que $Ad=0$.
+\end{lem}
+\begin{proof}Veamos ambas implicaciones.
+	\begin{itemize}
+		\item[\bra] Sea $d$ una dirección, por tanto, dado $x\in\mc{S}$ y $\lambda\geq 0$ se cumple que $x+\lambda d\in\mc{S}$, luego $A(x+\lambda d)=b$, por tanto
+		\begin{equation*}
+			A(x+\lambda d)=Ax+\lambda Ad=b+\lambda A d = b\sii A d = 0
+		\end{equation*}
+		Queda comprobar que $d$ es un vector no negativo, para ello supongamos que tiene alguna componente negativa, digamos la $i$--ésima. Entonces por hipótesis $x_j+\lambda d_j\geq 0$ para todo $\lambda\geq 0$, sin embargo, tomando un $\lambda$ lo suficientemente grande llegamos a un absurdo.
+		\item[\bla] Es claro que $x+\lambda d$ es un vector no negativo para todo $x\in\mc{S}$ (por hipótesis). Comprobemos que está en la región factible. En efecto
+		\begin{equation*}
+			A(x+\lambda d)=Ax+\lambda Ad=Ax=b \qedhere
+		\end{equation*}
+	\end{itemize}
+\end{proof}
+El lema anterior nos abre las puertas a una caracterización de las direcciones extremas mucho más potente y muy parecida al teorema \ref{fund_teo_caracterizacionExtremos}, es decir, muy poco intuitiva.
+\begin{theo}[Caracterización fuerte]
+	Dada una región factible $\mc{S}$, $d$ es una dirección extrema de $\mc{S}$ si y solo si, tras una conveniente reordenación, hay una base $B$ de $A$ tal que
+	\begin{equation*}
+		\begin{array}{cc}
+		A=(B|N)\qquad&\qquad d=\alpha\begin{pmatrix}
+		-B^{-1}a_k\\
+		e_t
+		\end{pmatrix}
+		\end{array}
+	\end{equation*}
+	con $k=m+t$, $\alpha>0$, $B^{-1}a_k\leq 0$ y siendo $e_t$ el $t$--ésimo vector de la base canónica.
+\end{theo}
+\begin{proof}Veamos ambas implicaciones.
+	\begin{itemize}
+		\item[\bla]
+		\item[\bra]\qedhere
+	\end{itemize}
+\end{proof}
 \section{Teoremas fundamentales}
