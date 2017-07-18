@@ -552,7 +552,7 @@ Veamos a continuación un concepto análogo al de los puntos extremos pero en el
 	\includegraphics[scale = 0.75]{img/direcciones}
 	\caption{Ilustración de una dirección y una dirección extrema}
 \end{figure}
-Veamos una caracterización muy sencilla de las direcciones extremas para regiones factibles.
+Veamos una caracterización muy sencilla de las direcciones para regiones factibles.
 \begin{lem}[Caracterización débil]
 	Dada una región factible $\mc{S}$, $d$ es una dirección de $\mc{S}$ si y solo si $d$ es un vector no negativo y no nulo que verifica que $Ad=0$.
 \end{lem}
@@ -569,8 +569,9 @@ Veamos una caracterización muy sencilla de las direcciones extremas para region
 		\end{equation*}
 	\end{itemize}
 \end{proof}
-El lema anterior nos abre las puertas a una caracterización de las direcciones extremas mucho más potente y muy parecida al teorema \ref{fund_teo_caracterizacionExtremos}, es decir, muy poco intuitiva.
+El lema anterior nos abre las puertas a una caracterización de las direcciones extremas mucho muy potente y extremadamente parecida al teorema \ref{fund_teo_caracterizacionExtremos}, es decir, muy poco intuitiva. Conviene reflexionar sobre el enunciado antes de lanzarse a la demostración.
 \begin{theo}[Caracterización fuerte]
+	\label{fund_teo_caracterizacionDireccionesExtremas}
 	Dada una región factible $\mc{S}$, $d$ es una dirección extrema de $\mc{S}$ si y solo si, tras una conveniente reordenación, hay una base $B$ de $A$ tal que
 	\begin{equation*}
 		\begin{array}{cc}
@@ -580,12 +581,83 @@ El lema anterior nos abre las puertas a una caracterización de las direcciones 
 		\end{pmatrix}
 		\end{array}
 	\end{equation*}
-	con $k=m+t$, $\alpha>0$, $B^{-1}a_k\leq 0$ y siendo $e_t$ el $t$--ésimo vector de la base canónica.
+	donde $a_k$ es una columna de $N$, o sea, la $k=m+t$--ésima columna de $A$.
+	
+	Además, $\alpha>0$, $B^{-1}a_k\leq 0$ y $e_t$ es el $t$--ésimo vector de la base canónica de $\R^{n-m}$.
 \end{theo}
 \begin{proof}Veamos ambas implicaciones.
 	\begin{itemize}
-		\item[\bla]
-		\item[\bra]\qedhere
+		\item[\bla] Sea $d$ un vector que cumple las propiedades del enunciado, luego no negativo y no nulo. Veamos en primer lugar que es una dirección de la región factible. En efecto, usando la única caracterización que tenemos
+		\begin{equation*}
+			Ad=(B|N)(-B^{-1}a_k|e_t)^t=-BB^{-1}a_k+Ne_t=-a_k+a_k=0
+		\end{equation*}
+		Para comprobar la extremalidad de $d$, supongamos que puede escribirse como combinación lineal positiva de dos direcciones $d_1$ y $d_2$ y veamos que estas direcciones son equivalentes.
+		
+		Como $d=\lambda_1 d_1+\lambda_2 d_2$, si nos fijamos únicamente en las $n-m$ últimas coordenadas se tiene que $e_t=\lambda_1d_{1N}+\lambda_2d_{2N}$, luego, por ser los vectores $d_1$ y $d_2$ no negativos, sus $n-m$ últimas componentes deben ser múltiplos de $e_t$. Es decir $d_{iN}=\mu_ie_t$ con $i\in\{1,2\}$.
+		
+		Fijémonos ahora en las $m$ primeras componentes. Al ser los vectores $d_i$ con $i\in\{1,2\}$ direcciones se cumplirá que $Ad_i=0$. Desarrollando esta cuenta tenemos
+		\begin{equation*}
+			Ad_i=(B|N)(d_{iB}|\mu_i e_t)^t=Bd_{iB}+\mu_iNe_t=Bd_{iB}+\mu_ia_k=0
+		\end{equation*}
+		despejando obtenemos que $d_{iB}=-\mu_iB^{-1}a_k$ con lo que ambas direcciones son equivalentes.
+		\item[\bra] Sea $d$ una dirección extrema de $\mc{S}$, por tanto un vector no negativo y no nulo. Podemos suponer que $d$ tiene $p+1$ componentes positivas con $p\in\{0,\dots,n-1\}$. En primer lugar, procedemos a reordenar el vector de forma que sus $p$ primeras componentes sean positivas, colocando la última componente positiva en la posición $k>m$ (cualquiera donde quepa).
+		
+		Veamos que las columnas correspondientes a las $p$ primeras componentes del vector $d$ reordenado son linealmente independientes. En caso contrario existirá una combinación lineal no trivial tal que $\sum_{i=1}^{p}\lambda_ia_i=0$. Dicho esto, vamos a tratar de construir dos direcciones de $\mc{S}$ en función de las cuales $d$ pueda escribirse como combinación lineal positiva, llegando a una contradicción con la extremalidad de $d$.
+		
+		Definiendo el vector $\lambda:=(\lambda_1,\dots,\lambda_p,0,\dots,0)$ y los vectores
+		\begin{equation*}
+			\begin{array}{cc}
+			d_1=d+\delta\lambda\qquad&\qquad d_2=d-\delta\lambda
+			\end{array}
+		\end{equation*} siendo $\delta$ suficientemente pequeño para que $d_1$ y $d_2$ sean no negativos. Nótese que $d=\frac{1}{2}d_1+\frac{1}{2}d_2$, luego si $d_1$ y $d_2$ son direcciones tendríamos una contradicción. Y, en efecto lo son, basta echar las cuentas
+		\begin{equation*}
+			Ad_i=A(d\pm\delta\lambda)=Ad\pm\delta A\lambda=0
+		\end{equation*}
+		De esta forma se llega a la conclusión de que necesariamente $p\leq m$, lo cual es importante, pues nos dice que si un vector tiene más de $m$ componentes positivas este no puede ser dirección extrema.
+		
+		En definitiva, si $p=m$ ya tenemos una base $B$ de $A$, en caso contrario siempre podemos coger columnas adicionales para completar la base (observación \ref{fund_obs_rango}). Veamos pues que se cumple lo que se tiene que cumplir, para lo cual basta con, de nuevo, hacer las cuentas.
+		\begin{equation*}
+			0=Ad=(B|N)(d_B|d_N)^t=Bd_B+Nd_N=Bd_B+a_kd_k
+		\end{equation*}
+		despejando obtenemos que $d_B=-d_kB^{-1}a_k$ y evidentemente $d_N=d_ke_t$, luego tomando $\alpha:=d_k$ se tiene el resultado.\qedhere
 	\end{itemize}
 \end{proof}
+Terminado nuestro viaje por el mundo de la convexidad, podemos internarnos ya en el meollo del asunto, es decir, en desarrollar material teórico que nos permita desarrollar un algoritmo para optimizar funciones lineales condicionadas a variedades afines en el $2^n$--ante positivo.
 \section{Teoremas fundamentales}
+Empezamos esta sección enunciando un teorema que no demostraremos, no porque sea especialmente complicado, sino porque es especialmente largo y su demostración no aporta demasiado a nuestros objetivos. Hablamos del famoso ``teorema de representación''.
+\begin{theo}[Teorema de representación]
+	Sea $\mc{S}$ una región factible con $p$ puntos extremos $\{x_1,\dots,x_p\}$ y $l$ direcciones extremas $\{d_1,\dots,d_l\}$. Un punto $x$ está en la región factible si y solo si $x$ es ``combinación esotérica'' de puntos y direcciones extremas, es decir
+	\begin{equation*}
+		x=\sum_{i=1}^{p}\lambda_ix_i+\sum_{j=1}^{l}\mu_jd_j
+	\end{equation*}
+	con $\lambda_i,\mu_j\geq 0$ y $\sum_{i=1}^{p}\lambda_i=1$.
+\end{theo}
+El siguiente teorema es un test de optimalidad para regiones factibles que poseen direcciones extremas.
+\begin{theo}[Test de optimalidad]
+	\label{fund_teo_testOptim}
+	Dado un problema de programación lineal con región factible no acotada y direcciones extremas $\{d_1,\dots,d_s\}$, el problema tiene solución optima si y solo si se cumple que $c^td_j\geq 0$ para todo $j\in\{1,\dots,s\}$.
+\end{theo}
+\begin{proof}Demostremos ambas implicaciones echando mano del teorema de representación.
+	\begin{itemize}
+		\item[\bra] Por reducción al absurdo, si la función objetivo alcanzara la solución óptima y hubiera una dirección extrema $d_r$ tal que $c^td_r<0$ podemos considerar el punto de la región factible (por el teorema de representación)
+		\begin{equation*}
+			x_{\mu_r}=\sum_{i=1}^{p}\lambda_ix_i+\mu_rd_r
+		\end{equation*}
+		Veamos cómo evoluciona el valor de la función objetivo para valores grandes de $\mu_r$
+		\begin{equation*}
+			\lim\limits_{\mu_r\to\infty}c^tx_{\mu_r}=\lim\limits_{\mu_r\to\infty}\sum_{i=1}^{p}\lambda_ic^tx_i+\mu_rc^td_r=\lim\limits_{\mu_r\to\infty}\mu_rc^td_r=-\infty
+		\end{equation*}
+		luego es un problema con solución no acotada (absurdo por hipótesis).
+		\item[\bla]Dado un punto $x$ de la región factible por el teorema de representación se verifica que la función objetivo evaluada en $x$ es\begin{equation*}
+			c^tx=\sum_{i=1}^{p}\lambda_ic^tx_i+\sum_{j=1}^{s}\mu_jc^td_j
+		\end{equation*} el resultado que arroja el segundo sumatorio es positivo, luego si consiguiéramos fusilarlo mejoraríamos el valor de la función objetivo. Para ello basta con coger el punto con representación $x':=\sum_{i=1}^{p}\lambda_ix_i$. De esta forma
+		\begin{equation*}
+			c^tx\geq c^tx'=\sum_{i=1}^{p}\lambda_ic^tx_i
+		\end{equation*} más aun, si consideramos el punto extremo $x^*$ tal que $c^tx^*:=\min\{c^tx_i\midc 1\leq i\leq p\}$ tenemos la cadena de desigualdades \begin{equation*}
+		c^tx\geq c^tx'\geq \sum_{i=1}^{p}\lambda_ic^tx^*=c^tx^*
+	\end{equation*} de esta forma se tiene que $x^*$ es solución óptima del problema, ya que la función objetivo evaluada en ese punto es menor o igual a la de cualquier otro.\qedhere
+	\end{itemize}
+\end{proof}
+\begin{obs}[Algoritmo de representación]
+	Con todo lo que tenemos hasta ahora ya tenemos un algoritmo para resolver problemas de programación lineal. Basta con calcular los puntos y direcciones extremas de la región factible, lo cual puede hacerse usando los teoremas \ref{fund_teo_caracterizacionExtremos} y \ref{fund_teo_caracterizacionDireccionesExtremas} y seguir la demostración del test de optimalidad (teorema \ref{fund_teo_testOptim}).
+\end{obs}
