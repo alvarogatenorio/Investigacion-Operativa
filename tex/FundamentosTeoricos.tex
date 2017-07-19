@@ -451,6 +451,7 @@ Al hilo de este teorema surge la siguiente definición.
 \end{obs}
 Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo.
 \begin{obs}[Finitud]
+	\label{fund_obs_finitudExtremos}
 	Una región factible tiene un número finito de puntos extremos, esto es debido a que $A$ tiene más bases que puntos extremos, ya que cada base $B$ está asociada a un único candidato a punto extremo, el punto que tiene a $B^{-1}b$ como parte básica. Además, cada matriz tiene a lo sumo $\binom{n}{m}$ bases.
 \end{obs}
 \begin{theo}[Existencia]
@@ -491,6 +492,7 @@ Culminamos este teorema con una pequeña observación.
 \end{obs}
 El siguiente teorema termina de mostrar la brutal importancia de los puntos extremos de las regiones factibles en los problemas de programación lineal, y es que, si un problema tiene solución óptima, esta se alcanza en un punto extremo o solución básica factible.
 \begin{theo}[Optimalidad]
+	\label{fund_teo_optimExtremos}
 	Si un problema de programación lineal en forma estándar tiene solución óptima, esta se alcanza en un punto extremo.
 \end{theo}
 \begin{proof}
@@ -622,6 +624,9 @@ El lema anterior nos abre las puertas a una caracterización de las direcciones 
 		despejando obtenemos que $d_B=-d_kB^{-1}a_k$ y evidentemente $d_N=d_ke_t$, luego tomando $\alpha:=d_k$ se tiene el resultado.\qedhere
 	\end{itemize}
 \end{proof}
+\begin{obs}[Finitud]
+	Sobre la finitud de las direcciones extremas de una región factible sigue siendo válida con muy pocas modificaciones (que se dejan al lector) la observación \ref{fund_obs_finitudExtremos}.
+\end{obs}
 Terminado nuestro viaje por el mundo de la convexidad, podemos internarnos ya en el meollo del asunto, es decir, en desarrollar material teórico que nos permita desarrollar un algoritmo para optimizar funciones lineales condicionadas a variedades afines en el $2^n$--ante positivo.
 \section{Teoremas fundamentales}
 Empezamos esta sección enunciando un teorema que no demostraremos, no porque sea especialmente complicado, sino porque es especialmente largo y su demostración no aporta demasiado a nuestros objetivos. Hablamos del famoso ``teorema de representación''.
@@ -660,4 +665,149 @@ El siguiente teorema es un test de optimalidad para regiones factibles que posee
 \end{proof}
 \begin{obs}[Algoritmo de representación]
 	Con todo lo que tenemos hasta ahora ya tenemos un algoritmo para resolver problemas de programación lineal. Basta con calcular los puntos y direcciones extremas de la región factible, lo cual puede hacerse usando los teoremas \ref{fund_teo_caracterizacionExtremos} y \ref{fund_teo_caracterizacionDireccionesExtremas} y seguir la demostración del test de optimalidad (teorema \ref{fund_teo_testOptim}).
+	
+	La eficiencia de este algoritmo es pésima pues obliga a calcular todos los puntos extremos, con lo que la eficiencia el algoritmo sería $\mc{O}\binom{n}{m}$ siendo $n$ el número de variables de decisión y $m$ el número de restricciones.
+\end{obs}
+La pésima eficiencia del algoritmo basado en el teorema de representación incita seguir desarrollando soporte teórico para un algoritmo mejor.
+
+El siguiente resultado actúa a modo de recopilación de todo lo visto hasta ahora y se presenta más que nada por su recurrente aparición en la literatura como un teorema con nombre propio.
+\begin{theo}[Teorema fundamental de la programación lineal]
+	Dado un problema de programación lineal en forma estándar se cumplen los siguientes asertos
+	\begin{enumerate}
+		\item Si el problema es factible, posee al menos una solución básica factible.
+		\item Si el problema tiene solución óptima, posee al menos una solución básica factible óptima.
+		\item Si el problema no tiene solución óptima, o bien es infactible o bien tiene solución no acotada.
+	\end{enumerate}
+\end{theo}
+\begin{proof}
+	El primer aserto se corresponde con el contenido del teorema \ref{fund_teo_existenciaExtremos}. La segunda afirmación se demuestra en el teorema \ref{fund_teo_optimExtremos}.
+	
+	El último apartado es el que tiene algo más de chicha. Distinguimos tres casos según la naturaleza de la región factible. Si la región factible es vacía el problema es, por definición, infactible. En el caso de que la región factible sea acotada, es también compacta. 
+	
+	Esto se debe a que es la imagen inversa de $\{b\}$ (cerrado) vía la función lineal (continua) que tiene a $A$ por matriz asociada, luego la región factible es cerrada y acotada, por tanto, la función objetivo alcanza el mínimo en la región factible y el problema tiene solución óptima (se sale de nuestros casos de estudio).
+	
+	Si la región factible es no acotada basta con aplicar el teorema \ref{fund_teo_testOptim}.
+\end{proof}
+A continuación vamos a presentar un nuevo test de optimalidad de una solución factible que no requiere del cálculo de todas las direcciones extremas. Antes de enunciarlo presentamos la siguiente definición.
+\begin{defi}[Costes reducidos]
+	Definimos el \tbi[vector!de costes reducidos]{vector de costes reducidos} asociado a una base $B$ como el vector $\overline{c}\in\R^n$ cuyas componentes son
+	\begin{equation*}
+		\overline{c_j}:=c_j-c_B^tB^{-1}a_j
+	\end{equation*}
+	justificaremos el nombre y la razón de ser de esta cruel definición tras la demostración del teorema \ref{fund_teo_testOptimSimplex}, que consideramos bastante importante.
+\end{defi}
+\begin{theo}[Test de optimalidad]
+	\label{fund_teo_testOptimSimplex}
+	Si $\overline{x}$ es un punto extremo de $\mc{S}$ asociado a la base $B$ y el vector de costes reducidos asociado a $B$ es no negativo entonces $\overline{x}$ es una solución óptima.
+\end{theo}
+\begin{proof}
+	Sea $x$ un punto arbitrario de $\mc{S}$. Vamos a demostrar que $c^tx\geq c^t\overline{x}$, con lo cual quedaría demostrado el resultado.
+	
+	Como $x\in \mc{S}$ se verifica que $Ax=b$. Expresando esto en términos de la base $B$ tenemos que
+	\begin{equation*}
+		Ax=(B|N)(x_B|x_N)^t=Bx_B+Nx_N=b\sii x_B=B^{-1}b-B^{-1}Nx_N
+	\end{equation*}
+	Pasemos $x$ por la función objetivo
+	\begin{multline*}
+		c^tx=(c_B^t|c_N^t)(x_B|x_N)^t=c_B^tx_B+c_N^tx_N=\\
+		=c_B^t(B^{-1}b-B^{-1}Nx_N)+c_N^tx_N= c_B^tB^{-1}b+(c_N^t-c_B^tB^{-1}N)x_N=\\
+		=c_B^tB^{-1}b+\left(c_N^t-c_B^t\sum_{j=m+1}^{n}B^{-1}a_j\right)x_N=\\
+		=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\left[(c_j-c_B^tB^{-1}a_j)x_j\right]=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\overline{c_j}x_j
+	\end{multline*}
+	Como el último sumatorio arroja por hipótesis un resultado positivo tenemos que
+	\begin{equation*}
+		c^tx\geq c_B^tB^{-1}b
+	\end{equation*}
+	pero resulta que $c_B^tB^{-1}b=c^t\overline{x}$ por el teorema \ref{fund_teo_caracterizacionExtremos} (compruébese). 
+\end{proof}
+\begin{obs}[Justificación del nombre]
+	Una interpretación que le podemos dar a las componentes del vector de costes reducidos es la siguiente.
+	\begin{equation*}
+		\overline{c_j}=c^t(\overline{x}+e_j)-c^t\overline{x}
+	\end{equation*}
+	donde $e_j$ es el $j$--ésimo vector de la base canónica de $\R^n$ y $\overline{x}$ es una solución básica factible (punto extremo).
+	
+	Para comprobar que esta interpretación es válida basta con echar las cuentas usando las identidades obtenidas en la demostración del teorema \ref{fund_teo_testOptimSimplex}.
+	
+	Nótese que si $j\leq m$ entonces $\overline{c_j}=0$ (compruébese).
+	
+	Lo que quiere decir esta interpretación es que $\overline{c_j}$ es la diferencia entre valor que arroja la función objetivo cuando se la evalúa en un punto extremo y el valor que obtenemos si le sumamos uno a la coordenada $j$--ésima. Esto, a parte de (con mucha imaginación) justificar el nombre nos da una forma fácil de no tener que aprendernos la fórmula, lo cual se agradece bastante.
+\end{obs}
+\begin{theo}[Test de no acotación]
+	\label{fund_teo_testNoAcotacionSimplex}
+	Dada una región factible no vacía $\mc{S}$ y un punto extremos $\overline{x}$ asociado a la base $B$ de manera que hay algún coste reducido $\overline{c_k}<0$ y se verifica que $B^{-1}a_k\leq 0$, entonces el problema tiene solución no acotada.
+\end{theo}
+\begin{proof}
+	Nótese que $k\in\{m+1,\dots,n\}$ ya que los costes reducidos asociados a las componentes asociadas a $B$ son nulos.
+	
+	Como por hipótesis $B^{-1}a_k\leq 0$, luego es claro que la región factible posee una dirección extrema, la dada por $d:=(-B^{-1}a_k|e_t)^t$ donde $k=m+t$.
+	
+	De esta forma sabemos que el punto $x_\alpha:=\overline{x}+\alpha d\in\mc{S}$ para todo $\alpha\geq 0$. Veamos cómo se comporta $c^tx_\alpha$ para valores grandes de $\alpha$
+	\begin{equation*}
+		c^tx_\alpha=c^t(\overline{x}+\alpha d)=c^t\overline{x}+\alpha c^td\stackrel{!}{=}c_b^tB^{-1}b+\alpha c^td
+	\end{equation*}
+	por otra parte tenemos que
+	\begin{equation*}
+		c^td =(c_B^t|c_N^t)(-B^{-1}a_k|e_t)^t=-c_B^tB^{-1}a_k+c_N^te_t=-c_B^tB^{-1}a_k+c_k=\overline{c_k}
+	\end{equation*}
+	de manera que $c^tx_\alpha=c_B^tB^{-1}b+\alpha\overline{c_k}$. Al ser $\overline{c_k}$ negativo claramente $\lim\limits_{\alpha\to\infty}c^tx_\alpha=-\infty$
+\end{proof}
+\begin{obs}[Nueva interpretación]
+	De la demostración del teorema \ref{fund_teo_testNoAcotacionSimplex} obtenemos una nueva interpretación de lo que significan los costes reducidos. En concreto, la $k$--ésima componente del vector de costes reducidos es el valor de la función objetivo en la dirección extrema asociada a la base y a la $k$--ésima componente. 
+\end{obs}
+\begin{defi}[Vector auxiliar]
+	Dada una matriz $A$ y una base $B$ de $A$, llamamos \tbi[vector!auxiliar]{vector auxiliar} asociado a $a_k$ al vector
+	\begin{equation*}
+		y_k:=B^{-1}a_k\in\R^m
+	\end{equation*}
+	La única intención de esta definición es compactar un poco la notación para las direcciones extremas.
+	
+	Cabe destacar que no es necesario aprenderse la fórmula, simplemente hay que entender que $y_k$ es el vector $a_k$ escrito en coordenadas de la base $B$.
+	
+	Denotaremos por $y_{ik}$ a la $i$--ésima componente de $y_k$.
+\end{defi}
+Presentamos a continuación el que probablemente sea el teorema más importante del curso, cuya demostración es debida a Clara Rodríguez.
+\begin{theo}[Mejora de la solución]
+	Sea una región factible $\mc{S}$ no vacía y un punto extremo $\overline{x}$ asociado a una base $B$ de manera que hay algún coste reducido $\overline{c_k}<0$ y se verifica que $y_k$ tiene al menos una componente positiva.
+	
+	Entonces se tiene que el vector $x'=\overline{x}+\alpha d$ es un punto extremo que mejora la función objetivo respecto a $\overline{x}$, es decir $c^tx'\leq c^t\overline{x}$. Donde
+	\begin{equation*}
+	\begin{array}{cc}
+	\alpha:=\min\left\{\frac{\overline{x_i}}{y_{ik}}\midc y_{ik}>0\right\}=:\frac{\overline{x_l}}{y_{lk}} \qquad&\qquad d:=(-y_k|e_t)^t\text{ con } k=m+t
+	\end{array}
+	\end{equation*}
+	Además $c^tx'< c^t\overline{x}$ si y solo si $\overline{x_l}>0$.
+\end{theo}
+\begin{proof}
+	Veamos en primer lugar que $x'$ pertenece a la región factible. Es evidente que $Ax'=b$ (se deja al lector hacer la cuenta), luego solo queda comprobar que $x'\geq 0$. Es claro que las componentes de $x'$ que no están asociadas a la base $B$ son todas positivas ya que
+	\begin{equation*}
+		x'=(x_B'|x_N')^t=(B^{-1}b|0)^t+\alpha(-y_k|e_t)^t\sii x_N'=\alpha e_t\geq 0
+	\end{equation*}
+	por tanto, solo nos debemos preocupar de las componentes asociadas a la base. Veamos que son todas no negativas
+	\begin{equation*}
+		x_B'=\overline{x_B}-\alpha y_k\geq 0\sii \overline{x_i}-\alpha y_{ik}\geq 0\text{ con } i\in\{1,\dots,m\}
+	\end{equation*}
+	esa última condición se verifica si y solo si $\alpha\leq \frac{\overline{x_i}}{y_{ik}}$ para los $y_{ik}>0$. Y hemos cogido $\alpha$ expresamente para que esto se cumpla, luego $x'$ está en la región factible.
+	
+	Veamos ahora que $x'$ es un punto extremo, para lo cual basta con demostrar que el conjunto de vectores $(B\setminus a_l)\cup a_k$ es linealmente independiente. Para mostrar consideramos el conjunto de vectores $B\cup a_k$, que es un sistema de generadores de $\R^m$.
+	
+	Resulta que $a_l$ es combinación lineal de los vectores de $(B\setminus a_l)\cup a_k$ ya que
+	\begin{equation*}
+		x_k=\sum_{i=1}^{m}y_{ik}a_i=\sum_{\substack{i=1\\i\not=l}}^{m}y_{ik}a_i+y_la_l
+	\end{equation*}
+	como $y_l>0$ podemos despejar $a_l$. En efecto
+	\begin{equation*}
+		a_l=\frac{x_k}{y_{lk}}-\sum_{\substack{i=1\\i\not=l}}^{m}\frac{y_{ik}}{y_{lk}}a_i
+	\end{equation*}
+	de donde se desprende que el conjunto $(B\setminus a_l)\cup a_k$ sigue siendo un sistema de generadores de $\R^m$ que además tiene $m$ elementos, luego es una base.
+	
+	Veamos ahora que $x'$ es una solución mejor que $\overline{x}$, basta echar las cuentas
+	\begin{equation*}
+		c^t(\overline{x}+\alpha d)=c^t\overline{x}+\frac{\overline{x_l}}{y_{lk}}c^td\stackrel{!}{=}c_B^tB^{-1}b+\frac{\overline{x_l}}{y_{lk}}\overline{c_k}\leq c_B^tB^{-1}b=c^t\overline{x}
+	\end{equation*}
+	El ``además'' es evidente. Con lo que concluye la prueba.
+\end{proof}
+Con la ayuda estos últimos teoremas podemos desarrollar un algoritmo (mejor que el basado en el teorema de representación) que nos permite hallar la solución a un problema de programación lineal. Este algoritmo es conocido como ``algoritmo del Símplex'', desarrollado por el matemático estadounidense \ti{\tb{George Dantzig}} en $1947$.
+\begin{obs}[Justificación del nombre]
+	El nombre ``símplex'' que recibe el algoritmo se debe a que las regiones factibles de los problemas de programación lineal en forma estándar tienen estructura geométrica de \tb{\ti{poliedros}} o \tb{\ti{símplices}}, o, en inglés \tb{\ti{simplex}}.
 \end{obs}
