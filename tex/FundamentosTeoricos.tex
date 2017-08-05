@@ -1,11 +1,11 @@
 %Para este capítulo se usará la abreviatura "fund".
 \chapter{Fundamentos teóricos}
 \label{fund}
-La disciplina de la programación lineal cogió fuerza en la segunda guerra mundial, pues era necesario optimizar los escasos recursos de los que se disponían para realizar operaciones militares. En un principio fue impulsada por el ejército británico, con un grupo de investigación dirigido por \ti{\tb{Blackett}}, quien más adelante ganaría el premio Nobel de física.
+La disciplina de la programación lineal cogió fuerza en la segunda guerra mundial, pues era necesario optimizar los escasos recursos de los que se disponían para realizar operaciones militares. En un principio fue impulsada por el ejército británico, con un grupo de investigación dirigido por \ti{\tb{Blackett}}, quien más adelante ganaría el premio Nobel de física por otros motivos.
 
 Cabe destacar la gran importancia que tuvo la programación lineal en países como Albania, debido, entre otras cosas, a su utilidad a la hora de optimizar los procesos de producción de carbón. 
 \section{Planteamiento del problema}
-De ahora en adelante consideraremos fijadas las bases canónicas tanto de $\R^n$ como de $\R$, a no ser que se especifique lo contrario.
+De ahora en adelante, consideraremos fijadas las bases canónicas tanto de $\R^n$ como de $\R$, a no ser que se especifique lo contrario.
 
 Antes de plantear formalmente el problema de la programación lineal, introduzcamos unas definiciones.
 
@@ -26,9 +26,9 @@ Dicho esto, ya podemos formular el problema de la programación lineal.
 	
 	\begin{figure}[h!]
 		\centering
-		\label{fund_img_problemaGeneral}
 		\includegraphics[scale = 0.75]{img/problemaGeneral}
 		\caption{Ilustración del problema de programación lineal.}
+		\label{fund_img_problemaGeneral}
 	\end{figure}
 	En el caso de la ilustración \ref{fund_img_problemaGeneral} suponemos que $f$ es una aplicación lineal definida sobre todo el plano a la cual restringimos el dominio a la variedad afín $\mc{L}$ cortada con el cuadrante positivo (línea azul). Nuestro deber es encontrar los puntos (si los hay) sobre la línea azul en los cuales $f$ alcanza un máximo o un mínimo absoluto.
 \end{prob} 
@@ -85,7 +85,7 @@ b_m
 \end{pmatrix}
 \end{array}
 \end{equation*}
-A la matriz $A\in\mathfrak{M}_{m\times n}(\R)$ usualmente la llamaremos \tbi[matriz!de coeficientes de las restricciones]{matriz de coeficientes de las restricciones}, además, a cada una de las ecuaciones del sistema las llamaremos \tbi{restricciones}. Asimismo el vector $b$ será conocido como \tbi[vector!de términos independientes]{vector de términos independientes}.
+A la matriz $A\in\mathfrak{M}_{m\times n}(\R)$ usualmente la llamaremos \tbi[matriz!de coeficientes de las restricciones]{matriz de coeficientes de las restricciones}, además, a cada una de las ecuaciones del sistema las llamaremos \tbi{restricciones}. Asimismo, el vector $b$ será conocido como \tbi[vector!de términos independientes]{vector de términos independientes}.
 
 Expongamos ahora la llamada ``\ti{formulación estándar}'' del problema de la programación lineal.
 
@@ -118,7 +118,7 @@ La formulación estándar del problema de programación lineal puede parecer muy
 	\end{array}
 	\end{equation*}
 \end{prob}
-Una vez vistas todas las formulaciones hagamos una pequeña reflexión. Sería la apoteosis del tedio tener que demostrar resultados teóricos para cada una de las formulaciones. No obstante, no hay que dejar nunca de confiar en los dioses olímpicos, pues a veces son benévolos con nosotros. Esta benevolencia consiste en que todas los formulaciones son equivalentes en el sentido que veremos a continuación.
+Una vez vistas todas las formulaciones, hagamos una pequeña reflexión. Sería la apoteosis del tedio tener que demostrar resultados teóricos para cada una de las formulaciones. No obstante, no hay que dejar nunca de confiar en los dioses olímpicos, pues a veces son benévolos con nosotros. Esta benevolencia consiste en que todas los formulaciones son equivalentes en el sentido que veremos a continuación.
 \subsubsection{Maximización y minimización}
 Si se nos plantea el problema de hallar el máximo absoluto de una función objetivo $f$ podemos transformar este problema en uno equivalente de forma que el objetivo de el nuevo problema sea hallar el mínimo de otra función objetivo $g$.
 
@@ -135,7 +135,9 @@ La utilidad de este hecho es que podemos transformar un problema de programació
 	Evidentemente $\eta$ verifica que $g(x)\geq \eta$ para todo $x\in A$, o equivalentemente $-g(x)\leq -\eta$ para todo $x\in A$. Pero $-g(x)=f(x)$, luego $f(x)\leq -\eta$ para todo $x\in A$. Por unicidad del máximo $-\eta =\xi$, como queríamos demostrar.
 \end{proof}
 \begin{obs}[Aplicación]
-	Si tenemos un problema de programación lineal formulado en términos de maximización bastará con cambiar la función objetivo $f$ por la función objetivo $-f$ para obtener un problema equivalente en términos de minimización cuyas soluciones deben ser cambiadas de signo.
+	Si tenemos un problema de programación lineal formulado en términos de maximización bastará con cambiar la función objetivo $f$ por la función objetivo $-f$ para obtener un problema equivalente en términos de minimización.
+	
+	Para obtener las soluciones del primer problema en términos del segundo bastará con cambiar el valor por la función objetivo de las soluciones del segundo problema por su opuesto.
 \end{obs}
 \subsubsection{Igualdades y desigualdades}
 Una vez visto el apartado anterior, vamos a aprender a trasformar restricciones de tipo desigualdad a restricciones de tipo igualdad, con lo cual ya podremos transformar cualquier problema planteado en alguna forma canónica a un problema equivalente planteado en forma estándar.
@@ -181,7 +183,9 @@ Veamos que utilidad tiene lo que acabamos de demostrar.
 		& (x_1,\dots,x_n,x_{n+1},\dots,x_{n+m})\mapsto f(x_1,\dots,x_n)
 		\end{array}
 	\end{equation*}
-	donde $n$ es el número total de restricciones originales y $m$ el número de restricciones de tipo $\geq$ o $\leq$. De esta forma obtenemos un problema equivalente cuya solución será el vector solución del nuevo problema quitando las componentes correspondientes a variables de holgura (¡compruébese!).
+	donde $n$ es el número total de restricciones originales y $m$ el número de restricciones de tipo desigualdad.
+	 
+	Para obtener las soluciones del problema original en términos de este nuevo problema equivalente basta con quitar las componentes correspondientes a las variables de holgura.
 \end{obs}
 Con lo que sabemos hasta el momento podemos transformar cualquier problema escrito en cualquiera de las formas canónicas en un problema en forma estándar.
 \subsubsection{Positividad y negatividad}
@@ -206,7 +210,9 @@ Otro caso que se presenta de manera usual es que al modelizar un problema concre
 		& (x_1\dots,x_i^+,x_i^-,\dots,x_n)\mapsto f(x_1,\dots,x_i^+-x_i^-,\dots,x_n)
 		\end{array}
 	\end{equation*}
-	obtenemos un problema equivalente cuya solución será el vector $(x_1,\dots,x_i^+-x_i^-,\dots,x_n)$ donde $(x_1\dots,x_i^+,x_i^-,\dots,x_n)$ es el vector solución del problema con las restricciones nuevas.
+	obtenemos un problema equivalente.
+	
+	Para obtener la solución del problema original en términos de este nuevo problema basta considerar el vector $(x_1,\dots,x_i^+-x_i^-,\dots,x_n)$ donde $(x_1\dots,x_i^+,x_i^-,\dots,x_n)$ es el vector solución del problema con las restricciones nuevas.
 \end{obs}
 Hechas todas estas disquisiciones iniciales cabe mencionar que a la hora de modelizar problemas, siempre que tanto la función objetivo como las restricciones sean lineales, podremos realizar transformaciones (las vistas en esta sección) para que el problema quede planteado en forma estándar, pudiendo ser así resuelto mediante el uso de toda la artillería teórica que veremos a continuación.
 \subsection{Terminología y casuística}
@@ -224,6 +230,8 @@ Una vez resuelto el problema se pueden dar las siguientes situaciones
 	\item La región factible del problema es el conjunto vacío. En este caso se dirá que el problema es \tbi[problema!infactible]{infactible}.
 	\item La función objetivo alcanza valores tan bajos como queramos en la región factible. En este caso se dice que el problema posee una solución \tbi[solución!no acotada]{no acotada}.
 \end{itemize}
+A lo largo del capítulo veremos por qué no se puede dar ninguna otra situación.
+
 Teniendo en cuenta estas pequeñas observaciones podemos empezar a estudiar cómo son las regiones factibles, lo cual nos será muy útil para resolver el problema de programación lineal.
 \section{Programación lineal y conjuntos convexos}
 En esta sección demostraremos que las regiones factibles de un problema de programación lineal en forma estándar son siempre conjuntos convexos. 
@@ -358,12 +366,12 @@ Para estrenar esta nueva buena costumbre se presenta la siguiente definición.
 		\end{cases}
 	\end{equation*}
 \end{defi}
-La ilustración \ref{fund_img_puntosExtremos} marga en negro los puntos extremos de un polígono regular, para coger una idea intuitiva. A lo largo de este capítulo veremos la importancia que tienen estos puntos en la resolución del problema de programación lineal.
+La ilustración \ref{fund_img_puntosExtremos} marca en negro los puntos extremos de un polígono regular, para coger una idea intuitiva. A lo largo de este capítulo veremos la importancia que tienen estos puntos en la resolución del problema de programación lineal.
 \begin{figure}[h!]
 	\centering
-	\label{fund_img_puntosExtremos}
 	\includegraphics[scale = 0.75]{img/puntosExtremos}
 	\caption{Ilustración de los puntos extremos de un heptágono regular.}
+	\label{fund_img_puntosExtremos}
 \end{figure}
 El teorema \ref{fund_teo_caracterizacionExtremos} nos da una caracterización de los puntos extremos de una región factible que, aunque muy potente, resulta poco intuitiva. Antes de enunciarlo recordemos un viejo resultado de álgebra lineal.
 \begin{obs}[Rango y submatrices]
@@ -449,7 +457,7 @@ Al hilo de este teorema surge la siguiente definición.
 	
 	Esto nos lleva a deducir de forma evidente que cada punto extremo puede estar asociado a más de una base (salvo reordenaciones).
 \end{obs}
-Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo.
+Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo, y además únicamente tiene una cantidad finita de ellos.
 \begin{obs}[Finitud]
 	\label{fund_obs_finitudExtremos}
 	Una región factible tiene un número finito de puntos extremos, esto es debido a que $A$ tiene más bases que puntos extremos, ya que cada base $B$ está asociada a un único candidato a punto extremo, el punto que tiene a $B^{-1}b$ como parte básica. Además, cada matriz tiene a lo sumo $\binom{n}{m}$ bases.
@@ -550,9 +558,9 @@ Veamos a continuación un concepto análogo al de los puntos extremos pero en el
 \end{defi}
 \begin{figure}[h!]
 	\centering
-	\label{fund_img_direcciones}
 	\includegraphics[scale = 0.75]{img/direcciones}
 	\caption{Ilustración de una dirección y una dirección extrema}
+	\label{fund_img_direcciones}
 \end{figure}
 Veamos una caracterización muy sencilla de las direcciones para regiones factibles.
 \begin{lem}[Caracterización débil]
@@ -663,11 +671,35 @@ El siguiente teorema es un test de optimalidad para regiones factibles que posee
 	\end{equation*} de esta forma se tiene que $x^*$ es solución óptima del problema, ya que la función objetivo evaluada en ese punto es menor o igual a la de cualquier otro.\qedhere
 	\end{itemize}
 \end{proof}
+\begin{obs}[No acotación]
+	La hipótesis de no acotación del teorema \ref{fund_teo_testOptim} no es necesaria para la demostración de la implicación a la izquierda.
+	
+	La demostración de la implicación a la derecha exige la existencia de al menos una dirección extrema, y por tanto la no acotación de la región factible. Esta implicación constituye un criterio de no acotación de la función objetivo en regiones factibles no acotadas.
+\end{obs}
 \begin{obs}[Algoritmo de representación]
-	Con todo lo que tenemos hasta ahora ya tenemos un algoritmo para resolver problemas de programación lineal. Basta con calcular los puntos y direcciones extremas de la región factible, lo cual puede hacerse usando los teoremas \ref{fund_teo_caracterizacionExtremos} y \ref{fund_teo_caracterizacionDireccionesExtremas} y seguir la demostración del test de optimalidad (teorema \ref{fund_teo_testOptim}).
+	Con todo lo que tenemos hasta ahora ya tenemos un algoritmo (algoritmo \ref{fund_alg_represent}) para resolver problemas de programación lineal. Basta con calcular los puntos y direcciones extremas de la región factible, lo cual puede hacerse usando los teoremas \ref{fund_teo_caracterizacionExtremos} y \ref{fund_teo_caracterizacionDireccionesExtremas} y seguir la demostración del test de optimalidad (teorema \ref{fund_teo_testOptim}).
 	
 	La eficiencia de este algoritmo es pésima pues obliga a calcular todos los puntos extremos, con lo que la eficiencia el algoritmo sería $\mc{O}\binom{n}{m}$ siendo $n$ el número de variables de decisión y $m$ el número de restricciones.
 \end{obs}
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\STATE Calcular los puntos y direcciones extremas.
+		\IF{no hay puntos extremos}
+			\RETURN problema infactible.
+		\ELSIF{no hay direcciones extremas}
+			\RETURN el mejor punto extremo.
+		\ELSE\STATE\COMMENT{Region no acotada.}
+			\STATE Comprobar las hipótesis del teorema \ref{fund_teo_testOptim}.
+			\IF{hay solución óptima}
+				\RETURN el mejor punto extremo.
+			\ELSE
+				\RETURN $x_{\mu_r}$, dirección en la que las soluciones decrecen.
+			\ENDIF
+		\ENDIF
+	\end{algorithmic}
+	\caption{Algoritmo de representación.}
+	\label{fund_alg_represent}
+\end{algorithm}
 La pésima eficiencia del algoritmo basado en el teorema de representación incita seguir desarrollando soporte teórico para un algoritmo mejor.
 
 El siguiente resultado actúa a modo de recopilación de todo lo visto hasta ahora y se presenta más que nada por su recurrente aparición en la literatura como un teorema con nombre propio.
@@ -704,16 +736,18 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 	Sea $x$ un punto arbitrario de $\mc{S}$. Vamos a demostrar que $c^tx\geq c^t\overline{x}$, con lo cual quedaría demostrado el resultado.
 	
 	Como $x\in \mc{S}$ se verifica que $Ax=b$. Expresando esto en términos de la base $B$ tenemos que
-	\begin{equation*}
+	\begin{equation}
+	\label{fund_eq_problema}
 		Ax=(B|N)(x_B|x_N)^t=Bx_B+Nx_N=b\sii x_B=B^{-1}b-B^{-1}Nx_N
-	\end{equation*}
+	\end{equation}
 	Pasemos $x$ por la función objetivo
-	\begin{multline*}
-		c^tx=(c_B^t|c_N^t)(x_B|x_N)^t=c_B^tx_B+c_N^tx_N=\\
-		=c_B^t(B^{-1}b-B^{-1}Nx_N)+c_N^tx_N= c_B^tB^{-1}b+(c_N^t-c_B^tB^{-1}N)x_N=\\
-		=c_B^tB^{-1}b+\left(c_N^t-c_B^t\sum_{j=m+1}^{n}B^{-1}a_j\right)x_N=\\
-		=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\left[(c_j-c_B^tB^{-1}a_j)x_j\right]=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\overline{c_j}x_j
-	\end{multline*}
+	\begin{multline}
+		\label{fund_eq_funcionObj}
+		c^tx=(c_{B}^t|c_N^t)(x_B|x_N)^t=c_B^tx_B+c_N^tx_N=\\
+		=c_B^t(B^{-1}b-B^{-1}Nx_N)+c_N^tx_N=c_B^tB^{-1}b+(c_N^t-c_B^tB^{-1}N)x_N=\\
+		=c_B^tB^{-1}b+\left(c_N^tx_N-c_B^t\sum_{m+1}^{n}(B^{-1}a_j)x_j\right)=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_jx_j-c_B^tB^{-1}a_jx_j)=\\
+		=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_j-c_B^tB^{-1}a_j)x_j=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\overline{c_j}x_j
+	\end{multline}
 	Como el último sumatorio arroja por hipótesis un resultado positivo tenemos que
 	\begin{equation*}
 		c^tx\geq c_B^tB^{-1}b
@@ -727,11 +761,11 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 	\end{equation*}
 	donde $e_j$ es el $j$--ésimo vector de la base canónica de $\R^n$ y $\overline{x}$ es una solución básica factible (punto extremo).
 	
-	Para comprobar que esta interpretación es válida basta con echar las cuentas usando las identidades obtenidas en la demostración del teorema \ref{fund_teo_testOptimSimplex}.
+	Lo que quiere decir esta interpretación es que $\overline{c_j}$ es la diferencia entre valor que arroja la función objetivo cuando se la evalúa en un punto extremo y el valor que obtenemos si le sumamos uno a la coordenada $j$--ésima.
+	
+	La comprobación de la validez de esta interpretación se hace echando mano de las identidades obtenidas en la demostración del teorema \ref{fund_teo_testOptimSimplex}.
 	
 	Nótese que si $j\leq m$ entonces $\overline{c_j}=0$ (compruébese).
-	
-	Lo que quiere decir esta interpretación es que $\overline{c_j}$ es la diferencia entre valor que arroja la función objetivo cuando se la evalúa en un punto extremo y el valor que obtenemos si le sumamos uno a la coordenada $j$--ésima. Esto, a parte de (con mucha imaginación) justificar el nombre nos da una forma fácil de no tener que aprendernos la fórmula, lo cual se agradece bastante.
 \end{obs}
 \begin{theo}[Test de no acotación]
 	\label{fund_teo_testNoAcotacionSimplex}
@@ -752,10 +786,13 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 	\end{equation*}
 	de manera que $c^tx_\alpha=c_B^tB^{-1}b+\alpha\overline{c_k}$. Al ser $\overline{c_k}$ negativo claramente $\lim\limits_{\alpha\to\infty}c^tx_\alpha=-\infty$
 \end{proof}
-\begin{obs}[Nueva interpretación]
-	De la demostración del teorema \ref{fund_teo_testNoAcotacionSimplex} obtenemos una nueva interpretación de lo que significan los costes reducidos. En concreto, la $k$--ésima componente del vector de costes reducidos es el valor de la función objetivo en la dirección extrema asociada a la base y a la $k$--ésima componente. 
+\begin{obs}[Dirección de decrecimiento]
+	De la demostración del teorema \ref{fund_teo_testNoAcotacionSimplex} se deduce que la función objetivo decrece indefinidamente a lo largo de la recta afín de ecuación paramétrica $x_\alpha$. A esto usualmente lo llamaremos \tbi[dirección! de decrecimiento de las soluciones]{dirección de decrecimiento} de las soluciones.
+	
+	Algo similar se desprende de la demostración del teorema \ref{fund_teo_testOptim} con $x_{\mu_r}$.
 \end{obs}
 \begin{defi}[Vector auxiliar]
+	\label{fund_defi_vectorAux}
 	Dada una matriz $A$ y una base $B$ de $A$, llamamos \tbi[vector!auxiliar]{vector auxiliar} asociado a $a_k$ al vector
 	\begin{equation*}
 		y_k:=B^{-1}a_k\in\R^m
@@ -768,6 +805,7 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 \end{defi}
 Presentamos a continuación el que probablemente sea el teorema más importante del curso, cuya demostración es debida a Clara Rodríguez.
 \begin{theo}[Mejora de la solución]
+	\label{fund_teo_mejoraSimplex}
 	Sea una región factible $\mc{S}$ no vacía y un punto extremo $\overline{x}$ asociado a una base $B$ de manera que hay algún coste reducido $\overline{c_k}<0$ y se verifica que $y_k$ tiene al menos una componente positiva.
 	
 	Entonces se tiene que el vector $x'=\overline{x}+\alpha d$ es un punto extremo que mejora la función objetivo respecto a $\overline{x}$, es decir $c^tx'\leq c^t\overline{x}$. Donde
@@ -807,7 +845,36 @@ Presentamos a continuación el que probablemente sea el teorema más importante 
 	\end{equation*}
 	El ``además'' es evidente. Con lo que concluye la prueba.
 \end{proof}
-Con la ayuda estos últimos teoremas podemos desarrollar un algoritmo (mejor que el basado en el teorema de representación) que nos permite hallar la solución a un problema de programación lineal. Este algoritmo es conocido como ``algoritmo del Símplex'', desarrollado por el matemático estadounidense \ti{\tb{George Dantzig}} en $1947$.
+Con la ayuda estos últimos teoremas podemos desarrollar un algoritmo (mejor que el basado en el teorema de representación) que nos permite hallar la solución a un problema de programación lineal. Este algoritmo es conocido como ``algoritmo del Símplex'' (algoritmo \ref{fund_alg_simplex}), desarrollado por el matemático estadounidense \ti{\tb{George Dantzig}} en $1947$.
 \begin{obs}[Justificación del nombre]
 	El nombre ``símplex'' que recibe el algoritmo se debe a que las regiones factibles de los problemas de programación lineal en forma estándar tienen estructura geométrica de \tb{\ti{poliedros}} o \tb{\ti{símplices}}, o, en inglés \tb{\ti{simplex}}.
 \end{obs}
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\REQUIRE Punto extremo $\overline{x}$ de la región factible $\mc{S}$.
+		\ENSURE Punto extremo $x'$ que mejora o iguala a $\overline{x}$.
+		\STATE Aplicar el teorema \ref{fund_teo_testOptimSimplex} para detectar la optimalidad de $\overline{x}$.
+		\IF {$\overline{x}$ es solución óptima}
+		\RETURN $\overline{x}$.
+		\ELSE 
+		\STATE Aplicar el teorema \ref{fund_teo_testNoAcotacionSimplex} para detectar la no acotación.
+			\IF{el problema es no acotado}
+			\RETURN $x_\alpha$, dirección de decrecimiento de las soluciones.
+			\ELSE
+			\STATE Calcular una solución mejor usando el teorema \ref{fund_teo_mejoraSimplex}.
+			\RETURN $x'$, la solución mejorada.
+			\ENDIF
+		\ENDIF	
+	\end{algorithmic}
+	\caption{Primera aproximacíon al algoritmo del Símplex.}\label{fund_alg_simplex}
+\end{algorithm}
+\begin{obs}[Acertijos en la oscuridad]
+	El algoritmo \ref{fund_alg_simplex} deja ciertas lagunas. Por ejemplo, no está claro que la aplicación reiterada del algoritmo termine devolviéndonos una solución óptima (podría quedarse estancado).
+	
+	Además, tampoco se especifica cómo se calcula el primer punto extremo, ni se establece ninguna regla acerca de cómo calcular los costes reducidos necesarios para aplicar los teoremas.
+	
+	Este último punto puede dar lugar (con una implementación inocente) a un algoritmo extremadamente ineficiente.
+	
+	Otro asunto a discutir sería el de, en caso de haber varios costes reducidos negativos, cuál elegir para aplicar el teorema \ref{fund_teo_mejoraSimplex}.
+\end{obs}
+Todas estas cuestiones se discutirán en el capítulo siguiente.
