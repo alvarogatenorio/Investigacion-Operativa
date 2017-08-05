@@ -3,6 +3,78 @@
 \label{simp}
 Este es un capítulo dedicado a aclarar las lagunas que presenta el algoritmo \ref{fund_alg_simplex}, desarrollando ya un algoritmo completo que tenga en cuenta todas las contigencias habidas y por haber, el algoritmo del Símplex.
 \section{Cambios de base}
+Llegados a este punto nos preguntamos qué datos necesita el algoritmo \ref{fund_alg_simplex} para ejecutarse. Para obtener la respuesta basta con mirar con cuidado los teoremas en los que se basa, con lo que concluimos que son necesarios
+\begin{itemize}
+	\item Las componentes asociadas a la base (o componentes básicas) del punto extremo. Para calcular qué vector sale de la base al mejorar el punto extremo (teorema \ref{fund_teo_mejoraSimplex}) y para devolverlas cuando se detecta la optimalidad.
+	\item El vector de costes reducidos asociado a la base del punto extremo para aplicar los tests de optimalidad y no acotación. Además de para decidir qué vector entra a la base para mejorar el punto extremo.
+	\item Los vectores auxiliares $y_j$ para aplicar los tests de no acotación (y en su caso devolver la dirección en la que la función objetivo decrece indefinidamente) y para calcular qué vector sale de la base al mejorar el punto extremo.
+	\item El valor de la función objetivo al ser evaluada en el punto extremo, para devolverlo cuando se halle la solución óptima.
+\end{itemize}
+Cuando cambiamos de punto extremo, el teorema de mejora nos da explícitamnte la nueva base asociada al nuevo punto. Este nuevo punto tendrá otras componentes asociadas a la base e inducirá nuevos vectores de costes reducidos y vectores axiliares que necesitan ser calculados para ejecutar la nueva iteración.
+
+La forma inocente de calcular todas estas cosas pasa por invertir la base asociada al nuevo punto extremo, lo cual es pecado mortal, pues es un trabajo computacionalmente muy pesado (del orden de $\mc{O}(n^3)$).
+
+En lugar de eso lo que haremos será calcular todos los nuevos valores necesarios a partir de los anteriores. A ver que esto es posible y cómo nos dedicamos en esta sección.
+\subsection{Vectores auxiliares y componentes básicas}
+En primer lugar nos planteamos la ecuación \eqref{fund_eq_problema} respecto de la base asociada al punto extremo original, $B$, y la nueva base $B'=(B\setminus a_l)\cup a_k$.
+\begin{gather}
+	x_B=\overline{x_B}-B^{-1}Nx_N\label{simp_eq_general1}\\
+	x_{B'}=\overline{x_{B'}}-B'^{-1}N'x_{N'}\label{simp_eq_general2}
+\end{gather}
+\begin{obs}[Vectores auxiliares]
+	Nótese que, por las propiedades del producto de matrices se tiene que
+	\begin{gather*}
+		B^{-1}N=B^{-1}(a_{m+1}\cdots a_n)=(B^{-1}a_{m+1}\cdots B^{-1}a_n)=(y_{m+1}\cdots y_n)\\
+		B'^{-1}N'=(y'_{m+1}\cdots y'_{k-1}|y'_l|y'_{k+1}\cdots y'_n)\qedhere
+	\end{gather*}
+\end{obs}
+Planteando las ecuaciones \eqref{simp_eq_general1} y \eqref{simp_eq_general2} componente a componente nos econtramos con
+\begin{gather}
+	x_s=\overline{x_s}-\sum_{\substack{j=m+1\\j\not=k}}^{n}y_{sj}x_j-y_{sk}x_k\label{simp_eq_componentes1}\\
+	x_s=\overline{x_s'}-\sum_{\substack{j=m+1\\j\not=k}}^{n}y'_{sj}x_j-y'_{sl}x_l\label{simp_eq_componentes2}
+\end{gather}
+Una vez organizado nuestro espacio de trabajo como lo está ahora, vayamos por partes. Por un lado consideramos la ecuación \eqref{simp_eq_componentes1} para $s=l$. Despejando $x_k$ de esta ecuación obtenemos (¡compruébese!)
+\begin{equation}
+\label{simp_eq_xk}
+	x_k=\frac{\overline{x_l}}{y_{lk}}-\sum_{\substack{j=m+1\\j\not=k}}^{n}\frac{y_{lj}}{y_{lk}}x_j-\frac{1}{y_{lk}}x_l
+\end{equation}
+Nótese que el despeje que hemos hecho es válido, ya que por el teorema \ref{fund_teo_mejoraSimplex} tenemos garantizado que $y_{lk}>0$. Ahora, si sustituimos el valor de $x_k$ dado por la ecuación \eqref{simp_eq_xk} en la ecuación \eqref{simp_eq_componentes1} obtenemos
+\begin{equation*}
+	x_s=\overline{x_s}-\frac{y_{sk}\overline{x_l}}{y_{lk}}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\left(\frac{y_{sk}y_{lj}}{y_{lk}}-y_{sj}\right)x_j+\frac{y_{sk}}{y_{lk}}x_l
+\end{equation*}
+esta ecuación y la ecuación \eqref{simp_eq_componentes2} son dos ecuaciones lineales equivalentes. Por tanto, son la una múltiplo de la otra, no obtante, al tener $x_s$ el mismo coeficiente en ambas ecuaciones, estas deben ser iguales. De esto se desprende, comparando ambas ecuaciones
+\begin{equation}
+	\begin{array}{ccc}
+		\displaystyle{\overline{x_s'}=\overline{x_s}-\frac{y_{sk}\overline{x_l}}{y_{lk}}}&\qquad
+		\displaystyle{y_{sj}'=y_{sj}-\frac{y_{sk}y_{lj}}{y_{lk}}}&\qquad\displaystyle{y_{sl}'}=-\frac{y_{sk}}{y_{kl}}
+	\end{array}
+\end{equation}
+para $s\in\{1,\dots,m\}\setminus\{l\}$ y con $j\in\{m+1,\dots,n\}\setminus\{k\}$. En el caso $s=l$ estas expresiones también son válidas (aunque no nos importa mucho).
+
+Nos queda pues el trabajo de hallar extresiones para $\overline{x_k'}$, la coordenada $k$--ésima del nuevo punto extremo, e $y_{kj}'$ con $j\in\{m+1,\dots n\}\setminus\{k\}$ (las columnas de $N'$, excepto la columna $l$, que ya se quedó calculada) ya que $y_j'$ donde $j$ es un índice correspondiente a las columnas de $B'$ es $e_j$ (véase definición \ref{fund_defi_vectorAux}).
+
+Cosideramos ahora la ecuación \eqref{simp_eq_componentes2} en el caso $s=k$. Dicha ecuación y \eqref{simp_eq_xk} son ecuaciones lineales equivalentes, de hecho iguales (siguiendo el razonamiento anterior). Por ende basta compararlas para obtener
+\begin{equation}
+	\begin{array}{ccc}
+	\displaystyle{\overline{x_k'}=\frac{\overline{x_l}}{y_{lk}}} \qquad&\displaystyle{ y_{kj}'=\frac{y_{lj}}{y_{lk}}}\qquad&\displaystyle{y_{kl}'=\frac{1}{y_{lk}}}
+	\end{array}
+\end{equation}
+\subsection{Costes reducidos y función objetivo}
+Echando mano de la ecuación \eqref{fund_eq_funcionObj} respecto de las bases $B$ y $B'$ obtenemos
+\begin{gather}
+	c^tx=c_B^t\overline{x_B}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\overline{c_j}x_j+\overline{c_k}x_k\label{simp_eq_obj1}\\
+	c^tx=c_{B'}^t\overline{x_{B'}}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\overline{c_j'}x_j+\overline{c_l'}x_l\label{simp_eq_obj2}
+\end{gather}
+Sustituyendo el valor de $x_k$ de \eqref{simp_eq_xk} en \eqref{simp_eq_obj1} obtenemos
+\begin{equation*}
+	c^tx=c_B^t\overline{x_B}+\frac{\overline{x_l}}{y_{lk}}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\left(\overline{c_j}-\frac{y_{lj}}{y_{lk}}\right)x_j-\frac{x_l}{y_{lk}}
+\end{equation*}
+tanto esta ecuación como la \eqref{simp_eq_obj2} son expresiones analíticas de la misma función lineal respecto de las mismas bases (que no tienen nada que ver con las bases asociadas a la matriz del problema). Esto quiere decir que ambas expresiones son iguales, luego comparándolas obtenemos
+\begin{equation}
+	\begin{array}{ccc}
+	\displaystyle{c_{B'}^t\overline{x_{B'}}=c_B^t\overline{x_B}+\overline{c_k}\frac{\overline{x_l}}{y_{lk}}}\qquad&\displaystyle{\overline{c_j'}=\overline{c_j}-\overline{c_k}\frac{y_{lj}}{y_{lk}}}\qquad&
+	\displaystyle{\overline{c_l'}=-\frac{\overline{c_k}}{y_{lk}}}\end{array}
+\end{equation}
 \section{Tabla del Símplex. Pivotajes}
 \subsection{Ejemplo de ejecución}
 \section{Punto extremo inicial}
