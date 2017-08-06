@@ -112,7 +112,7 @@ La virtud de representar un problema de programación lineal de esta forma es qu
 		$B'$     & $x_1$    & $\vdots$ & $x_l$                    & $\vdots$ & $x_m$    & $x_{m+1}$                                  & $\vdots$ & $x_k$    & $\vdots$ & $x_n$                                & $\overline{x_{B'}}$                                  \\ \hline
 		$x_1$    & $1$      & $\vdots$ & $-\frac{y_{1k}}{y_{lk}}$ & $\vdots$ & $0$      & $y_{1,m+1}-y_{1k}\frac{y_{l,m+1}}{y_{lk}}$ & $\vdots$ & $0$      & $\vdots$ & $y_{1n}-y_{1k}\frac{y_{ln}}{y_{lk}}$ & $\overline{x_1}-y_{1k}\frac{\overline{x_l}}{y_{lk}}$ \\
 		$\vdots$ & $\vdots$ &          & $\vdots$                 &          & $\vdots$ & $\vdots$                                   &          & $\vdots$ &          & $\vdots$                             & $\vdots$                                             \\
-		$x_k$    & $0$      & \$\vdots & $\frac{1}{y_{lk}}$       & $\vdots$ & $0$      & $\frac{y_{l,m+1}}{y_{lk}}$                 & $\vdots$ & $1$      & $\vdots$ & $\frac{y_{ln}}{y_{lk}}$              & $\frac{\overline{x_l}}{y_{lk}}$                      \\
+		$x_k$    & $0$      & $\vdots$ & $\frac{1}{y_{lk}}$       & $\vdots$ & $0$      & $\frac{y_{l,m+1}}{y_{lk}}$                 & $\vdots$ & $1$      & $\vdots$ & $\frac{y_{ln}}{y_{lk}}$              & $\frac{\overline{x_l}}{y_{lk}}$                      \\
 		$\vdots$ & $\vdots$ &          & $\vdots$                 &          & $\vdots$ & $\vdots$                                   &          & $\vdots$ &          & $\vdots$                             & $\vdots$                                             \\
 		$x_m$    & $0$      & $\vdots$ & $-\frac{y_{mk}}{y_{lk}}$ & $\vdots$ & $1$      & $y_{m,m+1}-y_{mk}\frac{y_{l,m+1}}{y_{lk}}$ & $\vdots$ & $0$      & $\vdots$ & $y_{mn}-y_{mk}\frac{y_{ln}}{y_{kl}}$ & $\overline{x_m}-y_{mk}\frac{\overline{x_l}}{y_{lk}}$ \\ \hline
 	\end{tabular}
@@ -160,13 +160,80 @@ Como se observa, la tabla del Símplex tiene en su última fila el vector de cos
 
 A la operación de cambiar de base una tabla se la denmina \tbi{pivotaje} y al elemento $y_{lk}$ se le denomina \tbi{pivote}.
 \section{Punto extremo inicial}
-Aunque el trabajo duro ya está hecho, todavía quedan preguntas por resolver, por ejemplo, cómo obtener el punto extremo inicial y todos los datos necesarios asociados a este de forma eficiente, cuestión a la que dedicamos esta sección.
+Aunque el trabajo duro ya está hecho, todavía quedan preguntas por resolver, por ejemplo, cómo obtener el punto extremo inicial (si lo hay, ya que el problema podría ser infactible) y todos los datos necesarios asociados a este de forma eficiente.
 \subsection{Método de las dos fases}
-\subsubsection{Ejemplo de ejecución}
+Encontrar bases de matrices es un trabajo compuracionalmente costoso, en el caso peor, que no haya base alguna, es del orden de $\mc{O}\binom{n}{m}$ (eso si las comprobaciones intermedias tuvieran coste constante, que no lo tienen). Razón por la cual necesitamos algún tipo de sustitutivo a este método de fuerza bruta.
+
+Lo que exponemos a continuación es conocido como \tbi[método!de las dos fases]{método de las dos fases} y únicamente es aplicable a problemas en forma estándar con $b\geq 0$. Esto no supone ninguna pérdida de generalidad ya que siempre podemos multiplicar la restricción correspondiente a un $b_i<0$ por $-1$, obteniendo una restricción equivalente y, por tanto, un problema equivalente.
+
+A un problema en las hipótesis anteriormente expuestas que tenga a $A$ por matriz de coeficientes de las restricciones, se le asocia otro problema al que llamaremos \tbi[problema!artificial]{problema artificial}. Dicho problema es el siguiente
+\begin{equation*}
+	\begin{array}{c}
+		\min w(x|x_a)^t:=\sum_{i=1}^{m}x_i^a\\
+		\text{Sujeto a:}\qquad (A|I_m)(x|x_a)^t=b,\qquad x\geq 0,\ x_a\geq 0
+	\end{array}
+\end{equation*}
+es decir, el problema resultante de cosiderar las restricciones
+\begin{equation*}
+	a_{i1}x_1+\dots+a_{in}x_n+x_i^a=b_i
+\end{equation*}
+para $i\in\{1,\dots,m\}$, cuya matriz asociada es $(A|I_m)$. A las nuevas variables $x_i^a$ se las conoce como \tbi[variables!artificiales]{variables artificiales}. Además, la función objetivo se sustituye por $w\equiv \sum_{i=1}^{m}x_i^a$.
+
+Entre las buenas propiedades de este nuevo problema es que tiene una base trivial, la identidad, situada convenientemente en las últimas columnas (lo cual el ordenador agradece).
+
+Pero la cosa no queda aquí, ya que el problema artificial no es un problema no acotado. En efecto, por las restricciones de no negatividad, la función objetivo está acotada inferiormente por $0$. Además, el problema artificial es factible, bastanto considerar el vector $(0|b)^t\in\R^{n+m}$ como solución factible. Esta es la razón por la que exigimos $b\geq 0$.
+
+Con esto, por el teorema fundamental de la programación lineal (teorema \ref{fund_teo_fund}), sabemos que el problema artificial tiene solución óptima. Por si esto fuera poco, obtenemos casi gratis un test de factibilidad para el problema original.
+\begin{lem}[Test de factibilidad]
+	\label{simp_lem_testFacti}
+	El problema original es factible si y solo si el problema artificial posee una solución óptima $(\overline{x}|\overline{x_a})^t$ con $\overline{x_a}=0$.
+\end{lem}
+\begin{proof}
+	Demostraremos la implicación a la derecha, para descubrir después que si miramos la demostración con amor, y del revés, la otra implicación también está demostrada.
+	
+	Si el problema original es factible, entonces habrá un $x\geq 0$ tal que $Ax=b$. En tal caso es claro que el vector $(x|0)^t$ es solución factible del problema artificial (¡compruébese!). Como resulta que $w(x|0)^t=0$, por la acotación inferior de $w$ tenemos que $(x|0)^t$ es solución óptima del problema artificial con $\overline{x_a}=0$.
+\end{proof}
+\begin{obs}[Sutileza]
+	Si el problema artificial posee una solución óptima $x^*$ con $\overline{x_a}=0$, todas sus soluciones óptimas $x'$ tendrán $\overline{x_a}=0$, ya que, en caso contrario $w(x^*)<w(x')$, lo cual es absurdo. 
+\end{obs}
+Dicho esto, es claro que, dado un problema de programación lineal dentro de nuestras hipótesis, podemos considerar el problema artificial asociado y resolverlo mediante el algoritmo del Símplex que ya tenemos desarrollado, siendo el rellenado de la tabla inicial (y la determinación del primer punto extremo) trivial, ya que $B=I_m$, por tanto la tabla del Símplex es la correspondiente a la matriz $(A|I_m|b)$ añadiendo como última fila el vector de costes reducidos y el opuesto del valor de la función objetivo.
+
+Cabe destacar que el cálculo del vector de costes reducidos es bastante trivial computacionalmente ya que no hay que invertir ninguna base, símplemente $\overline{w_j}=w_j-w_B^ta_j$.
+
+Una vez hallada la solución óptima al problema artificial, podremos usar el lema \ref{simp_lem_testFacti} para decidir sobre la factibilidad o no del problema original. En caso de que este resulte factible, la base asociada a la solución óptima encontrada será base del problema original (ya que todas las columnas de la base están asociadas a columnas de la matriz original). Con esto, ya podríamos aplicar el algoritmo del Símplex para resolver el problema original.
+
+No obstante, cabría preguntarse si es computacionalmente costoso rellenar la tabla del simplex del problema original respecto de la base $B$ dada (es decir, ¿hay que invertir $B$?). La respuesta es no, ya que necesitamos calcular la matriz
+\begin{equation*}
+	B^{-1}(A|b)=(B^{-1}a_1\cdots B^{-1}a_n|B^{-1}b)
+\end{equation*}
+y la matriz asociada a la tabla asociada a la solución óptima del problema artificial es
+\begin{equation*}
+	B^{-1}(A|I_m|b)=(B^{-1}a_1\cdots B^{-1}a_n|B^{-1}e_1\cdots B^{-1}e_m|B^{-1}b)=(B^{-1}A|B^{-1}|B^{-1}b)
+\end{equation*}
+luego basta con tomar la misma tabla suprimiendo las columnas asociadas a las variables artificiales.
+
+En cuanto al cálculo de los costes reducidos, aunque ya tenemos invertida la matriz $B$ y podríamos hacerlo ``a capón'', no es recomendable, pues multiplicar matrices es computacionalemente costoso.
+
+En lugar de eso, lo que podemos hacer es añadir una fila más a la tabla del Símplex del problema artificial, donde ir calculando (mediante los pivotajes) los costes reducidos asociados a la función objetivo $z:=c^tx$ del problema original (nótese que no hay ningún problema).
+
+De esta forma, basta con consultar la tabla asociada a $B$ del problema artificial para rellenar la tabla inicial del problema original, que ya puede ser resuelto usando el algoritmo del Símplex conocido. Organizemos toda esta literatura.
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\STATE\COMMENT{Primera fase}
+			\STATE Construir el problema artificial
+			\STATE Resolver el problema artificial (algoritmo \ref{fund_alg_simplex}) repedidas veces.
+			\STATE Aplicar el test de factibilidad (lema \ref{simp_lem_testFacti})
+			\IF{es factible}
+				\STATE\COMMENT{Segunda fase}
+				\STATE Rellenar la primera tabla con los trucos vistos.
+				\STATE Resolver el problema original (algoritmo \ref{fund_alg_simplex}) repedidas veces.
+			\ELSE
+				\RETURN Infactible
+			\ENDIF
+	\end{algorithmic}
+	\caption{Algoritmo de las dos fases.}\label{simp_alg_dosFases}
+\end{algorithm}
 \subsection{Método de las penalizaciones}
-\subsubsection{Ejemplo de ejecución}
 \section{Prevención de bucles}
 \subsection{Regla lexicográfica}
-\subsubsection{Ejemplo de ejecución}
 \subsection{Regla de Bland}
-\subsubsection{Ejemplo de ejecución}
