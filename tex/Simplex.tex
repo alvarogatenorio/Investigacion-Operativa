@@ -44,6 +44,7 @@ Nótese que el despeje que hemos hecho es válido, ya que por el teorema \ref{fu
 \end{equation*}
 esta ecuación y la ecuación \eqref{simp_eq_componentes2} son dos ecuaciones lineales equivalentes. Por tanto, son la una múltiplo de la otra, no obtante, al tener $x_s$ el mismo coeficiente en ambas ecuaciones, estas deben ser iguales. De esto se desprende, comparando ambas ecuaciones
 \begin{equation}
+\label{simp_eq_aux1}
 	\begin{array}{ccc}
 		\displaystyle{\overline{x_s'}=\overline{x_s}-\frac{y_{sk}\overline{x_l}}{y_{lk}}}&\qquad
 		\displaystyle{y_{sj}'=y_{sj}-\frac{y_{sk}y_{lj}}{y_{lk}}}&\qquad\displaystyle{y_{sl}'}=-\frac{y_{sk}}{y_{kl}}
@@ -55,6 +56,7 @@ Nos queda pues el trabajo de hallar extresiones para $\overline{x_k'}$, la coord
 
 Cosideramos ahora la ecuación \eqref{simp_eq_componentes2} en el caso $s=k$. Dicha ecuación y \eqref{simp_eq_xk} son ecuaciones lineales equivalentes, de hecho iguales (siguiendo el razonamiento anterior). Por ende basta compararlas para obtener
 \begin{equation}
+\label{simp_eq_aux2}
 	\begin{array}{ccc}
 	\displaystyle{\overline{x_k'}=\frac{\overline{x_l}}{y_{lk}}} \qquad&\displaystyle{ y_{kj}'=\frac{y_{lj}}{y_{lk}}}\qquad&\displaystyle{y_{kl}'=\frac{1}{y_{lk}}}
 	\end{array}
@@ -67,17 +69,98 @@ Echando mano de la ecuación \eqref{fund_eq_funcionObj} respecto de las bases $B
 \end{gather}
 Sustituyendo el valor de $x_k$ de \eqref{simp_eq_xk} en \eqref{simp_eq_obj1} obtenemos
 \begin{equation*}
-	c^tx=c_B^t\overline{x_B}+\frac{\overline{x_l}}{y_{lk}}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\left(\overline{c_j}-\frac{y_{lj}}{y_{lk}}\right)x_j-\frac{x_l}{y_{lk}}
+	c^tx=c_B^t\overline{x_B}+\overline{c_k}\frac{\overline{x_l}}{y_{lk}}+\sum_{\substack{j=m+1\\j\not=k}}^{n}\left(\overline{c_j}-\overline{c_k}\frac{y_{lj}}{y_{lk}}\right)x_j-\overline{c_k}\frac{1}{y_{lk}}x_l
 \end{equation*}
 tanto esta ecuación como la \eqref{simp_eq_obj2} son expresiones analíticas de la misma función lineal respecto de las mismas bases (que no tienen nada que ver con las bases asociadas a la matriz del problema). Esto quiere decir que ambas expresiones son iguales, luego comparándolas obtenemos
 \begin{equation}
+\label{simp_eq_reducidos}
 	\begin{array}{ccc}
 	\displaystyle{c_{B'}^t\overline{x_{B'}}=c_B^t\overline{x_B}+\overline{c_k}\frac{\overline{x_l}}{y_{lk}}}\qquad&\displaystyle{\overline{c_j'}=\overline{c_j}-\overline{c_k}\frac{y_{lj}}{y_{lk}}}\qquad&
-	\displaystyle{\overline{c_l'}=-\frac{\overline{c_k}}{y_{lk}}}\end{array}
+	\displaystyle{\overline{c_l'}=-\overline{c_k}\frac{1}{y_{lk}}}\end{array}
 \end{equation}
+De esta forma, las ecuaciones \eqref{simp_eq_reducidos}, \eqref{simp_eq_aux1} y \eqref{simp_eq_aux2} nos proporcionan las fórmulas que andábamos buscando.
 \section{Tabla del Símplex. Pivotajes}
-\subsection{Ejemplo de ejecución}
+En esta sección introducimos la llamada \tbi[tabla!del símplex]{tabla del símplex}, que no es más que una forma elegante de implementar las fórmulas de cambio de base deducidas en la sección anterior. Además, evita su memorización.
+
+Sea un problema de programación lineal en forma estándar del que suponemos conocido un punto extremo de su región factible, es decir, una base $B$.
+
+Consideremos el sistema de ecuaciones lineales asociado a dicho problema y multipliquémoslo a ambos lados por $B^{-1}$.
+\begin{multline}
+	\label{simp_eq_tabla}
+	Ax=b\sii (B|N)(x_B|x_N)^t=b\sii B^{-1}(B|N)(x_B|x_N)^t=B^{-1}b\sii\\
+	\sii (B^{-1}B|B^{-1}N)(x_B|x_N)^t=\overline{x_B}\sii (I_m|y_{m+1}\cdots y_n)(x_B|x_N)^t=\overline{x_B}
+\end{multline}
+La igualdad final de la ecuación \eqref{simp_eq_tabla} puede representarse como una tabla de la siguiente manera
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c|cccccccccc|c}
+		$B$      & $x_1$    & $\cdots$ & $x_l$    & $\cdots$ & $x_m$    & $x_{m+1}$   & $\cdots$ & $x_k$    & $\cdots$ & $x_n$    & $\overline{x_B}$ \\ \hline
+		$x_1$    & $1$      & $\cdots$ & $0$      & $\cdots$ & $0$      & $y_{1,m+1}$ & $\cdots$ & $y_{1k}$ & $\cdots$ & $y_{1n}$ & $\overline{x_1}$ \\
+		$\cdots$ & $\cdots$ &          & $\cdots$ &          & $\cdots$ & $\cdots$    &          & $\cdots$ &          & $\cdots$ & $\cdots$         \\
+		$x_l$    & $0$      & $\cdots$ & $1$      & $\cdots$ & $0$      & $y_{l,m+1}$ & $\cdots$ & $y_{lk}$ & $\cdots$ & $y_{ln}$ & $\overline{x_l}$ \\
+		$\cdots$ & $\cdots$ &          & $\cdots$ &          & $\cdots$ & $\cdots$    &          & $\cdots$ &          & $\cdots$ & $\cdots$         \\
+		$x_m$    & $0$      & $\cdots$ & $0$      & $\cdots$ & $1$      & $y_{m,m+1}$ & $\cdots$ & $y_{mk}$ & $\cdots$ & $y_{mn}$ & $\overline{x_m}$ \\ \hline
+	\end{tabular}
+	\label{simp_tab_simplex1}
+	\caption{Primera aproximación a la tabla del Símplex.}
+\end{table}
+La virtud de representar un problema de programación lineal de esta forma es que los cambios de base son ``automáticos'' en cierto sentido. Supongamos que queremos cambiar de punto extremo de forma que la nueva base es $B'=(B\setminus a_l)\cup a_k$. Siguiendo las fórmulas de la sección anterior, la tabla asociada a la nueva base sería
+\begin{table}[H]
+	\centering
+	\scalebox{0.9}[0.9]{
+	\begin{tabular}{c|cccccccccc|c}
+		$B'$     & $x_1$    & $\vdots$ & $x_l$                    & $\vdots$ & $x_m$    & $x_{m+1}$                                  & $\vdots$ & $x_k$    & $\vdots$ & $x_n$                                & $\overline{x_{B'}}$                                  \\ \hline
+		$x_1$    & $1$      & $\vdots$ & $-\frac{y_{1k}}{y_{lk}}$ & $\vdots$ & $0$      & $y_{1,m+1}-y_{1k}\frac{y_{l,m+1}}{y_{lk}}$ & $\vdots$ & $0$      & $\vdots$ & $y_{1n}-y_{1k}\frac{y_{ln}}{y_{lk}}$ & $\overline{x_1}-y_{1k}\frac{\overline{x_l}}{y_{lk}}$ \\
+		$\vdots$ & $\vdots$ &          & $\vdots$                 &          & $\vdots$ & $\vdots$                                   &          & $\vdots$ &          & $\vdots$                             & $\vdots$                                             \\
+		$x_k$    & $0$      & \$\vdots & $\frac{1}{y_{lk}}$       & $\vdots$ & $0$      & $\frac{y_{l,m+1}}{y_{lk}}$                 & $\vdots$ & $1$      & $\vdots$ & $\frac{y_{ln}}{y_{lk}}$              & $\frac{\overline{x_l}}{y_{lk}}$                      \\
+		$\vdots$ & $\vdots$ &          & $\vdots$                 &          & $\vdots$ & $\vdots$                                   &          & $\vdots$ &          & $\vdots$                             & $\vdots$                                             \\
+		$x_m$    & $0$      & $\vdots$ & $-\frac{y_{mk}}{y_{lk}}$ & $\vdots$ & $1$      & $y_{m,m+1}-y_{mk}\frac{y_{l,m+1}}{y_{lk}}$ & $\vdots$ & $0$      & $\vdots$ & $y_{mn}-y_{mk}\frac{y_{ln}}{y_{kl}}$ & $\overline{x_m}-y_{mk}\frac{\overline{x_l}}{y_{lk}}$ \\ \hline
+	\end{tabular}
+	}
+	\caption{Tabla del problema respecto de la base $B'$.}
+\end{table}
+Si nos fijamos, la nueva tabla puede verse como el resultado de aplicar el algoritmo de Gauss--Jordan en la columna $k$--ésima, es decir, considerando la tabla como una matriz, usar las transformaciones elementales de matrices para convertir el elemento $y_{lk}$ en un $1$ y ``hacer ceros'' en el resto de la columna. Esto es maravilloso porque puede implementarse en ordenador de forma casi trivial.
+
+La mala noticia es que la tabla \ref{simp_tab_simplex1} no tiene todos los datos necesarios para que el algoritmo se ejecute. En concreto, faltan los costes reducidos y el valor de la función objetivo.
+
+La gran noticia sin embargo (y prueba irrefutable de que los dioses son benévolos de cuando en cuando) es que podemos completar la tabla \ref{simp_tab_simplex1} de manera que lleve todos los datos necesarios y además la implementacón de los cambios de base no varíe en absoluto. En efecto, si consideramos la tabla
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c|cccccccccc|c}
+		$B$                                 & $x_1$                   & $\cdots$                     & $x_l$                   & $\cdots$                     & $x_m$                   & $x_{m+1}$                                & $\cdots$                     & $x_k$                                & $\cdots$                    & $x_n$                                 & $\overline{x_B}$                               \\ \hline
+		$x_1$                               & $1$                     & $\cdots$                     & $0$                     & $\cdots$                     & $0$                     & $y_{1,m+1}$                              & $\cdots$                     & $y_{1k}$                             & $\cdots$                    & $y_{1n}$                              & $\overline{x_1}$                               \\
+		$\cdots$                            & $\cdots$                &                              & $\cdots$                &                              & $\cdots$                & $\cdots$                                 &                              & $\cdots$                             &                             & $\cdots$                              & $\cdots$                                       \\
+		$x_l$                               & $0$                     & $\cdots$                     & $1$                     & $\cdots$                     & $0$                     & $y_{l,m+1}$                              & $\cdots$                     & $y_{lk}$                             & $\cdots$                    & $y_{ln}$                              & $\overline{x_l}$                               \\
+		$\cdots$                            & $\cdots$                &                              & $\cdots$                &                              & $\cdots$                & $\cdots$                                 &                              & $\cdots$                             &                             & $\cdots$                              & $\cdots$                                       \\
+		$x_m$                               & $0$                     & $\cdots$                     & $0$                     & $\cdots$                     & $1$                     & $y_{m,m+1}$                              & $\cdots$                     & $y_{mk}$                             & $\cdots$                    & $y_{mn}$                              & $\overline{x_m}$                               \\ \hline
+		\multicolumn{1}{c|}{$\overline{c}$} & \multicolumn{1}{c}{$0$} & \multicolumn{1}{c}{$\cdots$} & \multicolumn{1}{c}{$0$} & \multicolumn{1}{c}{$\cdots$} & \multicolumn{1}{c}{$0$} & \multicolumn{1}{c}{$\overline{c_{m+1}}$} & \multicolumn{1}{c}{$\cdots$} & \multicolumn{1}{c}{$\overline{c_k}$} & \multicolumn{1}{c}{$\cdots$} & \multicolumn{1}{c|}{$\overline{c_n}$} & \multicolumn{1}{c}{$-(c_{B}^t\overline{x_B})$}
+	\end{tabular}
+	\caption{Tabla del Símplex.}
+\end{table}
+la tabla asociada a la base $B'$ será
+\begin{table}[H]
+	\centering
+	\scalebox{0.9}[0.9]{
+	\begin{tabular}{c|cccccccccc|c}
+		$B'$           & $x_1$    & $\vdots$ & $x_l$                             & $\vdots$ & $x_m$    & $x_{m+1}$                                                   & $\vdots$ & $x_k$    & $\vdots$ & $x_n$                                                & $\overline{x_{B'}}$                                                      \\ \hline
+		$x_1$          & $1$      & $\vdots$ & $-\frac{y_{1k}}{y_{lk}}$          & $\vdots$ & $0$      & $y_{1,m+1}-y_{1k}\frac{y_{l,m+1}}{y_{lk}}$                  & $\vdots$ & $0$      & $\vdots$ & $y_{1n}-y_{1k}\frac{y_{ln}}{y_{lk}}$                 & $\overline{x_1}-y_{1k}\frac{\overline{x_l}}{y_{lk}}$                     \\
+		$\vdots$       & $\vdots$ &          & $\vdots$                          &          & $\vdots$ & $\vdots$                                                    &          & $\vdots$ &          & $\vdots$                                             & $\vdots$                                                                 \\
+		$x_k$          & $0$      & $\vdots$ & $\frac{1}{y_{lk}}$                & $\vdots$ & $0$      & $\frac{y_{l,m+1}}{y_{lk}}$                                  & $\vdots$ & $1$      & $\vdots$ & $\frac{y_{ln}}{y_{lk}}$                              & $\frac{\overline{x_l}}{y_{lk}}$                                          \\
+		$\vdots$       & $\vdots$ &          & $\vdots$                          &          & $\vdots$ & $\vdots$                                                    &          & $\vdots$ &          & $\vdots$                                             & $\vdots$                                                                 \\
+		$x_m$          & $0$      & $\vdots$ & $-\frac{y_{mk}}{y_{lk}}$          & $\vdots$ & $1$      & $y_{m,m+1}-y_{mk}\frac{y_{l,m+1}}{y_{lk}}$                  & $\vdots$ & $0$      & $\vdots$ & $y_{mn}-y_{mk}\frac{y_{ln}}{y_{kl}}$                 & $\overline{x_m}-y_{mk}\frac{\overline{x_l}}{y_{lk}}$                     \\ \hline
+		$\overline{c'}$ & $0$      & $\vdots$ & $-\overline{c_k}\frac{1}{y_{lk}}$ & $\vdots$ & $0$      & $\overline{c_{m+1}}-\overline{c_k}\frac{y_{l,m+1}}{y_{lk}}$ & $\vdots$ & $0$      & $\vdots$ & $\overline{c_n}-\overline{c_k}\frac{y_{ln}}{y_{lk}}$ & $-c_{B'}^t\overline{x_{B'}}-\overline{c_k}\frac{\overline{x_l}}{y_{lk}}$
+	\end{tabular}}
+	\caption{Tabla del problema respecto de la base $B'$.}
+\end{table}
+Como se observa, la tabla del Símplex tiene en su última fila el vector de costes reducidos y el \tb{opuesto} al valor que toma la función objetivo en el punto extremo asociado a la base que corresponda. La razón para guardar el opuesto y no el valor a secas es que si guardamos el opuesto podemos seguir haciendo los cambios de base como si aplicaramos parcialmente el algoritmo de Gauss-Jordan, en caso contrario no podríamos hacerlo.
+
+\begin{obs}[Notación]
+	Es habitual encontrarse con que la casilla correspondiente a la función objetivo en la tabla del Símplex contiene la expresión $z-(c_B^t\overline{x_B})$. Esto no supone ninguna variación en absolutamente nada, es símplemente notación, añadir una $z$ al principio, sin más.
+\end{obs}
+
+A la operación de cambiar de base una tabla se la denmina \tbi{pivotaje} y al elemento $y_{lk}$ se le denomina \tbi{pivote}.
 \section{Punto extremo inicial}
+Aunque el trabajo duro ya está hecho, todavía quedan preguntas por resolver, por ejemplo, cómo obtener el punto extremo inicial y todos los datos necesarios asociados a este de forma eficiente, cuestión a la que dedicamos esta sección.
 \subsection{Método de las dos fases}
 \subsubsection{Ejemplo de ejecución}
 \subsection{Método de las penalizaciones}
