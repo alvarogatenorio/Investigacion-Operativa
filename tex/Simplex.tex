@@ -177,7 +177,7 @@ es decir, el problema resultante de cosiderar las restricciones
 \begin{equation*}
 	a_{i1}x_1+\dots+a_{in}x_n+x_i^a=b_i
 \end{equation*}
-para $i\in\{1,\dots,m\}$, cuya matriz asociada es $(A|I_m)$. A las nuevas variables $x_i^a$ se las conoce como \tbi[variables!artificiales]{variables artificiales}. Además, la función objetivo se sustituye por $w\equiv \sum_{i=1}^{m}x_i^a$.
+para $i\in\{1,\dots,m\}$, cuya matriz asociada es $(A|I_m)$. A las nuevas variables $x_i^a$ se las conoce como \tbi[variable!artificial]{variables artificiales}. Además, la función objetivo se sustituye por $w\equiv \sum_{i=1}^{m}x_i^a$.
 
 Entre las buenas propiedades de este nuevo problema es que tiene una base trivial, la identidad, situada convenientemente en las últimas columnas (lo cual el ordenador agradece).
 
@@ -233,7 +233,90 @@ De esta forma, basta con consultar la tabla asociada a $B$ del problema artifici
 	\end{algorithmic}
 	\caption{Algoritmo de las dos fases.}\label{simp_alg_dosFases}
 \end{algorithm}
-\subsection{Método de las penalizaciones}
+\subsection{Método de las penalizaciones (Big $M$)}
 \section{Prevención de bucles}
+\subsection{Criterios de entrada y salida de la base}
 \subsection{Regla lexicográfica}
+En este apartado exponemos un criterio de salida de la base, al que llamamos \tbi[regla!de la razón léxico mínima]{regla de la razón léxico--mínima} o símplemente \tbi[regla!lexicográfica]{regla lexicográfica}. Lo que hace útil a este criterio es que, como veremos al finalizar la sección, es un criterio que evita la aparición de bucles, de forma que garantiza la convergencia del algoritmo a una solución óptima (cuando el problema la posea).
+
+Antes de comenzar introduzcamos las siguientes definiciones.
+\begin{defi}[Lexicográficamente positivo]
+	Un vector $x\in\R^n$ se dice \tbi[lexicográficamente!positivo]{lexicográficamente positivo} si es no nulo y su primera componente no nula es positiva.
+	
+	Esto lo denotamos por $x>_L0$.
+\end{defi}
+\begin{defi}[Orden lexicográfico]
+	Dados dos vectores $x,y\in\R^n$ decimos que $x$ es \tbi[lexicográficamente!mayor]{lexicográficamente mayor} que $y$ si $x-y$ es lexicográficamente positivo. Sintéticamente
+	\begin{equation*}
+		x>_Ly\sii x-y>_L0
+	\end{equation*}
+	Esta relación define un orden total estricto en $\R^n\setminus\{0\}$.
+\end{defi}
+Hechas estas consideraciones previas, supongamos que en cierta iteración del algoritmo se decide que la $k$--ésima columna entra en la base, mientras que a la hora de decidir la variable que sale, se producen empates con la regla de la razón mínima.
+
+En tal caso consideramos la matriz $V_B:=(\overline{x_B}|B^{-1})$ donde $B$ es la base ``vieja'' que vamos a sustituir por la base $B'$ (aún por calcular).
+
+Denotaremos por $V_B^i$ a la fila $i$--ésima de la matriz $V_B$.
+\begin{obs}[Cálculo de $V_B$]
+	Nótese que el cálculo de la matriz $V_B$ no supone ningún coste adicional para el ordenador en el caso de que la base inicial sea la identidad, cosa que siempre pasará si utilizamos el método de las dos fases o de las penalizaciones.
+
+	Esto se debe a que la tabla del símplex (salvo el vector de costes y la función objetivo) viene dada por la matriz
+	\begin{equation*}
+		B^{-1}(A|b)=B^{-1}(N|I_m|b)=(B^{-1}N|B^{-1}|\overline{x_B})
+	\end{equation*}
+	con lo que tenemos $B^{-1}$ en las columnas correspondientes a la base inicial, con lo que automáticamente tenemos $V_B$.
+\end{obs}
+Dicho esto, la \tb{regla lexicográfica} dicta que saldrá de la base la columna $l$--ésima si y solo si se verifica
+\begin{equation}
+\label{simp_eq_lexico}
+	\begin{array}{cc}
+		y_{lk}>0 \qquad&\qquad \displaystyle{\frac{V_B^i}{y_{ik}}>_L\frac{V_B^l}{y_{lk}}}
+	\end{array}
+\end{equation}
+para todo $i\in\{1,\dots,m\}\setminus\{l\}$ con $y_{ik}>0$.
+
+Antes de continuar presentemos dos observaciones interesantes.
+\begin{obs}[Generalización]
+	Nótese que la regla lexicográfica no es más que una generalización de la regla de la razón mínima, en la que en lugar de hacer una comparación lexicográfica de los vectores $V_B^i\frac{1}{y_{ik}}$ y $V_B^l\frac{1}{y_{lk}}$, únicamente se comparaban sus primeras componentes.
+	
+	Esto sugiere una implementación natural de la comparación lexicográfica, que únicamente necesita comparar $V_B^i\frac{1}{y_{ik}}$ y $V_B^l\frac{1}{y_{lk}}$ componente a componente hasta que la comparación arroje un resultado no nulo.
+\end{obs}
+\begin{obs}[Imposibilidad de empates]
+	Es interesante observar también que la regla lexicográfica no permite los empates, ya que, en caso de que varios vectores empataran se dería la situación
+	\begin{equation*}
+		\frac{V_B^i}{y_{ik}}>_L\frac{V_B^l}{y_{lk}}\sii \frac{y_{lk}}{y_{ik}}V_B^i=V_B^l
+	\end{equation*}
+	Luego $B^{-1}$ tendría dos filas proporcionales (lo cual va contra su invertivilidad).
+\end{obs}
+Para finalizar, comprobemos que, efectivamente, la regla lexicográfica es una regla de prevención de ciclos, para lo cual necesitamos introducir una definición.
+\begin{defi}[Valor vectorial lexicográfico]
+	Definimos el \tbi{valor vectorial lexicográfico} asociado a la base $B$ como el vector $v_B:=\sum_{i=1}^{m}c_iV_B^i$.
+\end{defi}
+La idea de la demostración será comparar los valores lexicográficos de una base $B$ y el de la base $B'$ resultante de aplicar el cambio de base según la regla lexicográfica, viendo que $v_{B'}<_Lv_B$, siendo imposible que el algoritmo analice dos veces una misma base.
+
+Antes de pasar a demostrar esto, observemos la relación que hay entre $V_{B'}^i$ y $V_B^i$. Símplemente fijándonos en las fórmulas del pivotaje tenemos que
+\begin{equation}
+\label{simp_eq_cambioLexico}
+	\begin{array}{cc}
+		\displaystyle{V_{B'}^k=\frac{V_B^l}{y_{lk}}}\qquad&\qquad \displaystyle{V_{B'}^i=V_B^i-\frac{y_{ik}}{y_{lk}}V_B^l}
+	\end{array}
+\end{equation}
+\begin{obs}[Positividad]
+	Nótese además que si la primera base considerada en el algoritmo es la identidad, es claro que $V_{I_m}^i>_L0$, pero no solo eso, la aplicación de la regla lexicográfica en este supuesto asegura que $V_B^i>_L0$ para toda base considerada.
+	
+	Para probar esto basta echar un vistazo a las ecuaciones \eqref{simp_eq_lexico} y \eqref{simp_eq_cambioLexico} (se deja al lector).
+\end{obs}
+Dicho esto, ya estamos listos para demostrar lo que queremos.
+\begin{prop}[Buena definición]
+	La regla lexicográfica es una regla de prevención de ciclos.
+\end{prop}
+\begin{proof}
+	Basta desarrollar la siguiente cuenta
+	\begin{multline*}
+		v_{B'}:=\sum_{\substack{i=1\\i\not=l}}^{m}c_iV_{B'}^i+c_kV_{B'}^k=\sum_{\substack{i=1\\i\not=l}}^{m}c_i\left(V_B^i-\frac{y_{ik}}{y_{lk}}V_B^l\right)+c_k\frac{V_B^l}{y_{lk}}=\\=\sum_{\substack{i=1\\i\not=l}}^{m}c_iV_B^i+\frac{V_B^l}{y_{lk}}\left(c_k-\sum_{\substack{i=1\\i\not=l}}^{m}c_iy_{ik}\right)=\sum_{\substack{i=1\\i\not=l}}^{m}c_iV_B^i+\overline{c_k}\frac{V_B^l}{y_{lk}}<_L\sum_{i=1}^{m}c_iV_B^i=:v_B\qedhere
+	\end{multline*}
+\end{proof}
 \subsection{Regla de Bland}
+Presentamos a continuación otra regla de prevención de ciclos, debida a Robert G. Bland ($1977$), y que, como es evidente, es conocida como \tbi[regla!de Bland]{regla de Bland}. Esta regla es muy sencilla y constituye un criterio de entrada y salida a la base.
+
+Lo que dice la regla es lo siguiente: de todas las columnas candidatas a entrar en la base escogemos la de menor índice. Análogamente, de todas las columnas candidatas a salir de la base (que empatan con la regla de la razón mínima), escogemos también la de menor índice.  
