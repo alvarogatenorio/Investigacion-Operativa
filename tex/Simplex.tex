@@ -159,6 +159,15 @@ Como se observa, la tabla del Símplex tiene en su última fila el vector de cos
 \end{obs}
 
 A la operación de cambiar de base una tabla se la denmina \tbi{pivotaje} y al elemento $y_{lk}$ se le denomina \tbi{pivote}.
+
+\subsection{Criterios de entrada y salida de la base}
+El algoritmo \ref{fund_alg_simplex} deja al azar qué hacer para elegir la columna que entra en la base cuando hay varias columnas con coste reducido negativo. Hay diversas heurísticas y técnicas para resolver estos empates a la hora de la implementación, no obstante, la que usaremos nosotros es la llamada \tbi[regla!de Dantzig]{regla de Dantzig}, que consiste en coger la columna asociada al coste reducido más pequeño, deshaciendo los empates al azar.
+
+En cualquier caso, como hemos podido demostrar, aplicar esta regla o no da un poco igual, por tanto se dejó al azar con cierta parte de razón. No obstante, a la hora de la implementación si es muy recomendable seguir algún criterio, pues elegir la columna de entrada al tuntún puede llevarnos a hacer más pivotajes de la cuenta.
+
+El algoritmo \ref{fund_alg_simplex} sí que nos da un criterio de salida de la base, ya que nos pide amablemente que apliquemos el teorema \ref{fund_teo_mejoraSimplex}, y este teorema nos dice que escojamos la columna que minimice el cociente $\frac{\overline{x_i}}{y_{ik}}$ con $y_{ik}>0$ siendo $k$ el índice de la columna que va a entrar en la base.
+
+A este criterio se le conoce como \tbi[regla!de la razón mínima]{regla de la razón mínima}. El problema de esta regla es que en ocasiones pueden producirse empates, que, aunque en la mayoría de los casos podrían resolverse al azar, en ciertas circunstancias pueden ocasionar graves problemas. Veremos como subsanar estas contingencias más adelante.
 \section{Punto extremo inicial}
 Aunque el trabajo duro ya está hecho, todavía quedan preguntas por resolver, por ejemplo, cómo obtener el punto extremo inicial (si lo hay, ya que el problema podría ser infactible) y todos los datos necesarios asociados a este de forma eficiente.
 \subsection{Método de las dos fases}
@@ -235,7 +244,15 @@ De esta forma, basta con consultar la tabla asociada a $B$ del problema artifici
 \end{algorithm}
 \subsection{Método de las penalizaciones (Big $M$)}
 \section{Prevención de bucles}
-\subsection{Criterios de entrada y salida de la base}
+El algoritmo \ref{fund_alg_simplex} se basa fundamentalmente en el teorema \ref{fund_teo_mejoraSimplex}, el cual deja la puerta abierta a que se produzcan los temido \tbi[pivotaje!degenerado]{pivotajes degenerados}, es decir, cambios de base que no mejoran el valor de la función objetivo.
+
+El propio teorema \ref{fund_teo_mejoraSimplex} nos da una forma de saber cuándo un pivotaje es degenerado, pues basta fijarnos en la tabla y ver que estamos intentando sacar la columna $l$--ésima de la base, teniendo esta el valor $\overline{x_l}=0$.
+
+Los pivotajes degenerados no cambian el punto extremo, analizan el mismo punto extremo de nuevo pero respecto de otra base distinta. Esto también nos lo dice el teorema \ref{fund_teo_mejoraSimplex}, ya que el nuevo punto extremo a analizar viene dado explícitamente por $\overline{x}+\frac{\overline{x_l}}{y_{lk}} d$, luego si $\overline{x_l}=0$ el punto no cambia.
+
+De esta forma se deduce que si el algoritmo no se encuentra con pivotajes degenerados, necesariamente termina ya que no puede examinar una base anteriormente examinada, ya que el valor del siguiente punto extremo a examinar es estrictamente menor que el anterior.
+
+Por ende, el peligro de los bucles únicamente podría aparecer con los pivotajes degenerados, y de hecho aparece, el ejemplo más famoso se debe a Martin Beale. En esta sección desarrollaremos técnicas para prevenir estos bucles.
 \subsection{Regla lexicográfica}
 En este apartado exponemos un criterio de salida de la base, al que llamamos \tbi[regla!de la razón léxico mínima]{regla de la razón léxico--mínima} o símplemente \tbi[regla!lexicográfica]{regla lexicográfica}. Lo que hace útil a este criterio es que, como veremos al finalizar la sección, es un criterio que evita la aparición de bucles, de forma que garantiza la convergencia del algoritmo a una solución óptima (cuando el problema la posea).
 
@@ -320,3 +337,34 @@ Dicho esto, ya estamos listos para demostrar lo que queremos.
 Presentamos a continuación otra regla de prevención de ciclos, debida a Robert G. Bland ($1977$), y que, como es evidente, es conocida como \tbi[regla!de Bland]{regla de Bland}. Esta regla es muy sencilla y constituye un criterio de entrada y salida a la base.
 
 Lo que dice la regla es lo siguiente: de todas las columnas candidatas a entrar en la base escogemos la de menor índice. Análogamente, de todas las columnas candidatas a salir de la base (que empatan con la regla de la razón mínima), escogemos también la de menor índice.  
+
+Probemos pues que la regla de Bland es una regla de prevención de ciclos.
+\begin{prop}[Buena definición]
+	El algoritmo del Símplex implementado con la regla de Bland siempre termina.
+\end{prop}
+\begin{proof}
+	Supongamos que se produce un ciclo. Es decir, el algoritmo examina las bases $B_0,\dots,B_k$ y tras esto se vuelve a exmaminar la base $B_0$.
+	
+	Dicho esto llamaremos \tbi[variable!volátil]{volátiles} a las columnas que pertenecen a alguna base del ciclo, pero no a todas. Consideremos la columna volátil de mayor índice, a la que llamaremos $a_t$.
+	
+	Por ser $a_t$ volátil, habrá alguna base $B$ para la cual $a_t$ sea seleccionada para entrar en la base. Es claro que se debe cumplir que $\overline{c_t}<0$, ya que si no, no sería candidata a entrar en la base. Además, por la implementación de la regla de Bland, las demás columnas no asociadas a la base deben cumplir que $\overline{a_j}\geq 0$.
+	
+	Asimismo, por la volatilidad de $a_t$, habrá alguna base $B'$ para la cual $a_t$ sea seleccionada para salir de la base, siendo sustituida por la columna $a_s$. En estas circunstancias se debe cumplir que $y'_{ts}>0$, además, $\overline{c_s'}<0$ y $s<t$ (por la regla de Bland).
+	
+	El punto extremo asociado a la base posterior a $B'$ es $x'=\overline{x}+\alpha d$ (ver teorema \ref{fund_teo_mejoraSimplex}), siendo $d=((-y_s|0)+e_s)^t$. Claramente $d$ es una dirección extrema, por tanto, se verifica que $Ad=0$, es decir, $d$ está en el complemento ortogonal del espacio de filas de $A$.
+	
+	Sabiendo que $\overline{c}=c-c_B^tB^{-1}A$ y $\overline{c'}=c-c_{B'}^tB'^{-1}A$ tenemos que 
+	\begin{equation*}
+		c^*:=\overline{c}-\overline{c'}\stackrel{!}{=}(c_{B'}^tB'^{-1}-c_B^tB^{-1})A
+	\end{equation*}
+	luego $c^*$ está en el espacio de filas de $A$, lo que quiere decir que $d$ es ortogonal a $c^*$. En otras palabras $(c^*)^td=0$. No obstante además tenemos que
+	\begin{equation*}
+		(c^*)^td=c^*_sd_s+c^*_td_t+\sum_{\text{no volátiles en }B'}c^*_jd_j+\sum_{\substack{\text{volátiles en }B'\\j\not=t}}c^*_jd_j
+	\end{equation*}
+	El sumatorio asociado a las columnas no volátiles se anula ya que $c_j^*=0$, los costes reducidos siempre se anulan por estar siempre en la base. Por su lado, el sumatorio asociado a las columnas volátiles es no negativo ya que $d_j\geq 0$ (en caso contrario estaríamos quebrantando la regla de Bland) y $c_j^*=\overline{c_j}\geq 0$ (como vimos antes). Además como $d_s=1$, $\overline{c_s}\geq 0$ y $-\overline{c_s'}>0$ tenemos que el primer sumando es positivo. Finalmente, como tanto $d_t$ como $c_t^*$ son negativos se tiene que el segundo sumando es positivo.
+	
+	En definiva $(c^*)^td>0$, lo cual es absurdo, con lo que queda demostrado que los ciclos son imposibles.
+\end{proof}
+\begin{obs}[Desventajas]
+	La regla de Bland es maravillosa por su sencillez, no obstante, en la práctica puede llegar a ser peligrosa, pues suele conducir a realizar más pivotajes de los que serían necesarios usando otros criterios, como el lexicográfico.
+\end{obs}
