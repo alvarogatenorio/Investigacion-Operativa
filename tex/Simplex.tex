@@ -243,6 +243,82 @@ De esta forma, basta con consultar la tabla asociada a $B$ del problema artifici
 	\caption{Algoritmo de las dos fases.}\label{simp_alg_dosFases}
 \end{algorithm}
 \subsection{Método de las penalizaciones (Big $M$)}
+Una alternativa al método de las dos fases es el llamado \tbi[método! de las penalizaciones]{método de las penalizaciones} o de la $M$ grande. Al igual que el método de las dos fases, solo es aplicable a problemas con $b\geq 0$, lo cual, como discutimos anteriormente, no supone ninguna pérdida de generalidad.
+
+El método de las dos fases también asocia al problema que queremos resolver otro problema, al que llamaremos \tbi[problema!penalizado]{problema penalizado}, cuyas restricciones son exactamente las mismas a las del problema artificial. Lo único que los diferencia es la función objetivo, que en este caso es
+\begin{equation*}
+	u:\equiv z+Mw
+\end{equation*}
+donde $z$ es la función objetivo del problema original y $w$ la función objetivo del problema artificial de las dos fases. Por su parte, $M$ es una constante positiva lo suficientemente grande (especificaremos después).
+
+Antes de continuar presentemos un par de observaciones elementales.
+\begin{obs}[Relaciones de factibilidad]
+	Evidentemente, toda solución factible del problema original puede ``extenderse'' (poniendo las variables artificiales a cero) de modo que se convierte en una solución factible del problema penalizado. Este proceso puede realizarse a la inversa en el sentido de que toda solución factible del problema penalizado que tenga a $0$ todas sus variables artificiales puede ``acortarse'' (fusilando las componentes asociadas a las variables artificiales) de manera que pasa a ser una solución factible del problema original.
+\end{obs}
+\begin{obs}[Sutilezas]
+	Evidentemente el problema penalizado es factible, por el mismo motivo que lo es el problema artificial. No obstante, y al contrario de lo que sucedía con el problema artificial, el problema penalizado puede estar no acotado. En efecto, basta que el problema original sea no acotado.
+\end{obs}
+Dicho esto, si aplicamos el algoritmo del Símplex al problema penalizado, este puede acabar de dos maneras
+\begin{enumerate}
+	\item El último punto extremo analizado tiene alguna componente artificial positiva.
+	\item El último punto extremo tiene todas las componentes asociadas a variables artificiales nulas.
+\end{enumerate}
+Demostremos que si se da el primer caso, entonces el problema original es infactible.
+\begin{prop}[Test de infactibilidad]
+	Si el último punto extremo tiene alguna componente positiva, el problema original es infactible.
+\end{prop}
+\begin{proof}
+	Distinguimos dos casos. Según el algoritmo detecte la no acotación o la optimalidad del problema penalizado.
+	\begin{itemize}
+		\item En caso de detectar la optimalidad (digamos para un punto $(x^*|x_a)^t$), es claro que el problema es infactible, ya que de existir una solución factible $\overline{x}$ del problema original (sin pérdida de generalidad un punto extremo) se tendría que $c^t\overline{x}\leq c^tx^*+Mw(x^*|x_a)^t$, siempre y cuando $M$ sea adecuadamente grande (especificaremos luego).
+		\item En caso de detectarse la no acotación tendríamos que hay un cierto $k$ para el cual $\overline{u_k}<0$ y además $y_k\leq 0$ (si hubiera varios escogemos es que tenga coste reducido menor). Si desarrollamos la cuenta tenemos que 
+		\begin{equation*}
+			\overline{u_j}=u_j-\sum_{\text{no artif.}\in B}c_iy_{ij}-M\sum_{\text{artif.}\in B}y_{sj}
+		\end{equation*}
+		En el caso de $\overline{u_k}$ todos los escalares $y_{sk}$ correspondientes al último sumatorio son nulos, esto se debe a que, de haber alguno negativo tendríamos que $\overline{u_k}>0$ suponiendo que $M$ sea convenientemente grande.
+		
+		En el caso de otros $\overline{u_j}$ el último sumatorio no puede ser positivo, ya que, de serlo, al ser $M$ lo suficientemente grande tendríamos que $\overline{u_j}<\overline{u_k}$, contra la minimalidad de $\overline{u_k}$.
+		
+		La ecuación \eqref{simp_eq_general1} particularizada para las componentes asociadas a la base y que además están asociadas a variables artificiales nos dice que
+		\begin{equation*}
+			x_s=\overline{x_s}-\sum_{j\not\in B}y_{sj}x_j
+		\end{equation*}
+		sumando todas estas ecuaciones obtenemos
+		\begin{equation*}
+			\sum_{\text{artif.}\in B}x_s=\sum_{\text{artif.}\in B}\overline{x_s}-\sum_{j\not\in B}\left(\sum_{\text{artif.}\in B}y_{sj}\right)x_j
+		\end{equation*}
+		si el problema original tuviera alguna solución factible, su ampliación sería solución del problema penalizado, por ende, deberá cumplir la ecuación anterior, que en su caso particular es
+		\begin{equation*}
+			\sum_{\text{artif.}\in B}\overline{x_s}=\sum_{j\not\in B}\left(\sum_{\text{artif.}\in B}y_{sj}\right)x_j
+		\end{equation*}
+		por hipótesis el miembro de la izquierda es estrictamente positivo, mientras que el de la derecha es no negativo, lo cual es absurdo.  
+		\qedhere
+	\end{itemize}
+\end{proof}
+Una vez hecho esto, es trivial demostrar (se deja al lector) que si se da el segundo caso se dan los siguientes subcasos
+\begin{itemize}
+	\item Si se detecta optimalidad, la solución ``recortada'' es solución óptima del problema original.
+	\item Análogamente con la no acotación.
+\end{itemize}
+Para casi finalizar, veamos cómo son los costes reducidos asociados a la función objetivo $u$, para lo cual, echaremos una cuenta rápida, pero antes, un poco de notación. En primer lugar extendemos la definición de $c_j$ por $0$ para índices $j\in\{n+1,\dots,n+m\}$. En segundo lugar, definimos $d_j$ como $0$ para $j\in\{1,\dots,n\}$ y como $1$ para $j\in\{n+1,\dots,n+m\}$. De esta forma
+\begin{equation*}
+	u^tx=\sum_{j=1}^{n+m}u_jx_j=\sum_{j=1}^{n+m}c_jx_j+M\sum_{j=1}^{n+m}d_jx_j=\sum_{j=1}^{n+m}(c_j+d_jM)x_j
+\end{equation*}
+con lo que finalmente se concluye
+\begin{multline*}
+	\overline{u_j}=u_j-u_B^ty_j=(c_j+Md_j)-(c_B^t+Md_B^t)y_j=\\=(c_j-c_B^ty_j)+M(d_j-d_B^ty_j)=\overline{c_j}+M\overline{d_j}
+\end{multline*}
+Dicho esto, las tablas del Símplex se representarán de la manera habitual con una pequeña salvedad, dividiremos (por razones de comodidad) tanto la función objetivo como el vector de costes reducidos en dos filas, una para la parte asociada a $z$ y otra para la parte asociada a $Mw$ (nótese que los pivotajes se pueden seguir haciendo exactamente de la misma forma).
+
+Finalizamos este apartado con dos pequeñas observaciones.
+\begin{obs}[Implementación]
+	Nótese que a efectos de implementación no necesitamos saber cúanto vale $M$ (mucho menos si somos laxos a la hora de aplicar la regla de Dantzig), lo único que tenemos que tener en cuenta es que es ``dominante'', en el sentido de que al saber si un coste reducido es positivo o negativo basta mirar el factor que acompaña a $M$, ya que lo demás lo consideraremos despreciable.
+\end{obs}
+\begin{obs}[Valor de $M$]
+	Aunque para la implementación no necesitamos saber el valor de $M$, si que necesitamos saber que todo problema posee un valor finito de $M$ tal que hace ciertas las demostraciones que hemos venido realizando.
+	
+	Demostrar esto es sencillo, basta ir releyendo el apartado, a lo largo del cual vamos imponiendo exigencias a la $M$, a partir de estas exigencias podemos ir sacando cotas inferiores (se deja el trabajo al lector).
+\end{obs}
 \section{Prevención de bucles}
 El algoritmo \ref{fund_alg_simplex} se basa fundamentalmente en el teorema \ref{fund_teo_mejoraSimplex}, el cual deja la puerta abierta a que se produzcan los temido \tbi[pivotaje!degenerado]{pivotajes degenerados}, es decir, cambios de base que no mejoran el valor de la función objetivo.
 
@@ -254,7 +330,7 @@ De esta forma se deduce que si el algoritmo no se encuentra con pivotajes degene
 
 Por ende, el peligro de los bucles únicamente podría aparecer con los pivotajes degenerados, y de hecho aparece, el ejemplo más famoso se debe a Martin Beale. En esta sección desarrollaremos técnicas para prevenir estos bucles.
 \subsection{Regla lexicográfica}
-En este apartado exponemos un criterio de salida de la base, al que llamamos \tbi[regla!de la razón léxico mínima]{regla de la razón léxico--mínima} o símplemente \tbi[regla!lexicográfica]{regla lexicográfica}. Lo que hace útil a este criterio es que, como veremos al finalizar la sección, es un criterio que evita la aparición de bucles, de forma que garantiza la convergencia del algoritmo a una solución óptima (cuando el problema la posea).
+En este apartado exponemos un criterio de salida de la base, al que llamamos \tbi[regla!de la razón léxico mínima]{regla de la razón léxico--mínima} o símplemente \tbi[regla!lexicográfica]{regla lexicográfica}. Lo que hace útil a este criterio (descubierto en $1955$) es que, como veremos al finalizar la sección, es un criterio que evita la aparición de bucles, de forma que garantiza la convergencia del algoritmo a una solución óptima (cuando el problema la posea).
 
 Antes de comenzar introduzcamos las siguientes definiciones.
 \begin{defi}[Lexicográficamente positivo]
@@ -282,6 +358,8 @@ Denotaremos por $V_B^i$ a la fila $i$--ésima de la matriz $V_B$.
 		B^{-1}(A|b)=B^{-1}(N|I_m|b)=(B^{-1}N|B^{-1}|\overline{x_B})
 	\end{equation*}
 	con lo que tenemos $B^{-1}$ en las columnas correspondientes a la base inicial, con lo que automáticamente tenemos $V_B$.
+	
+	Este es un buen motivo para, cuando nos encontremos en la segunda fase del método de las dos fases, no tachar las columnas sobrantes, sino tenerlas ahí (marcadas para no pivotar por ellas) con objeto de tener $B^{-1}$ siempre a mano por si se producen ciclos.
 \end{obs}
 Dicho esto, la \tb{regla lexicográfica} dicta que saldrá de la base la columna $l$--ésima si y solo si se verifica
 \begin{equation}
