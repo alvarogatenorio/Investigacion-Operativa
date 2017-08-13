@@ -87,8 +87,8 @@ Sea un problema de programación lineal en forma estándar del que suponemos con
 Consideremos el sistema de ecuaciones lineales asociado a dicho problema y multipliquémoslo a ambos lados por $B^{-1}$.
 \begin{multline}
 	\label{simp_eq_tabla}
-	Ax=b\sii (B|N)(x_B|x_N)^t=b\sii B^{-1}(B|N)(x_B|x_N)^t=B^{-1}b\sii\\
-	\sii (B^{-1}B|B^{-1}N)(x_B|x_N)^t=\overline{x_B}\sii (I_m|y_{m+1}\cdots y_n)(x_B|x_N)^t=\overline{x_B}
+	Ax=b\sii (B|N)(x_B^t|x_N^t)^t=b\sii B^{-1}(B|N)(x_B^t|x_N^t)^t=B^{-1}b\sii\\
+	\sii (B^{-1}B|B^{-1}N)(x_B^t|x_N^t)^t=\overline{x_B}\sii (I_m|y_{m+1}\cdots y_n)(x_B^t|x_N^t)^t=\overline{x_B}
 \end{multline}
 La igualdad final de la ecuación \eqref{simp_eq_tabla} puede representarse como una tabla de la siguiente manera
 \begin{table}[H]
@@ -178,8 +178,8 @@ Lo que exponemos a continuación es conocido como \tbi[método!de las dos fases]
 A un problema en las hipótesis anteriormente expuestas que tenga a $A$ por matriz de coeficientes de las restricciones, se le asocia otro problema al que llamaremos \tbi[problema!artificial]{problema artificial}. Dicho problema es el siguiente
 \begin{equation*}
 	\begin{array}{c}
-		\min w(x|x_a)^t:=\sum_{i=1}^{m}x_i^a\\
-		\text{Sujeto a:}\qquad (A|I_m)(x|x_a)^t=b,\qquad x\geq 0,\ x_a\geq 0
+		\min w(x^t|x_a^t)^t:=\sum_{i=1}^{m}x_i^a\\
+		\text{Sujeto a:}\qquad (A|I_m)(x^t|x_a^t)^t=b,\qquad x\geq 0,\ x_a\geq 0
 	\end{array}
 \end{equation*}
 es decir, el problema resultante de cosiderar las restricciones
@@ -190,17 +190,17 @@ para $i\in\{1,\dots,m\}$, cuya matriz asociada es $(A|I_m)$. A las nuevas variab
 
 Entre las buenas propiedades de este nuevo problema es que tiene una base trivial, la identidad, situada convenientemente en las últimas columnas (lo cual el ordenador agradece).
 
-Pero la cosa no queda aquí, ya que el problema artificial no es un problema no acotado. En efecto, por las restricciones de no negatividad, la función objetivo está acotada inferiormente por $0$. Además, el problema artificial es factible, bastanto considerar el vector $(0|b)^t\in\R^{n+m}$ como solución factible. Esta es la razón por la que exigimos $b\geq 0$.
+Pero la cosa no queda aquí, ya que el problema artificial no es un problema no acotado. En efecto, por las restricciones de no negatividad, la función objetivo está acotada inferiormente por $0$. Además, el problema artificial es factible, bastanto considerar el vector $(0|b^t)^t\in\R^{n+m}$ como solución factible. Esta es la razón por la que exigimos $b\geq 0$.
 
 Con esto, por el teorema fundamental de la programación lineal (teorema \ref{fund_teo_fund}), sabemos que el problema artificial tiene solución óptima. Por si esto fuera poco, obtenemos casi gratis un test de factibilidad para el problema original.
 \begin{lem}[Test de factibilidad]
 	\label{simp_lem_testFacti}
-	El problema original es factible si y solo si el problema artificial posee una solución óptima $(\overline{x}|\overline{x_a})^t$ con $\overline{x_a}=0$.
+	El problema original es factible si y solo si el problema artificial posee una solución óptima $(\overline{x}^t|\overline{x_a}^t)^t$ con $\overline{x_a}=0$.
 \end{lem}
 \begin{proof}
 	Demostraremos la implicación a la derecha, para descubrir después que si miramos la demostración con amor, y del revés, la otra implicación también está demostrada.
 	
-	Si el problema original es factible, entonces habrá un $x\geq 0$ tal que $Ax=b$. En tal caso es claro que el vector $(x|0)^t$ es solución factible del problema artificial (¡compruébese!). Como resulta que $w(x|0)^t=0$, por la acotación inferior de $w$ tenemos que $(x|0)^t$ es solución óptima del problema artificial con $\overline{x_a}=0$.
+	Si el problema original es factible, entonces habrá un $x\geq 0$ tal que $Ax=b$. En tal caso es claro que el vector $(x^t|0)^t$ es solución factible del problema artificial (¡compruébese!). Como resulta que $w(x^t|0)^t=0$, por la acotación inferior de $w$ tenemos que $(x^t|0)^t$ es solución óptima del problema artificial con $\overline{x_a}=0$.
 \end{proof}
 \begin{obs}[Sutileza]
 	Si el problema artificial posee una solución óptima $x^*$ con $\overline{x_a}=0$, todas sus soluciones óptimas $x'$ tendrán $\overline{x_a}=0$, ya que, en caso contrario $w(x^*)<w(x')$, lo cual es absurdo. 
@@ -245,7 +245,7 @@ De esta forma, basta con consultar la tabla asociada a $B$ del problema artifici
 \subsection{Método de las penalizaciones (Big $M$)}
 Una alternativa al método de las dos fases es el llamado \tbi[método! de las penalizaciones]{método de las penalizaciones} o de la $M$ grande. Al igual que el método de las dos fases, solo es aplicable a problemas con $b\geq 0$, lo cual, como discutimos anteriormente, no supone ninguna pérdida de generalidad.
 
-El método de las dos fases también asocia al problema que queremos resolver otro problema, al que llamaremos \tbi[problema!penalizado]{problema penalizado}, cuyas restricciones son exactamente las mismas a las del problema artificial. Lo único que los diferencia es la función objetivo, que en este caso es
+El método de las dos fases también asocia al problema que queremos resolver otro problema, al que llamaremos \tbi[problema!penalizado]{problema penalizado}, cuyas restricciones son exactamente las mismas que las del problema artificial. Lo único que los diferencia es la función objetivo, que en este caso es
 \begin{equation*}
 	u:\equiv z+Mw
 \end{equation*}
@@ -253,10 +253,10 @@ donde $z$ es la función objetivo del problema original y $w$ la función objeti
 
 Antes de continuar presentemos un par de observaciones elementales.
 \begin{obs}[Relaciones de factibilidad]
-	Evidentemente, toda solución factible del problema original puede ``extenderse'' (poniendo las variables artificiales a cero) de modo que se convierte en una solución factible del problema penalizado. Este proceso puede realizarse a la inversa en el sentido de que toda solución factible del problema penalizado que tenga a $0$ todas sus variables artificiales puede ``acortarse'' (fusilando las componentes asociadas a las variables artificiales) de manera que pasa a ser una solución factible del problema original.
+	Evidentemente, toda solución factible del problema original puede ``extenderse'' (poniendo las variables artificiales a cero) de modo que se convierte en una solución factible del problema penalizado. Este proceso puede realizarse a la inversa, en el sentido de que toda solución factible del problema penalizado que tenga a $0$ todas sus variables artificiales puede ``acortarse'' (fusilando las componentes asociadas a las variables artificiales) de manera que pasa a ser una solución factible del problema original.
 \end{obs}
 \begin{obs}[Sutilezas]
-	Evidentemente el problema penalizado es factible, por el mismo motivo que lo es el problema artificial. No obstante, y al contrario de lo que sucedía con el problema artificial, el problema penalizado puede estar no acotado. En efecto, basta que el problema original sea no acotado.
+	Evidentemente, el problema penalizado es factible, esto ocurre por el mismo motivo que lo es el problema artificial. No obstante, y al contrario de lo que sucedía con el problema artificial, el problema penalizado puede estar no acotado. En efecto, basta que el problema original sea no acotado.
 \end{obs}
 Dicho esto, si aplicamos el algoritmo del Símplex al problema penalizado, este puede acabar de dos maneras
 \begin{enumerate}
@@ -270,7 +270,7 @@ Demostremos que si se da el primer caso, entonces el problema original es infact
 \begin{proof}
 	Distinguimos dos casos. Según el algoritmo detecte la no acotación o la optimalidad del problema penalizado.
 	\begin{itemize}
-		\item En caso de detectar la optimalidad (digamos para un punto $(x^*|x_a)^t$), es claro que el problema es infactible, ya que de existir una solución factible $\overline{x}$ del problema original (sin pérdida de generalidad un punto extremo) se tendría que $c^t\overline{x}\leq c^tx^*+Mw(x^*|x_a)^t$, siempre y cuando $M$ sea adecuadamente grande (especificaremos luego).
+		\item En caso de detectar la optimalidad (digamos para un punto $((x^*)^t|x_a^t)^t$), es claro que el problema es infactible, ya que de existir una solución factible $\overline{x}$ del problema original (sin pérdida de generalidad un punto extremo) se tendría que $c^t\overline{x}\leq c^tx^*+Mw((x^*)^t|x_a)^t$, siempre y cuando $M$ sea adecuadamente grande (especificaremos luego).
 		\item En caso de detectarse la no acotación tendríamos que hay un cierto $k$ para el cual $\overline{u_k}<0$ y además $y_k\leq 0$ (si hubiera varios escogemos es que tenga coste reducido menor). Si desarrollamos la cuenta tenemos que 
 		\begin{equation*}
 			\overline{u_j}=u_j-\sum_{\text{no artif.}\in B}c_iy_{ij}-M\sum_{\text{artif.}\in B}y_{sj}
@@ -312,7 +312,7 @@ Dicho esto, las tablas del Símplex se representarán de la manera habitual con 
 
 Finalizamos este apartado con dos pequeñas observaciones.
 \begin{obs}[Implementación]
-	Nótese que a efectos de implementación no necesitamos saber cúanto vale $M$ (mucho menos si somos laxos a la hora de aplicar la regla de Dantzig), lo único que tenemos que tener en cuenta es que es ``dominante'', en el sentido de que al saber si un coste reducido es positivo o negativo basta mirar el factor que acompaña a $M$, ya que lo demás lo consideraremos despreciable.
+	Nótese que a efectos de implementación no necesitamos saber cuánto vale $M$ (mucho menos si somos laxos a la hora de aplicar la regla de Dantzig), lo único que tenemos que tener en cuenta es que es ``dominante'', en el sentido de que al saber si un coste reducido es positivo o negativo basta mirar el factor que acompaña a $M$, ya que lo demás lo consideraremos despreciable.
 \end{obs}
 \begin{obs}[Valor de $M$]
 	Aunque para la implementación no necesitamos saber el valor de $M$, si que necesitamos saber que todo problema posee un valor finito de $M$ tal que hace ciertas las demostraciones que hemos venido realizando.

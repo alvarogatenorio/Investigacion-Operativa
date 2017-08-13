@@ -1,3 +1,57 @@
 %Para este capítulo se usará la abreviatura "dual".
 \chapter{Dualidad}
 \label{dual}
+\section{Formulación del problema dual}
+Sea un problema $P$ de programación lineal en forma canónica de maximización. Sintéticamente
+\begin{equation*}
+	\begin{array}{c}
+		\max c^tx\\
+		\text{Sujeto a:}\qquad Ax\leq b,\qquad x\geq 0
+	\end{array}
+\end{equation*}
+se define el \tbi[problema!dual]{problema dual} $D$ asociado a $P$ como
+\begin{equation*}
+	\begin{array}{c}
+		\min b^tu\\
+		\text{Sujeto a:}\qquad A^tu\geq b,\qquad u\geq 0
+	\end{array}
+\end{equation*}
+usualmente nos referiremos al problema $P$ como el \tbi[problema!primal]{problema primal}.
+\begin{obs}[Involutividad]
+	La primera cosa que salta a la vista es que la dualidad es involutiva, es decir, el problema dual asociado al problema dual es el problema primal (¡compruébese!).
+\end{obs}
+Aunque esta definición de problema dual parezca estricta, por solo poder aplicarse a los problemas en forma canónica de maximización, en realidad no lo es tanto, ya que podemos pasar de una forma canónica a otra. Veamos, por ejemplo, cuál es el problema dual asociado a un problema en forma canónica de minimización.
+\begin{exa}[Minimización]
+	Teniendo en cuenta que $\min f = -\max -f$ (se deja al lector la comprobación) tenemos que, dado el problema en forma canónica de minimización
+	\begin{equation*}
+		\begin{array}{c}
+			\min c^tx\\
+			\text{Sujeto a:}\qquad Ax\geq b,\qquad x\geq 0
+		\end{array}
+	\end{equation*}
+	su transformación a forma canónica de maximización es
+	\begin{equation*}
+		\begin{array}{c}
+			-\max -c^tx\\
+			\text{Sujeto a:}\qquad -Ax\leq -b,\qquad x\geq 0
+		\end{array}
+	\end{equation*}
+	donde lo único que se ha hecho es multiplicar por $-1$ todas las restricciones así como la función objetivo. En esta situación el problema dual ya está bien definido, y es
+	\begin{equation*}
+		\begin{array}{c}
+			-\min -b^tu\\
+			\text{Sujeto a:}\qquad -A^tu\geq -c,\qquad u\geq 0
+		\end{array}
+	\end{equation*}
+	planteando esto de nuevo en forma canónica de maximización obtenemos
+	\begin{equation*}
+		\begin{array}{c}
+			\max b^tu\\
+			\text{Sujeto a:}\qquad A^tu\leq c,\qquad u\geq 0
+		\end{array}
+	\end{equation*}
+	con lo que ya tenemos el problema dual asociado al problema original.
+\end{exa}
+Nótese que no está muy claro cómo definir el problema dual asociado a un problema en forma estándar. A esta cuestión nos decicaremos en secciones posteriores, justo después de ver por qué merece la pena plantearse estos problemas.
+\section{Relaciones de dualidad}
+En esta sección veremos cómo se relacionan un problema y su sual en términos de sus soluciones, viendo así parte de la utilidad de estudiar la dualidad.
