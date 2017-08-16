@@ -412,7 +412,7 @@ Dicho esto, ya estamos listos para demostrar lo que queremos.
 	\end{multline*}
 \end{proof}
 \subsection{Regla de Bland}
-Presentamos a continuación otra regla de prevención de ciclos, debida a Robert G. Bland ($1977$), y que, como es evidente, es conocida como \tbi[regla!de Bland]{regla de Bland}. Esta regla es muy sencilla y constituye un criterio de entrada y salida a la base.
+Presentamos a continuación otra regla de prevención de ciclos, debida a Robert G. Bland (quien la publicó en $1977$), y que, como es evidente, es conocida como \tbi[regla!de Bland]{regla de Bland}. Esta regla es muy sencilla y constituye un criterio de entrada y salida a la base.
 
 Lo que dice la regla es lo siguiente: de todas las columnas candidatas a entrar en la base escogemos la de menor índice. Análogamente, de todas las columnas candidatas a salir de la base (que empatan con la regla de la razón mínima), escogemos también la de menor índice.  
 
@@ -446,3 +446,5 @@ Probemos pues que la regla de Bland es una regla de prevención de ciclos.
 \begin{obs}[Desventajas]
 	La regla de Bland es maravillosa por su sencillez, no obstante, en la práctica puede llegar a ser peligrosa, pues suele conducir a realizar más pivotajes de los que serían necesarios usando otros criterios, como el lexicográfico.
 \end{obs}
+\section{Problemas de maximización}
+Hasta donde hemos visto, el algoritmo del Símplex requiere que el problema le sea introducido en forma estándar. Es decir, el problema debe ser de minimización. No obstante, con pequeñas modificaciones, podemos adaptarlo para que acepte problemas en ``casi'' forma estándar, es decir, problemas en forma estándar salvo por el detalle de que queremos maximizar, y no minimizar, la función objetivo.

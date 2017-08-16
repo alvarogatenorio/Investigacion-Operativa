@@ -1,7 +1,8 @@
 %Para este capítulo se usará la abreviatura "dual".
 \chapter{Dualidad}
 \label{dual}
-\section{Formulación del problema dual}
+En este capítulo introduciremos los llamados ``problemas duales'', estudiando sus propiedades y relaciones con sus respectivos ``problemas primales''. Sacaremos jugo a estas propiedades cual Jíbaro a la cabeza de un enemigo.
+\section{Formulación canónica del problema dual}
 Sea un problema $P$ de programación lineal en forma canónica de maximización. Sintéticamente
 \begin{equation*}
 	\begin{array}{c}
@@ -13,15 +14,16 @@ se define el \tbi[problema!dual]{problema dual} $D$ asociado a $P$ como
 \begin{equation*}
 	\begin{array}{c}
 		\min b^tu\\
-		\text{Sujeto a:}\qquad A^tu\geq b,\qquad u\geq 0
+		\text{Sujeto a:}\qquad A^tu\geq c,\qquad u\geq 0
 	\end{array}
 \end{equation*}
 usualmente nos referiremos al problema $P$ como el \tbi[problema!primal]{problema primal}.
 \begin{obs}[Involutividad]
-	La primera cosa que salta a la vista es que la dualidad es involutiva, es decir, el problema dual asociado al problema dual es el problema primal (¡compruébese!).
+	La primera cosa que salta a la vista es que la dualidad es involutiva, es decir, el problema dual asociado al problema dual es el problema primal (esto lo veremos en el ejemplo \ref{dual_exa_min}), que es de vital importancia.
 \end{obs}
 Aunque esta definición de problema dual parezca estricta, por solo poder aplicarse a los problemas en forma canónica de maximización, en realidad no lo es tanto, ya que podemos pasar de una forma canónica a otra. Veamos, por ejemplo, cuál es el problema dual asociado a un problema en forma canónica de minimización.
 \begin{exa}[Minimización]
+	\label{dual_exa_min}
 	Teniendo en cuenta que $\min f = -\max -f$ (se deja al lector la comprobación) tenemos que, dado el problema en forma canónica de minimización
 	\begin{equation*}
 		\begin{array}{c}
@@ -52,6 +54,56 @@ Aunque esta definición de problema dual parezca estricta, por solo poder aplica
 	\end{equation*}
 	con lo que ya tenemos el problema dual asociado al problema original.
 \end{exa}
-Nótese que no está muy claro cómo definir el problema dual asociado a un problema en forma estándar. A esta cuestión nos decicaremos en secciones posteriores, justo después de ver por qué merece la pena plantearse estos problemas.
+Nótese que no está muy claro cómo definir el problema dual asociado a un problema en forma estándar (mucho menos en otras formas más exóticas). A esta cuestión nos decicaremos en secciones posteriores, justo después de ver por qué merece la pena plantearse estos problemas.
 \section{Relaciones de dualidad}
-En esta sección veremos cómo se relacionan un problema y su sual en términos de sus soluciones, viendo así parte de la utilidad de estudiar la dualidad.
+En esta sección veremos cómo se relacionan un problema y su dual en términos de sus soluciones, viendo así parte de la utilidad de estudiar la dualidad. Comencemos con el siguiente resultado elemental
+\begin{lem}[Cotas]
+	Toda solución factible del problema dual proporciona una cota superior del valor óptimo de la función objetivo del problema primal, y viceversa.
+\end{lem}
+\begin{proof}
+	Sea $x\in\R^n$ una solución factible del problema primal. Asimismo consideremos $u\in\R^m$ un solución factible del problema dual.
+	
+	Tenemos que $c^tx=\sum_{j=1}^nc_jx_j$. Teniendo en cuenta la definición del problema dual ($A^tu\geq c$) tenemos que $c^tx\leq \sum_{j=1}^n(\sum_{i=1}^{m}a_{ij}u_i)x_j$. Intercambiando los sumatorios obtenemos la expresión $c^tx\leq\sum_{i=1}^{m}(\sum_{j=1}^{n}a_{ij}x_j)u_i$. Teniendo en cuenta la definición del problema primal $(Ax\leq b)$ concluimos que $c^tx\leq \sum_{i=1}^{m}bu_i=b^tu$. Como queríamos demostrar.
+\end{proof}
+\begin{cor}[Dualidad débil]
+	\label{dual_cor_dualidadDebil}
+	Si dos soluciones factibles $x$ y $u$, del problema primal y dual respectivamente, verifican que $c^tx=b^tu$, entonces, tanto $x$ como $u$ son soluciones óptimas de sus respectivos problemas.
+\end{cor}
+El siguiente resultado es conocido en la literatura con el nombre de ``teorema de dualidad'' o ``teorema de dualidad fuerte''. Es, en cierto sentido, el recíproco del corolario \ref{dual_cor_dualidadDebil}. Veámoslo.
+\begin{theo}[Dualidad fuerte]
+	\label{dual_teo_dualidadFuerte}
+	Si el problema primal tiene solución óptima $x$, entonces el problema dual tiene solución óptima $u$, y se verifica que $c^tx=b^tu$.
+\end{theo}
+\begin{proof}
+	Podemos suponer si pérdida de generalidad que la solución óptima $x$ se ha obtenido mediante el algoritmo del Símplex. En tal, caso llamaremos $B$ a su base asociada. Asimismo consideremos el vector fila $\lambda^t:=c_B^tB^{-1}$.
+	
+	Como $x$ es solución óptima de un problema de maximización encontrada mediante el algoritmo del Símplex se deberá verificar que todos los costes reducidos son no positivos, es decir, $\overline{c_j}\leq 0$.
+	
+	Nótese que para que se pueda ejecutar el algoritmo del Símplex sobre el problema primal se deberán añadir $m$ variables de holgura (una por restricción), de modo que la matriz del problema pasaría a ser $(A|I_m)$.
+	
+	Estudiemos con un poco de cariño los costes reducidos.
+	\begin{equation*}
+		\overline{c_j}=c_j-c_B^tB^{-1}a_j=c_j-\lambda^ta_j\leq 0\sii \lambda^ta_j\geq c_j\sii \sum_{i=1}^{m}a_{ij}\lambda_i\geq c_j
+	\end{equation*}
+	La última equivalencia nos dice que el vector $\lambda\in\R^m$ cumple con las restricciones del problema dual. Para asegurarse de que es solución factible de este basta con comprobar la no negatividad, para ello consideramos los costes reducidos asociados a las variables de holgura ($\overline{c_j}$ con $j\in\{n+1,\dots,n+m\}$), que se caracterizan por el hecho de que $c_{n+i}=0$ y $a_{n+i}=e_i$ con $i\in\{1,\dots,m\}$.
+	\begin{equation*}
+		\overline{c_{n+i}}=-\lambda^te_i=-\lambda_i\leq 0\sii\lambda_i\geq 0 
+	\end{equation*}
+	con lo que se concluye que $\lambda$ es solución factible dual. Además
+	\begin{equation*}
+		c^tx=\sum_{i=1}^{n}c_ix_i=c_B^t\overline{x_B}=c_B^tB^{-1}b=\lambda^tb=b^t\lambda
+	\end{equation*}
+	por el coralario \ref{dual_cor_dualidadDebil} tenemos que $\lambda$ es solución óptima del problema dual.
+\end{proof}
+\begin{obs}[Construcción]
+	Nótese que a partir de la solución óptima del primal obtenida por el algoritmo del Símplex obtenemos automáticamente la solución óptima del dual, en concreto, si la solución óptima del primal está asociada a la base $B$, la solución óptima del dual es $(c_B^tB^{-1})^t=-(\overline{c_{n+1}},\dots,\overline{c_{n+m}})$. Luego podemos decir que la solución del problema dual está literalmente en la tabla del Símplex del primal.
+\end{obs}
+Nótese que el teorema \ref{dual_teo_dualidadFuerte} está demostrado únicamente si el problema primal está en forma canónica de maximización. También se cumple si el problema primal están en forma canónica de minimización. La demostración es exactamente la misma, y constituye un gran ejericio para el lector.
+
+Otro resultado bastante fuerte que relaciona las soluciones de los problemas primal y dual es el llamado ``teorema de la holgura complementaria'', que da condiciones necesarias y suficientes para que dos soluciones (una del primal y otra del dual) sean óptimas simultáneamente.
+\begin{theo}[Teorema de la holgura complementaria]
+	Sean $x$ e $u$ soluciones factibles de primal y dual respectivamente.
+\end{theo}
+\begin{proof}
+	contenidos...
+\end{proof}
