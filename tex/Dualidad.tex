@@ -56,12 +56,16 @@ Aunque esta definición de problema dual parezca estricta, por solo poder aplica
 \end{exa}
 Nótese que no está muy claro cómo definir el problema dual asociado a un problema en forma estándar (mucho menos en otras formas más exóticas). A esta cuestión nos decicaremos en secciones posteriores, justo después de ver por qué merece la pena plantearse estos problemas.
 \section{Relaciones de dualidad}
-En esta sección veremos cómo se relacionan un problema y su dual en términos de sus soluciones, viendo así parte de la utilidad de estudiar la dualidad. Comencemos con el siguiente resultado elemental
+En esta sección veremos cómo se relacionan un problema y su dual en términos de sus soluciones, viendo así parte de la utilidad de estudiar la dualidad. Comencemos con el siguiente resultado elemental.
 \begin{lem}[Cotas]
-	Toda solución factible del problema dual proporciona una cota superior del valor óptimo de la función objetivo del problema primal, y viceversa.
+	\label{dual_lem_cotas}
+	Toda solución factible del problema dual proporciona una cota superior del valor óptimo de la función objetivo del problema primal, y viceversa. Es decir
+	\begin{equation*}
+		c^tx\leq b^tu
+	\end{equation*}
 \end{lem}
 \begin{proof}
-	Sea $x\in\R^n$ una solución factible del problema primal. Asimismo consideremos $u\in\R^m$ un solución factible del problema dual.
+	Sea $x\in\R^n$ una solución factible del problema primal. Asimismo consideremos $u\in\R^m$ una solución factible del problema dual.
 	
 	Tenemos que $c^tx=\sum_{j=1}^nc_jx_j$. Teniendo en cuenta la definición del problema dual ($A^tu\geq c$) tenemos que $c^tx\leq \sum_{j=1}^n(\sum_{i=1}^{m}a_{ij}u_i)x_j$. Intercambiando los sumatorios obtenemos la expresión $c^tx\leq\sum_{i=1}^{m}(\sum_{j=1}^{n}a_{ij}x_j)u_i$. Teniendo en cuenta la definición del problema primal $(Ax\leq b)$ concluimos que $c^tx\leq \sum_{i=1}^{m}bu_i=b^tu$. Como queríamos demostrar.
 \end{proof}
@@ -69,7 +73,7 @@ En esta sección veremos cómo se relacionan un problema y su dual en términos 
 	\label{dual_cor_dualidadDebil}
 	Si dos soluciones factibles $x$ y $u$, del problema primal y dual respectivamente, verifican que $c^tx=b^tu$, entonces, tanto $x$ como $u$ son soluciones óptimas de sus respectivos problemas.
 \end{cor}
-El siguiente resultado es conocido en la literatura con el nombre de ``teorema de dualidad'' o ``teorema de dualidad fuerte''. Es, en cierto sentido, el recíproco del corolario \ref{dual_cor_dualidadDebil}. Veámoslo.
+El siguiente resultado es conocido en la literatura con el nombre de ``teorema de dualidad'' o ``teorema de dualidad fuerte''. Es el recíproco del corolario \ref{dual_cor_dualidadDebil}. Veámoslo.
 \begin{theo}[Dualidad fuerte]
 	\label{dual_teo_dualidadFuerte}
 	Si el problema primal tiene solución óptima $x$, entonces el problema dual tiene solución óptima $u$, y se verifica que $c^tx=b^tu$.
@@ -98,12 +102,132 @@ El siguiente resultado es conocido en la literatura con el nombre de ``teorema d
 \begin{obs}[Construcción]
 	Nótese que a partir de la solución óptima del primal obtenida por el algoritmo del Símplex obtenemos automáticamente la solución óptima del dual, en concreto, si la solución óptima del primal está asociada a la base $B$, la solución óptima del dual es $(c_B^tB^{-1})^t=-(\overline{c_{n+1}},\dots,\overline{c_{n+m}})$. Luego podemos decir que la solución del problema dual está literalmente en la tabla del Símplex del primal.
 \end{obs}
-Nótese que el teorema \ref{dual_teo_dualidadFuerte} está demostrado únicamente si el problema primal está en forma canónica de maximización. También se cumple si el problema primal están en forma canónica de minimización. La demostración es exactamente la misma, y constituye un gran ejericio para el lector.
+Antes de continuar es necesario hacer un pequeño inciso.
+\begin{obs}[Teorema dual]
+	\label{dual_obs_dual}
+	Existe un ``teorema dual'' al teorema de dualidad fuerte \ref{dual_teo_dualidadFuerte}, cuyo enunciado es el mismo, pero permutando las palabras ``primal'' y ``dual''. La demostración es totalmente análoga y se deja al lector.
+	
+	Esto viene a significar que si alguno de los dos problemas tiene solución óptima, el otro también la tendrá.
+\end{obs}
 
 Otro resultado bastante fuerte que relaciona las soluciones de los problemas primal y dual es el llamado ``teorema de la holgura complementaria'', que da condiciones necesarias y suficientes para que dos soluciones (una del primal y otra del dual) sean óptimas simultáneamente.
 \begin{theo}[Teorema de la holgura complementaria]
-	Sean $x$ e $u$ soluciones factibles de primal y dual respectivamente.
+	\label{dual_teo_holgura}
+	Sean $x$ e $u$ soluciones factibles de primal y dual respectivamente. Se verifica que $x$ e $u$ son soluciones óptimas de sus respectivos problemas si y solo si se cumplen
+	\begin{enumerate}
+		\item Para cada restricción del problema primal (suponemos la $i$--ésima con $i\in\{1,\dots,m\}$) se verifica que $\sum_{j=1}^{n}a_{ij}x_j=b_i$ o bien $u_i=0$.
+		\item Para cada restricción del problema dual (suponemos la $j$--ésima con $j\in\{1,\dots,n\}$) se verifica que $\sum_{i=1}^{m}a_{ij}u_i=c_j$ o bien $x_j=0$.
+	\end{enumerate}
 \end{theo}
 \begin{proof}
-	contenidos...
+	Como por el lema \ref{dual_lem_cotas} sabemos que $c^tx\leq b^tu$, lo cual implica que tanto el problema primal como el problema dual tienen solución óptima (por no ser ni infactibles ni no acotados, véase teorema \ref{fund_teo_fund}).
+	
+	Dicho esto, el teorema \ref{dual_teo_dualidadFuerte} combinado con el corolario \ref{dual_cor_dualidadDebil} nos asegura que ser soluciones óptimas simultáneas es equivalente a que se verifique la igualdad $c^tx=b^tu$. Busquemos condiciones necesarias y suficientes para que esto se cumpla.
+	
+	Podemos resumir el contenido fundamental del lema \ref{dual_lem_cotas} en la siguiente cadena de desigualdades.
+	\begin{equation*}
+		c^tx=\sum_{j=1}^{n}c_jx_j\leq \sum_{j=1}^{n}\left(\sum_{i=1}^{m}a_{ij}u_i\right)x_j=\sum_{i=1}^{m}\left(\sum_{j=1}^{n}a_{ij}x_j\right)u_i\leq \sum_{i=1}^{m}b_iu_i=b^tu
+	\end{equation*}
+	Una condición suficiente para que se de la igualdad en la primera desigualdad de la cadena es que $c_jx_j=(\sum_{i=1}^{m}a_{ij}u_i)x_j$ para $j\in\{1,\dots,n\}$, lo cual se da si y solo si $c_j=\sum_{i=1}^{m}a_{ij}u_i$ o bien $x_j=0$. Encontramos una condición suciente análoga para la segunda desigualdad de la cadena.
+	
+	La condición que hemos impuesto también es necesaria, ya que $c_j\leq\sum_{i=1}^{m}a_{ij}u_i$ y $x_j\geq 0$ para todo $j\in\{1,\dots,n\}$, de este modo es fácil ver que si se diera la desigualdad estricta para un $j$ en el cual $x_j>0$ se produciría una desigualdad estricta también en el sumatorio. Análogamente se hace con la otra desigualdad.
 \end{proof}
+Aunque este último teorema pueda parece más inútil que un cubo de tela, no es así, pues, como vemos a continuación, sirve para comprobar si una solución (no necesariamente punto extremo) es óptima o no sin necesidad de aplicar el algoritmo del Símplex. Veamos este resultado en forma de una observación y un ejemplo.
+\begin{obs}[Test de optimalidad]
+	Una solución factible $x$ del problema primal es óptima si y solo si existe un $u\in\R^m$ que verifica las siguientes condiciones
+	\begin{enumerate}
+		\item Si $\sum_{j=1}^{n}a_{ij}x_j<b_i$ entonces $u_i=0$ y si $x_j>0$ entonces $\sum_{i=1}^{m}a_{ij}u_i=c_j$.
+		\item Se verifica que $\sum_{i=1}^{m}a_{ij}u_i\geq c_j$ y $u_i\geq 0$ para todo $j\in\{1,\dots,m\}$.
+	\end{enumerate}
+	La corrección de este ``test'' se deduce trivialmente de los teoremas \ref{dual_teo_dualidadFuerte} y \ref{dual_teo_holgura} junto con el corolario \ref{dual_cor_dualidadDebil}. Se recomienda encarecidamente al lector poner a prueba esta observación en la práctica.
+\end{obs}
+Para finalizar la sección presentemos una tabla resumen que recopila casi todo lo aprendido.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{c|c|c|c|}
+		\multicolumn{1}{l|}{} & Infactible & Sol. óptima & Sol. no acotada \\ \hline
+		Infactible & \textbf{Posible} & \cellcolor[HTML]{C0C0C0}{\color[HTML]{FFCCC9} \textbf{}} & \textbf{Posible} \\ \hline
+		Sol. óptima & \cellcolor[HTML]{C0C0C0}\textbf{} & \textbf{Posible} & \cellcolor[HTML]{C0C0C0}\textbf{} \\ \hline
+		Sol. no acotada & \textbf{Posible} & \cellcolor[HTML]{C0C0C0}\textbf{} & \cellcolor[HTML]{C0C0C0}\textbf{} \\ \hline
+	\end{tabular}
+	\caption{Relaciones de dualidad.}
+\end{table}
+Como se puede observar, la tabla es totalmente simétrica, motivo por el cual no se ha especificado a en ningún letrero se nos referimos al problema dual o al problema primal.
+
+La demostración de que la tabla es verídica es muy sencilla, siendo la demostración de la veracidad de la fila central el contenido de la observación \ref{dual_obs_dual}. Por su parte, la demostración correspondiente a la última fila se basa en el lema \ref{dual_lem_cotas}. Es muy sencilla y se deja al lector. En cuanto a la primera fila, se pueden encontrar ejemplos de los dos casos posibles, mientras que el caso otro caso es imposible por la observación \ref{dual_obs_dual}.
+\section{Otras formulaciones}
+Vamos a extender la noción ``problema dual asociado'' a problemas que no nevesariamente están presentados en forma canónica.
+\subsection{Formulación estándar}
+Dado un problema de programación lineal en forma estándar
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad Ax= b,\qquad x\geq 0
+\end{array}
+\end{equation*}
+vamos a ponerlo en forma canónica de minimización usando el siguiente truco. Consideramos el problema equivalente
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad Ax\leq b\quad \&\quad Ax\geq b,\qquad x\geq 0
+\end{array}
+\end{equation*}
+que a su vez transformamos en
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad -Ax\geq -b\quad \&\quad Ax\geq b,\qquad x\geq 0
+\end{array}
+\end{equation*}
+que ya está en forma canónica, por simplificar un poco las cosas explicitamos que la matriz de este problema es $(A^t|-A^t)^t$ y su vector de términos independientes $(b^t|-b^t)^t$. De esta forma ya podemos calcular el problema dual con la definición usual. Este es
+\begin{equation*}
+\begin{array}{c}
+\max b^tx\\
+\text{Sujeto a:}\qquad(A^t|-A^t)u\leq c\qquad u\geq 0
+\end{array}
+\end{equation*}
+Si llamamos $u_1$ a las $m$ componentes de $u$ asociadas a la submatriz $A^t$, mientras llamamos $u_2$ a las componentes asociadas a la submatriz restante tenemos que el problema dual tiene por restricción $A^tu_1-A^tu_2\leq c$, que es equivalente a la restricción $A^t(u_1-u_2)\leq c$.
+
+Llamando $w:=u_1-u_2$ tenemos que el problema dual es
+\begin{equation*}
+\begin{array}{c}
+\max b^tx\\
+\text{Sujeto a:}\qquad A^tw\leq c
+\end{array}
+\end{equation*}
+Nótese que como $u_1,u_2\geq 0$, $w$ no tiene ninguna restricción en cuanto al signo.
+
+Como la involutividad se sigue cumpliendo, ya tenemos una forma de ``dualizar'' problemas de maximización con variables no restringidas. Si uno no quiere gastar memoria en esto, basta con reproducir el procedimiento realizado y leerlo de abajo a arriba.
+
+Un buen ejercicio consistiría en repetir el apartado entero cambiando el problema inicial a dualizar por un problema en forma estándar pero de maximización.
+\subsection{Formulación general}
+En este apartado vamos a ver cómo dualizar cualquier problema de programación lineal (independientemente de su formulación), para lo cual seguiremos una estrategia totalmente análoga a la del apartado anterior.
+
+Uno de los problemas más generales que se nos puede plantear es el que tiene restricciones de todo tipo, es decir
+ \begin{equation*}
+ \begin{array}{c}
+ \max c^tx\\
+ \text{Sujeto a:}\qquad A_1x\leq b\quad \&\quad A_2x=b\quad\&\quad A_3x\geq b,\qquad x\geq 0
+ \end{array}
+ \end{equation*}
+ Si lo transformamos en un problema en forma canónica obtenemos (¡compruébese!)
+ \begin{equation*}
+ \begin{array}{c}
+ \max c^tx\\
+ \text{Sujeto a:}\qquad (A_1^t|A_2^t|-A_2^t|-A_3^t)^tx\leq (b_1^t|b_2^t|b_3^t|b_4^t)^t\qquad x\geq 0
+ \end{array}
+ \end{equation*}
+ por tanto su dual será (háganse las cuentas)
+  \begin{equation*}
+  \begin{array}{c}
+  \min b^tx\\
+  \text{Sujeto a:}\qquad (A_1^t|A_2^t|-A_2^t|-A_3^t)(u_1^t|u_2^t|u_3^t|u_4^t)^t\geq c\qquad u\geq 0
+  \end{array}
+  \end{equation*}
+  Por ende la restricción del problema dual es equivalente a $A_1^tu_1+A_2^t(u_2-u_3)+A_3^t(-u_4)\geq c$. Llamando $w_1:=u_2-u_3$ y $w_2:=-u_4$ obtenemos que el problema dual tiene a $A_1^tu_1+A_2^tw_1+A_3^tw_2$ por restricción, donde $w_1$ son variables no restrigidas y $w_2$ son variables no positivas.
+  
+  Podemos realizar el mismo proceso con un problema de minimización, y en general con cualquier problema, ya que las anomalías de tener variables no restringidas o no positivas se trataron en el capítulo \ref{fund}, de modo que podemos transformar cualquier problema en uno del tipo tratado en este apartado o su análogo de minimización.
+\section{Algoritmo dual}
+Resolver problemas de programación lineal en forma canónica de minimización con el algoritmo de Símplex provoca, a simple vista, un desperdicio de memoria que da pena verlo.
+\subsection{Fundamentación teórica}
+\subsection{Método de la restricción artificial}
