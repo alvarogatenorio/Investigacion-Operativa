@@ -100,7 +100,7 @@ El siguiente resultado es conocido en la literatura con el nombre de ``teorema d
 	por el coralario \ref{dual_cor_dualidadDebil} tenemos que $\lambda$ es solución óptima del problema dual.
 \end{proof}
 \begin{obs}[Construcción]
-	Nótese que a partir de la solución óptima del primal obtenida por el algoritmo del Símplex obtenemos automáticamente la solución óptima del dual, en concreto, si la solución óptima del primal está asociada a la base $B$, la solución óptima del dual es $(c_B^tB^{-1})^t=-(\overline{c_{n+1}},\dots,\overline{c_{n+m}})$. Luego podemos decir que la solución del problema dual está literalmente en la tabla del Símplex del primal.
+	Nótese que a partir de la solución óptima del primal obtenida por el algoritmo del Símplex obtenemos automáticamente la solución óptima del dual, en concreto, si la solución óptima del primal está asociada a la base $B$, la solución óptima del dual es $(c_B^tB^{-1})^t=-(\overline{c_{n+1}},\dots,\overline{c_{n+m}})^t$. Luego podemos decir que la solución del problema dual está literalmente en la tabla del Símplex del primal.
 \end{obs}
 Antes de continuar es necesario hacer un pequeño inciso.
 \begin{obs}[Teorema dual]
@@ -151,12 +151,13 @@ Para finalizar la sección presentemos una tabla resumen que recopila casi todo 
 		Sol. no acotada & \textbf{Posible} & \cellcolor[HTML]{C0C0C0}\textbf{} & \cellcolor[HTML]{C0C0C0}\textbf{} \\ \hline
 	\end{tabular}
 	\caption{Relaciones de dualidad.}
+	\label{dual_tab_tabla}
 \end{table}
-Como se puede observar, la tabla es totalmente simétrica, motivo por el cual no se ha especificado a en ningún letrero se nos referimos al problema dual o al problema primal.
+Como se puede observar, la tabla es totalmente simétrica, motivo por el cual no se ha especificado a en ningún letrero si nos referimos al problema dual o al problema primal.
 
 La demostración de que la tabla es verídica es muy sencilla, siendo la demostración de la veracidad de la fila central el contenido de la observación \ref{dual_obs_dual}. Por su parte, la demostración correspondiente a la última fila se basa en el lema \ref{dual_lem_cotas}. Es muy sencilla y se deja al lector. En cuanto a la primera fila, se pueden encontrar ejemplos de los dos casos posibles, mientras que el caso otro caso es imposible por la observación \ref{dual_obs_dual}.
 \section{Otras formulaciones}
-Vamos a extender la noción ``problema dual asociado'' a problemas que no nevesariamente están presentados en forma canónica.
+Vamos a extender la noción ``problema dual asociado'' a problemas que no necesariamente están presentados en forma canónica.
 \subsection{Formulación estándar}
 Dado un problema de programación lineal en forma estándar
 \begin{equation*}
@@ -182,16 +183,16 @@ que a su vez transformamos en
 que ya está en forma canónica, por simplificar un poco las cosas explicitamos que la matriz de este problema es $(A^t|-A^t)^t$ y su vector de términos independientes $(b^t|-b^t)^t$. De esta forma ya podemos calcular el problema dual con la definición usual. Este es
 \begin{equation*}
 \begin{array}{c}
-\max b^tx\\
+\max (b^t|-b^t)^tu\\
 \text{Sujeto a:}\qquad(A^t|-A^t)u\leq c\qquad u\geq 0
 \end{array}
 \end{equation*}
-Si llamamos $u_1$ a las $m$ componentes de $u$ asociadas a la submatriz $A^t$, mientras llamamos $u_2$ a las componentes asociadas a la submatriz restante tenemos que el problema dual tiene por restricción $A^tu_1-A^tu_2\leq c$, que es equivalente a la restricción $A^t(u_1-u_2)\leq c$.
+Si llamamos $u_1$ a las $m$ componentes de $u$ asociadas a la submatriz $A^t$, mientras llamamos $u_2$ a las componentes asociadas a la submatriz restante tenemos que el problema dual tiene por restricción $A^tu_1-A^tu_2\leq c$, que es equivalente a la restricción $A^t(u_1-u_2)\leq c$. Algo similar se hace con la función objetivo.
 
 Llamando $w:=u_1-u_2$ tenemos que el problema dual es
 \begin{equation*}
 \begin{array}{c}
-\max b^tx\\
+\max b^tw\\
 \text{Sujeto a:}\qquad A^tw\leq c
 \end{array}
 \end{equation*}
@@ -220,14 +221,153 @@ Uno de los problemas más generales que se nos puede plantear es el que tiene re
  por tanto su dual será (háganse las cuentas)
   \begin{equation*}
   \begin{array}{c}
-  \min b^tx\\
+  \min (b_1^t|b_2^t|b_3^t|b_4^t)(u_1^t|u_2^t|u_3^t|u_4^t)^t\\
   \text{Sujeto a:}\qquad (A_1^t|A_2^t|-A_2^t|-A_3^t)(u_1^t|u_2^t|u_3^t|u_4^t)^t\geq c\qquad u\geq 0
   \end{array}
   \end{equation*}
-  Por ende la restricción del problema dual es equivalente a $A_1^tu_1+A_2^t(u_2-u_3)+A_3^t(-u_4)\geq c$. Llamando $w_1:=u_2-u_3$ y $w_2:=-u_4$ obtenemos que el problema dual tiene a $A_1^tu_1+A_2^tw_1+A_3^tw_2$ por restricción, donde $w_1$ son variables no restrigidas y $w_2$ son variables no positivas.
+  Por ende la restricción del problema dual es equivalente a $A_1^tu_1+A_2^t(u_2-u_3)+A_3^t(-u_4)\geq c$. Llamando $w_1:=u_2-u_3$ y $w_2:=-u_4$ obtenemos que el problema dual tiene a $A_1^tu_1+A_2^tw_1+A_3^tw_2$ por restricción, donde $w_1$ son variables no restrigidas y $w_2$ son variables no positivas. Algo similar se hace con la función objetivo.
   
   Podemos realizar el mismo proceso con un problema de minimización, y en general con cualquier problema, ya que las anomalías de tener variables no restringidas o no positivas se trataron en el capítulo \ref{fund}, de modo que podemos transformar cualquier problema en uno del tipo tratado en este apartado o su análogo de minimización.
 \section{Algoritmo dual}
-Resolver problemas de programación lineal en forma canónica de minimización con el algoritmo de Símplex provoca, a simple vista, un desperdicio de memoria que da pena verlo.
+Resolver problemas de programación lineal en forma canónica de minimización con vector de términos independientes $b\geq 0$ utilizando el algoritmo de Símplex provoca un desperdicio de memoria que da pena verlo.
+
+Esto es debido a que al realizar la transformación del problema $Ax\geq b$ a forma estándar nos encontramos con que la matriz asociada al problema pasa a ser $(A|-I_m)$, lo cual arroja una base trivial del problema, sin embargo, esta base no nos sirve, ya que no está asociada a ningún punto extremo. En efecto $(-I_m)^{-1}b=-I_mb=-b\leq 0$.
+
+Esto nos obliga a usar algún procedimiento de inicialización como el método de las dos fases o el método de las penalizaciones, lo cual supone añadir $m$ columnas más a la tabla, lo cual da rabia, habiendo estado tan cerca de conseguir una base trivial sin hacer nada.
+
+Es de esta frustración que nace el llamado ``algoritmo dual'', que resuelve estas situaciones más ágilmente, exprimiendo las propiedades de dualidad vistas hasta ahora.
 \subsection{Fundamentación teórica}
+En este apartado desarrollaremos otro algoritmo para resolver problemas de programación lineal en forma estándar que, como se comentó antes, en ciertas situaciones es más eficiente.
+
+Sea el problema de programación lineal en forma estándar
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad Ax= b,\qquad x\geq 0
+\end{array}
+\end{equation*}
+cuyo dual, convenientemente reescrito es
+\begin{equation*}
+\begin{array}{c}
+\max \lambda^tb\\
+\text{Sujeto a:}\qquad \lambda^tA\leq c^t
+\end{array}
+\end{equation*}
+Supongamos que disponemos de una base inicial $B$ de la matriz $A$ de forma que todos los costes reducidos asociados al problema primal son positivos, es decir
+\begin{equation*}
+	\overline{c_j}=c_j-c_B^tB^{-1}a_j\geq 0
+\end{equation*}
+De ser esto así, si consideramos el vector $\lambda^t:=c_B^tB^{-1}$ es sencillo deducir que $\lambda^t$ es una solución factible del problema dual. En efecto
+\begin{multline*}
+	\lambda^tA=c_B^tB^{-1}(B|N)=c_B^tB^{-1}(a_1\cdots a_m|a_{m+1}\cdots a_n)=\\=(c_B^tB^{-1}a_1\cdots c_B^tB^{-1}a_m|c_B^tB^{-1}a_{m+1}\cdots c_B^tB^{-1}a_n)=\\=(c_1-\overline{c_1}\cdots c_m-\overline{c_m}|c_{m+1}-\overline{c_{m+1}}\cdots c_n-\overline{c_n})\leq (c_1\cdots c_n)=c^t
+\end{multline*}
+Nótese que como $\overline{c_j}=0$ cuando $a_j$ es una columna de la base se tiene que $\lambda^ta_j=c_j$ para las columnas asociadas a $B$, mientras que $\lambda^ta_j\leq c_j$ para las columnas no asociadas a $B$.
+
+Dicho esto, consideremos el vector $\overline{x}:=((B^{-1}b)^t|0)^t$, que es solución del problema primal. Nótese que en ningún momento decimos que $\overline{x}$ sea solución \tb{factible}, ya que no sabemos si $\overline{x}\geq 0$. No obstante, sería maravilloso que esto ocurriera, como vemos a continuación.
+\begin{lem}[Test de optimalidad]
+	\label{dual_lem_testOptim}
+	Si $\overline{x}\geq 0$ entonces $\overline{x}$ es solución óptima del problema primal.
+\end{lem}
+\begin{proof}
+	Es evidente ya que en tal caso $c^t\overline{x}=c_B^tB^{-1}b=\lambda^tb$. Es decir, ambas soluciones factibles tienen el mismo valor al ser pasados por sendas funciones objetivo. El corolario \ref{dual_cor_dualidadDebil} nos da el resto del resultado.
+\end{proof}
+No obstante, esto no suele ser lo habitual. Así pues, la estrategia a seguir cuando tengamos que $\overline{x}$ no es solución factible será cambiar de base, es decir, construir a partir de $B$ una nueva base $B'$ sobre la que continuar probando suerte. Nótese que es una filosofía similar a la que sigue el algoritmo del Símplex primal. Supongamos pues que $\overline{x_l}<0$.
+
+En este caso consideraremos el vector $\lambda_\varepsilon^t:=\lambda^t-\varepsilon u_l^t$ donde $u_l^t$ es la $l$--ésima fila de $B^{-1}$. A lo largo del apartado determinaremos un $\varepsilon>0$ adecuado, de forma que $\lambda_\varepsilon'$ sea una solución factible del problema dual y además exista una base $B'$ de $A$ de forma que $\lambda_\varepsilon^t=c_{B'}^tB'^{-1}$, y, por ende, todos los costes reducidos asociados a $B'$ sean no negativos (compruébese), pudiéndose volver a ejecutar todo el proceso de nuevo.
+\begin{obs}[Igualdades útiles]
+	Es sencillo comprobar que $u_l^ta_j=y_{lj}$. Esto se debe a que, por definición $B^{-1}a_j=y_j$. Si expresamos la matriz $B^{-1}$ descompuesta en filas obtenemos la expresión $(u_1\cdots u_m)^ta_j=y_j$, en concreto, $y_{lj}=u_l^ta_j$. Análogamente se demuestra que $u_l^tb=\overline{x_l}$. Usaremos estas igualdades a menudo.
+\end{obs}
+
+Para que $\lambda_\varepsilon^t$ sea solución factible dual se debe cumplir que $\lambda_\varepsilon^tA\leq c^t$, o equivalentemente, que $\lambda_\varepsilon^ta_j\leq c_j$ para todo $j\in\{1,\dots,n\}$. Vayamos caso por caso para ver qué $\varepsilon$ sería bueno escoger.
+\begin{itemize}
+	\item Para $j\in\{1,\dots,m\}\setminus\{l\}$ tenemos que
+	\begin{equation*}
+		\lambda_\varepsilon^ta_j=(\lambda^t-\varepsilon u_l^t)a_j=\lambda^ta_j-\cancel{\varepsilon y_{lj}}=\lambda^ta_j=c_j
+	\end{equation*}
+	luego para este caso el $\varepsilon$ que cojamos da un poco igual.
+	\item Por su parte para $j=l$ tenemos
+	\begin{equation*}
+		\lambda_\varepsilon^ta_l=\lambda^ta_l-\varepsilon \cancel{y_{ll}}=\lambda^ta_l-\varepsilon=c_j-\varepsilon\leq c_j
+	\end{equation*}
+	concluyendo que para este caso también da un poco igual.
+	\item Por último consideramos el caso $j\in\{m+1,\dots,n\}$
+	\begin{equation*}
+		\lambda_\varepsilon^ta_j=\lambda^ta_j-y_{lj}\varepsilon\leq c_j-y_{lj}\varepsilon
+	\end{equation*}
+	este caso ya es más delicado, ya que si $y_{lj}\geq0$ podemos coger el $\varepsilon$ que queramos, no obstante, si este caso no se da, debemos coger $\varepsilon$ con mucho cuidado.
+\end{itemize}
+Al hilo de esto, veamos qué ocurre si todos los $y_{lj}$ son no negativos.
+\begin{lem}[Test de infactibilidad]
+	\label{dual_lem_testFacti}
+	Si $y_{lj}\geq 0$ para todo $j\in\{m+1,\dots,n\}$ entonces el problema primal es infactible.
+\end{lem}
+\begin{proof}
+	Si consideramos el vector $\lambda_\varepsilon^t$ tenemos que es una solución factible del problema dual, ya que \begin{equation*}
+		\lambda_\varepsilon^t A = \lambda_\varepsilon^t (a_1\cdots a_m|a_{m+1}\cdots a_n)=(\lambda_\varepsilon^t a_1\cdots \lambda_\varepsilon^t a_m|\lambda_\varepsilon^t a_{m+1}\cdots\lambda_\varepsilon^t a_n)
+	\end{equation*}
+	y resulta que $\lambda_\varepsilon^ta_j=\lambda^ta_j-\varepsilon y_{lj}\leq \lambda^ta_j\leq c_j$. Esta desigualdad también se da para los $j\in\{1,\dots,m\}$ ya que $y_{lj}\in\{0,1\}$ para esos índices.
+	
+	Además, se tiene que $\lambda_\varepsilon^tb=\lambda^tb-\varepsilon u_l^tb=\lambda^tb-\varepsilon\overline{x_l}$. Como $\overline{x_l}<0$ es claro que $\lim_{\varepsilon\to\infty}\lambda_\varepsilon^tb=\infty$, siendo así el problema dual no acotado, y, por tanto (ver la tabla \ref{dual_tab_tabla}), el problema primal será infactible.
+\end{proof}
+Llegados a este punto únicamente nos queda suponer que hay algún $a_j$ con $y_{lj}<0$ (con $j\in\{m+1,\dots,n\}$). Veamos qué $\varepsilon$ coger. Como ya vimos $\lambda_\varepsilon^ta_j=\lambda^ta_j-y_{lj}\varepsilon$. Desarrollando a partir de aquí tenemos que
+\begin{equation*}
+	\lambda^ta_j-y_{lj}\varepsilon\leq c_j\sii -\frac{c_j-\lambda^ta_j}{y_{lj}}\geq \varepsilon\sii \varepsilon\leq -\frac{\overline{c_j}}{y_{lj}}
+\end{equation*}
+En previsión de que haya varios $y_{lj}<0$ tomaremos $\varepsilon$ como
+\begin{equation*}
+	\varepsilon:=-\frac{\overline{c_k}}{y_{lk}}:=\min\left\{-\frac{\overline{c_j}}{y_{lj}}\tq y_{lj}<0\right\}
+\end{equation*}
+De esta forma tenemos que $\lambda_\varepsilon^t$ es una solución factible dual, que en particular cumple que $\lambda_\varepsilon^ta_j=c_j$ para $j\in({1,\dots,m}\setminus\{l\})\cup\{k\}$. Esta propiedad es crucial, ya que si consideramos el conjunto de columnas $B':=(B\setminus\{a_l\})\cup\{a_k\}$ (que es una base, se comprueba como en la demostración del teorema \ref{fund_teo_mejoraSimplex}) tenemos
+\begin{equation*}
+	\lambda_\varepsilon^tB'=c_{B'}^t\sii \lambda_\varepsilon^t=c_{B'}^tB'^{-1}
+\end{equation*}
+Luego hemos ganado, y además, de una forma objetivamente bonita.
+
+Falta sin embargo comprobar que con este cambio de base estamos acercándonos más a la solución óptima. Una forma de verlo, usando dualidad, es que estamos mejorando la solución del problema dual, y, en efecto
+\begin{equation*}
+	\lambda_\varepsilon^tb=\lambda^tb-\varepsilon\overline{x_l}> \lambda^tb
+\end{equation*}
+Otro detalle a tener en cuenta es que puede ocurrir que haya varias componenetes negativas de $\overline{x}$. En este caso ¿cuál elegimos para salir de la base? La respuesta es que da un poco igual, no obstante, podemos adoptar un análogo a la vieja y confiable regla de Dantzig, es decir, coger la más pequeña de las componentes negativas.
+\begin{obs}[Bucles]
+	Algo maravilloso del algoritmo dual es que no puede haber bucles, ya que cada vez que cambiamos de base, el valor de la función objetivo dual aumenta estrictamente, por lo que nunca se examina dos veces la misma base.
+\end{obs}
+Dicho lo cual, podemos pasar a resumirlo todo en un bonito algoritmo.
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\REQUIRE Base $B$ de $A$ con $\overline{c}\geq 0$.
+		\ENSURE Solución óptima del problema.
+		\STATE Aplicar el lema \ref{dual_lem_testOptim} para detectar la optimalidad de $\overline{x}$.
+		\IF {$\overline{x}$ es solución óptima}
+		\RETURN $\overline{x}$.
+		\ELSE 
+		\STATE Aplicar el lema \ref{dual_lem_testFacti} para detectar la infactibilidad.
+		\IF{el problema es no factible}
+		\RETURN infactible
+		\ELSE
+		\STATE Cambiar de base según lo explicado anteriormente.
+		\RETURN $B'$, la nueva base.
+		\ENDIF
+		\ENDIF	
+	\end{algorithmic}
+	\caption{Primera aproximacíon al algoritmo del Símplex dual.}\label{dual_alg_dual}
+\end{algorithm}
+Nótese que podemos aplicar el algoritmo del Símplex dual sobre una tabla del Símplex normal y corriente, realizandose los cambios de base de la misma manera, lo cual, de nuevo, es una bendición de los dioses. Queda, no obstante, ver cómo nos las apañamos para obtener la primera base $B$, cosa que veremos en la siguiente sección.
+\begin{obs}[Maximización]
+	Se puede realizar una adaptación similar a la que ya se hizo con el problema primal para que el algoritmo dual sea también capaz de resolver problemas de maximización. Se deja como ejercicio al lector.
+\end{obs}
 \subsection{Método de la restricción artificial}
+En este apartado veremos una técnica para conseguir la base inicial necesaria para ejecuta el algoritmo dual. Supongamos que ya disponemos de una base $B$ de tal forma que hay algún coste reducido negativo.
+\begin{obs}[Suposiciones]
+	Suponer que se tiene una base inicial $B$ no es mucho suponer, pues este suele ser el caso de los problemas en los que merece la pena aplicar el algoritmo dual (forma canónica de minimización).
+\end{obs}
+Supuesto esto, nos panteamos el problema, al que llamaremos \tbi[problema!artificialmente restringido]{problema artificialmente restringido}, o símplemente problema restringido, que se define como
+\begin{equation*}
+\begin{array}{c}
+\min c^tx\\
+\text{Sujeto a:}\qquad Ax\leq b\quad \&\quad \sum_{j=m+1}^{n}x_j\leq M,\qquad x\geq 0
+\end{array}
+\end{equation*}
+donde $M$ es un número lo suficientemente grande. Una vez transformado el problema restringido a forma estándar, la matriz del problema restringido tendrá una fila y una columna más correspondientes a la nueva restricción y a su correspondiente variable de holgura. La columna añadida es linealmente independiente a las demás (compruébese), por lo que deberá ser incluída en la base.
+
+Hecho esto, realizamos el cambio de base consistente en expulsar a la columna correspondiente a la variable de holgura asociada a la restricción artificial y admitir la columna con menor coste reducido.
+

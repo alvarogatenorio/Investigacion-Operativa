@@ -124,6 +124,7 @@ Si se nos plantea el problema de hallar el máximo absoluto de una función obje
 
 La utilidad de este hecho es que podemos transformar un problema de programación lineal en primera forma canónica (que surgen de forma natural a la hora de modelizar problemas reales) en un problema más parecido a la formulación estándar.
 \begin{lem}[Maximización--minimización]
+	\label{fund_lem_maxmin}
 	Sea $A$ un conjunto arbitrario y una función $f:A\to\R$ que alcanza el máximo y el mínimo. Entonces se cumple
 	\begin{equation*}
 		\max f=-\min (-f)
@@ -388,7 +389,7 @@ A partir de ahora trabajaremos con matrices en las condiciones de la observació
 \end{defi}
 \begin{theo}[Caracterización]
 	\label{fund_teo_caracterizacionExtremos}
-	Dada una región factible $\mc{S}$, $\overline{x}$ es un punto extremo de $\mc{S}$ si y solo si hay alguna reordenación de las columnas de $A$ de forma que
+	Dada una región factible $\mc{S}$, $\overline{x}$ es un punto extremo de $\mc{S}$ si y solo si $\overline{x}\geq 0$ y hay alguna reordenación de las columnas de $A$ de forma que
 	\begin{equation*}
 	\begin{array}{ccc}
 	A=(B|N) \qquad&\qquad \overline{x}=\begin{pmatrix}
@@ -439,7 +440,7 @@ A partir de ahora trabajaremos con matrices en las condiciones de la observació
 	\end{itemize}
 \end{proof}
 \begin{cor}[Parte básica]
-	Dado un punto extremo $\overline{x}=(\overline{x_B}|0)^t$ de una región factible $\mc{S}$ se cumple que $\overline{x_B}=B^{-1}b$.
+	Dado un punto extremo $\overline{x}=(\overline{x_B}|0)^t$ de una región factible $\mc{S}$ se cumple que $\overline{x_B}=B^{-1}b\geq 0$.
 \end{cor}
 \begin{proof}
 	Basta con echar las cuentas. Como $\overline{x}\in\mc{S}$ es claro que $A\overline{x}=b$, luego
@@ -460,7 +461,7 @@ Al hilo de este teorema surge la siguiente definición.
 Una de las razones por la cual es estudio de los puntos extremos es importante es porque toda región factible de un problema de programación lineal en forma estándar tiene al menos un punto extremo, y además únicamente tiene una cantidad finita de ellos.
 \begin{obs}[Finitud]
 	\label{fund_obs_finitudExtremos}
-	Una región factible tiene un número finito de puntos extremos, esto es debido a que $A$ tiene más bases que puntos extremos, ya que cada base $B$ está asociada a un único candidato a punto extremo, el punto que tiene a $B^{-1}b$ como parte básica. Además, cada matriz tiene a lo sumo $\binom{n}{m}$ bases.
+	Una región factible tiene un número finito de puntos extremos, esto es debido a que $A$ tiene más bases que puntos extremos (hay una sobreyección que parte del conjunto de las bases y llega al conjunto de puntos extremos). Además, cada matriz tiene a lo sumo $\binom{n}{m}$ bases (salvo reordenaciones).
 \end{obs}
 \begin{theo}[Existencia]
 	\label{fund_teo_existenciaExtremos}
@@ -830,11 +831,11 @@ Presentamos a continuación el que probablemente sea el teorema más importante 
 	
 	Resulta que $a_l$ es combinación lineal de los vectores de $(B\setminus a_l)\cup a_k$ ya que
 	\begin{equation*}
-		x_k=\sum_{i=1}^{m}y_{ik}a_i=\sum_{\substack{i=1\\i\not=l}}^{m}y_{ik}a_i+y_la_l
+		a_k=\sum_{i=1}^{m}y_{ik}a_i=\sum_{\substack{i=1\\i\not=l}}^{m}y_{ik}a_i+y_{lk}a_l
 	\end{equation*}
-	como $y_l>0$ podemos despejar $a_l$. En efecto
+	como $y_{lk}>0$ podemos despejar $a_l$. En efecto
 	\begin{equation*}
-		a_l=\frac{x_k}{y_{lk}}-\sum_{\substack{i=1\\i\not=l}}^{m}\frac{y_{ik}}{y_{lk}}a_i
+		a_l=\frac{a_k}{y_{lk}}-\sum_{\substack{i=1\\i\not=l}}^{m}\frac{y_{ik}}{y_{lk}}a_i
 	\end{equation*}
 	de donde se desprende que el conjunto $(B\setminus a_l)\cup a_k$ sigue siendo un sistema de generadores de $\R^m$ que además tiene $m$ elementos, luego es una base.
 	
