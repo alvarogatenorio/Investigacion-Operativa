@@ -235,7 +235,7 @@ Esto es debido a que al realizar la transformación del problema $Ax\geq b$ a fo
 
 Esto nos obliga a usar algún procedimiento de inicialización como el método de las dos fases o el método de las penalizaciones, lo cual supone añadir $m$ columnas más a la tabla, lo cual da rabia, habiendo estado tan cerca de conseguir una base trivial sin hacer nada.
 
-Es de esta frustración que nace el llamado ``algoritmo dual'', que resuelve estas situaciones más ágilmente, exprimiendo las propiedades de dualidad vistas hasta ahora.
+Es de esta frustración que nace el llamado ``algoritmo dual'' en los años $90$, que resuelve estas situaciones más ágilmente, exprimiendo las propiedades de dualidad vistas hasta ahora.
 \subsection{Fundamentación teórica}
 En este apartado desarrollaremos otro algoritmo para resolver problemas de programación lineal en forma estándar que, como se comentó antes, en ciertas situaciones es más eficiente.
 
@@ -325,11 +325,11 @@ Luego hemos ganado, y además, de una forma objetivamente bonita.
 
 Falta sin embargo comprobar que con este cambio de base estamos acercándonos más a la solución óptima. Una forma de verlo, usando dualidad, es que estamos mejorando la solución del problema dual, y, en efecto
 \begin{equation*}
-	\lambda_\varepsilon^tb=\lambda^tb-\varepsilon\overline{x_l}> \lambda^tb
+	\lambda_\varepsilon^tb=\lambda^tb-\varepsilon\overline{x_l}\geq \lambda^tb
 \end{equation*}
 Otro detalle a tener en cuenta es que puede ocurrir que haya varias componenetes negativas de $\overline{x}$. En este caso ¿cuál elegimos para salir de la base? La respuesta es que da un poco igual, no obstante, podemos adoptar un análogo a la vieja y confiable regla de Dantzig, es decir, coger la más pequeña de las componentes negativas.
 \begin{obs}[Bucles]
-	Algo maravilloso del algoritmo dual es que no puede haber bucles, ya que cada vez que cambiamos de base, el valor de la función objetivo dual aumenta estrictamente, por lo que nunca se examina dos veces la misma base.
+	Lamentablemente, en el algoritmo dual también pueden producirse bucles, en concreto en la situación en la que tomamos $\varepsilon=0$. Para solucionar estas incómodas situaciones se recomienda usar la regla de Bland. Habría que demostrar que esta regla sigue siendo efectiva en este contexto, lo cual se deja al lector ya que la demostración es bastante simétrica.
 \end{obs}
 Dicho lo cual, podemos pasar a resumirlo todo en un bonito algoritmo.
 \begin{algorithm}[H]
@@ -367,7 +367,107 @@ Supuesto esto, nos panteamos el problema, al que llamaremos \tbi[problema!artifi
 \text{Sujeto a:}\qquad Ax\leq b\quad \&\quad \sum_{j=m+1}^{n}x_j\leq M,\qquad x\geq 0
 \end{array}
 \end{equation*}
-donde $M$ es un número lo suficientemente grande. Una vez transformado el problema restringido a forma estándar, la matriz del problema restringido tendrá una fila y una columna más correspondientes a la nueva restricción y a su correspondiente variable de holgura. La columna añadida es linealmente independiente a las demás (compruébese), por lo que deberá ser incluída en la base.
+donde $M$ es un número lo suficientemente grande. Una vez transformado el problema restringido a forma estándar, la matriz del problema restringido tendrá una fila y una columna más correspondientes a la nueva restricción y a su correspondiente variable de holgura.
 
-Hecho esto, realizamos el cambio de base consistente en expulsar a la columna correspondiente a la variable de holgura asociada a la restricción artificial y admitir la columna con menor coste reducido.
+La columna añadida es linealmente independiente a las demás (compruébese), por lo que deberá ser incluída en la base.
 
+Hecho esto, realizamos el cambio de base consistente en expulsar a la columna correspondiente a la variable de holgura asociada a la restricción artificial (a la cual le asignamos el índice $0$) y admitir la columna con menor coste reducido (supondremos que es la columna $a_k$).
+\begin{lem}[Base inicial]
+	La base obtenida tras es el cambio hace que el vector de costes reducidos sea no negativo.
+\end{lem}
+\begin{proof}
+	En efecto, la matriz asociada al problema original es $A=(B|N)$, siendo la matriz asociada al problema restringido
+	\begin{equation*}
+	\overline{A}=\left(\begin{array}{c|c|c}
+	1&0&1\\
+	\hline
+	0&B&N
+	\end{array}\right)
+	\end{equation*}
+	siendo la base $\overline{B}$ del problema restringido la matriz $\overline{A}$ excluyendo la última columna por bloques.
+	
+	Veamos cómo es la tabla del símplex asociada al problema restringido. Para lo cual, deberemos calcular la inversa de $\overline{B}$. Con un sencillo cálculo llegamos a que
+	\begin{equation*}
+	\overline{B}^{-1}=\left(\begin{array}{c|c}
+	1&0\\
+	\hline
+	0&B^{-1}
+	\end{array}\right)
+	\end{equation*}
+	de forma que la tabla del Símplex asociada al problema restringido es
+	\begin{equation*}
+	\overline{B}^{-1}\overline{A}=
+	\left(\begin{array}{c|c|c}
+	1&0&1\\
+	\hline
+	0&I_m&B^{-1}N
+	\end{array}\right)
+	\end{equation*}
+	de aquí concluimos que los escalares $y_{0j}=1$ para $j\in\{m+1,\dots,n\}$, dicho esto, de las fórmulas de cambio de base se deduce que los costes reducidos a la base $\overline{B}$ son $\overline{c_j'}=\overline{c_j}-\overline{c_k}$ (compruébese).
+	
+	Como $\overline{c_k}=\min\{\overline{c_j}\tq \overline{c_j}<0\}$ se tiene que todos los costes reducidos son no negativos.
+\end{proof}
+A partir de aquí podemos aplicar el algoritmo del Símplex dual para resolver el problema restringido. Dicho algoritmo puede acabar de dos formas distintas.
+\begin{enumerate}
+	\item \label{dual_enum_caso1}El problema restringido es infactible.
+	\item \label{dual_enum_caso2}El problema restringido tiene solución óptima.
+	\begin{enumerate}
+		\item \label{dual_enum_caso2a}La columna $a_0$ está en la última base considerada por el algoritmo.
+		\item \label{dual_enum_caso2b}La columna $a_0$ no está en la última base considerada por el algoritmo.
+	\end{enumerate}
+\end{enumerate}
+Veamos cuáles son las consecuencias de cada uno de estos finales para el problema original.
+
+Supongamos que se da el caso \ref{dual_enum_caso1}. En tal caso tenemos el siguiente lema.
+\begin{lem}[Test de factibilidad]
+	\label{dual_lem_facti}
+	El problema original es factible si y solo si el problema restringido lo es.
+\end{lem}
+\begin{proof}
+	Es claro que si el problema restringido es factible, también lo es el original, ya que tiene menos restricciones.
+	
+	Recíprocamente, si el problema original es factible, digamos que $\overline{x}$ es una solución factible del problema original (sin pérdida de generalidad un punto extremo), como escogimos $M$ lo suficientemente grande, es claro que $\overline{x}$ también verifica la restricción adicional.
+\end{proof}
+\begin{obs}[Valor de $M$]
+	La demostración anterior puede parecer tramposa, pero realmente no lo es, ya que, como hicimos con el método de las penalizaciones para el algoritmo del Símplex primal, para cada problema podemos escoger un $M$ finito de forma que todos los teoremas funcionen bien.
+	
+	La existencia de dicho $M$ finito ha de ser demostrada, buscando cotas para el mismo cada vez que aludimos a su ``grandeza'' para demostrar algo.
+	
+	Por poner un ejemplo, en el caso de \ref{dual_lem_facti} necesitamos que
+	\begin{equation*}
+		M>\max\left\{\sum_{j=m+1}^{n}\overline{x_j}\tq \overline{x}\text{ punto extremo}\right\}\qedhere
+	\end{equation*}
+\end{obs}
+Continuando con el estudio de la cauística, si se diera la situación \ref{dual_enum_caso2a} se puede demostrar (no lo haremos) que el problema original tiene solución óptima, y, de hecho, si el algoritmo determina que la solución óptima del problema restringido se alcanza en el punto $(x_0,\dots,x_n)$, la solución óptima del problema original se alcanzará en $(x_1,\dots,x_n)$.
+
+Por último, si se cumpliera \ref{dual_enum_caso2b}, cabe distinguir dos opciones
+\begin{itemize}
+	\item El valor de la función objetivo depende de $M$.
+	\item El valor de la función objetivo no depende de $M$.
+\end{itemize}
+\begin{obs}[Dependencia de la $M$]
+	\label{dual_obs_M}
+	Las alternativas que acabamos de exponer no pueden considerarse en el caso \ref{dual_enum_caso2a}, ya que el caso de que el valor de la función objetivo dependa de $M$ es imposible. En efecto, si consideramos que la última base examinada es $B':=B\cup\{a_0\}$ (donde $B$ es un conjunto de columnas linealmente independientes) tendríamos que $c^tx=c_{B'}^t\overline{x_{B'}}=(0|c_{B})^tB'^{-1}(M|b^t)^t$, si miramos esto con un poco de cariño tenemos que
+	\begin{equation*}
+	\begin{array}{ccc}
+	
+	B':=\left(\begin{array}{c|c}
+	1&0\\
+	\hline
+	0&B
+	\end{array}\right),\quad
+	&
+	B'^{-1}=\left(\begin{array}{c|c}
+	1&0\\
+	\hline
+	0&B^{-1}
+	\end{array}\right),\quad
+	&
+	B'^{-1}(M|b^t)^t=(M|(B^{-1}b)^t)^t
+	\end{array}
+	\end{equation*}
+	de forma que $c^tx$ no depende de $M$ en ningún caso, nótese que se ha usado fuertemente que $c_0=0$, por lo que esta demostración no sirve para los casos en los que $a_0$ no está en la base.
+\end{obs}
+Finalizado el inciso, supongamos que el valor de la función objetivo depende de la $M$. En tal caso, puede demostrarse, aunque no lo haremos aquí, que el problema original es no acotado.
+
+Por último, si la función objetivo no depende de la $M$, puede demostrarse (no lo haremos) que el problema orginal alcanza la solución óptima, y además, en un número infinito de puntos.
