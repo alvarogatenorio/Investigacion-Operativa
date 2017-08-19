@@ -446,7 +446,3 @@ Probemos pues que la regla de Bland es una regla de prevención de ciclos.
 \begin{obs}[Desventajas]
 	La regla de Bland es maravillosa por su sencillez, no obstante, en la práctica puede llegar a ser peligrosa, pues suele conducir a realizar más pivotajes de los que serían necesarios usando otros criterios, como el lexicográfico.
 \end{obs}
-\section{Problemas de maximización}
-Hasta donde hemos visto, el algoritmo del Símplex requiere que el problema le sea introducido en forma estándar. Es decir, el problema debe ser de minimización. No obstante, con pequeñas modificaciones, podemos adaptarlo para que acepte problemas en ``casi'' forma estándar, es decir, problemas en forma estándar salvo por el detalle de que queremos maximizar, y no minimizar, la función objetivo.
-
-Como sabemos por el lema \ref{fund_lem_maxmin}, $\max c^tx=-\min -c^tx$. Esto quiere decir que, dado un problema en forma estándar, su problema de maximización asociado, transformado a forma estándar (entiéndase el trabalenguas) tendrá los coeficientes de la función objetivo cambiados de signo.
