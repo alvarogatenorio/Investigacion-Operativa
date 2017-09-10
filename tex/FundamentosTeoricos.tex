@@ -759,11 +759,11 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 \begin{obs}[Justificación del nombre]
 	Una interpretación que le podemos dar a las componentes del vector de costes reducidos es la siguiente.
 	\begin{equation*}
-		\overline{c_j}=c^t(\overline{x}+e_j)-c^t\overline{x}
+		\overline{c_j}=c^te_j-c^t\overline{x}=c^t(e_j-\overline{x})
 	\end{equation*}
 	donde $e_j$ es el $j$--ésimo vector de la base canónica de $\R^n$ y $\overline{x}$ es una solución básica factible (punto extremo).
 	
-	Lo que quiere decir esta interpretación es que $\overline{c_j}$ es la diferencia entre valor que arroja la función objetivo cuando se la evalúa en un punto extremo y el valor que obtenemos si le sumamos uno a la coordenada $j$--ésima.
+	Lo que quiere decir esta interpretación es que $\overline{c_j}$ es la diferencia entre valor que arroja la función objetivo cuando se la evalúa en un punto extremo y el valor que obtenemos si la evaluamos sobre un vector de la base canónica.
 	
 	La comprobación de la validez de esta interpretación se hace echando mano de las identidades obtenidas en la demostración del teorema \ref{fund_teo_testOptimSimplex}.
 	

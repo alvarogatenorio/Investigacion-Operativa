@@ -1,4 +1,248 @@
 %Para este capítulo se usará la abreviatura "asig".
 \chapter{El problema de asignación}
 \label{asig}
-Como ya estamos adentrados en una parte de las notas que lleva por sobrenombre ``introducción'' las demostraciones de los teoremas irán brillando por su ausencia.
+El objetivo de este capítulo es desarrollar un algoritmo que permita resolver problemas de asignación, unos de los más aparentemente sencillos y más habituales problemas de programación entera.
+\section{Unimodularidad total}
+\begin{defi}[Unimodularidad total]
+	Una matriz $A\in\mf{M}_{m\times n}(\Z)$ se dice \tbi[matriz!totalmente unimodular]{totalmente unimodular} si todas sus submatrices cuadradas tienen determinante $0$, $1$ ó $-1$.
+\end{defi}
+\begin{obs}[Consecuencia inmediata]
+	Dado un coeficiente $a_{ij}$ de una matriz totalmente unimodular, se debe cumplir que $a_{ij}\in\{0,1,-1\}$. Esto es debido a que los elementos de una matriz son considerados submatrices cuadradas de orden $1$.
+\end{obs}
+Veamos algunas propiedades elementales de las matrices totalmente unimodulares.
+\begin{lem}[Trasposición]
+	$A$ es totalmente unimodular si y solo si $A^t$ también lo es.
+\end{lem}
+\begin{proof}
+	Sabemos que una submatriz cuadrada de orden $k$ queda caracterizada por la elección de $k$ filas y $k$ columnas de la matriz original. Es sencillo demostrar (se deja al lector) que la aplicación que, dada una elección de filas y columnas $(\{i_1,\dots,i_k\},\{j_1,\dots,j_k\})$ de la matriz $A$ le hace corresponder la elección $(\{j_1,\dots,j_k\},\{i_1,\dots,i_k\})$ de la matriz $A^t$, es una biyección.
+	
+	De esta forma se tiene que si $B$ es una submatriz cuadrada de $A$, entonces $B^t$ es una submatriz cuadrada de $A^t$. Y como $\det(B)=\det(B^t)$ se tiene que $A^t$ es totalmente unimodular.
+\end{proof}
+\begin{lem}[Extensión]
+	$A$ es totalmente unimodular si y solo si $(A|I)$ también lo es.
+\end{lem}
+\begin{proof}
+	La implicación a la izquierda es evidente.
+	
+	Para la otra, notemos que si tomamos una submatriz cuadrada de $(A|I)$ se pueden dar tres casos posibles. El primero de ellos es que cojamos una submatriz de $A$, luego no hay nada que probar. La segunda situación posible es que la matriz tenga una columna de ceros, en cuyo caso tampoco tenemos que hacer nada, ya que dicha matriz tendrá determinante nulo.
+	
+	La situación interesante es la de tener una o varias columnas formadas por ceros salvo un uno. En este caso, desarrollamos el determinante por estas columnas, nótese que, una vez agotadas, nos quedará el determinante de una submatriz cuadrada de $A$ (quizá multiplicado por $-1$).
+\end{proof}
+Vistas estas propiedades elementales, veámos cuál es la verdadera razón por la cual vale la pena estudiar estas matrices.
+\begin{prop}[Puntos extremos]\label{asig_prop_HoffmanKruskal}
+	Si $A\in\mf{M}_{m\times n}(\Z)$ es totalmente unimodular y cumple las hipótesis de \ref{fund_obs_rango} se tiene que, para todo $b\in\Z^m$, todos los puntos extremos $\overline{x}\in\R^n$ de la región factible asociada al problema $Ax=b$ con $x\geq 0$ son enteros, es decir $\overline{x}\in\Z^n$.
+\end{prop}
+\begin{proof}
+	Sea $B$ una base de $A$ asociada a un punto extremo, como $A$ es totalmente unimodular y $B$ es invertible, se tiene que $\det(B)=\pm1$. El punto extremo asociado a $B$ es pues la única solución de la ecuación $Bx_B=b$.
+	
+	Usando la regla de Cramer tenemos que $x_B^i=\frac{\det(Bi)}{\det B}$, donde $B_i$ denota a la matriz $B$ con la columna $i$--ésima sustituida por $b$. Evidentemente $x_B^i$ es un entero para todo $i$, y, por tanto, el punto extremo es entero.
+\end{proof}
+El recíproco de la proposición \ref{asig_prop_HoffmanKruskal} se da, de hecho se da algo más fuerte. Es un teorema con nombre que no demostraremos aquí, pero sí enunciaremos.
+\begin{theo}[Teorema de Hoffman--Kruskal]
+	Si $A\in\mf{M}_{m\times n}(\Z)$ en las las hipótesis de \ref{fund_obs_rango} y para todo $b\in \Z^m$ la región factible tiene al menos un punto extremo entero, se cumple que $A$ es totalmente unimodular.
+\end{theo}
+Tras este bonito y útil problema, pasemos a estudiar una condición suficiente para detectar la unimodularidad total de una matriz.
+\begin{prop}[Condición suficiente]\label{asig_prop_condicionSuficienteUnim}
+	Si $A$ verifica las siguientes condiciones, entonces es totalmente unimodular.
+	\begin{enumerate}
+		\item Todo coeficiente $a_{ij}\in\{0,1,-1\}$.
+		\item Cada columna tiene a lo sumo dos elementos no nulos.
+		\item Podemos realizar una bipartición de las filas de $A$ de manera que
+		\begin{enumerate}
+			\item Si los dos elementos no nulos de una columna tienen el mismo signo, entonces las filas asociadas a dichos elementos pertenecen cada una a un cojunto de la bipartición.
+			\item Si los dos elementos no nulos de una columna tienen distinto signo, entonces las filas asociadas a dichos elementos pertenecen al mismo conjunto de la bipartición.
+		\end{enumerate} 
+	\end{enumerate}
+\end{prop}
+\begin{proof}
+	Es muy sencillo probar esto por inducción sobre la dimensión de la submatriz cuadrada (se deja como ejercicio al lector).
+\end{proof}
+La proposición \ref{asig_prop_condicionSuficienteUnim} tiene su eco en la teoría de grafos. Como vemos a continuación.
+\begin{defi}[Matriz de incidencia vértices--aristas]
+	Dado un grafo dirigido $G$ que no contiene autolazos, se define su \tbi[matriz!de incidencia vértices--aristas]{matriz de incidencia vértices--aristas} como la matriz que tiene tantas columnas como aristas tenga el grafo y tantas filas como vértices, y, además, $a_{ij}\in\{0,1,-1\}$ donde si $a_{ij}=0$ la arista $j$ no sale ni entra del vértice $i$. En caso de que $a_{ij}=1$, la arista $j$ parte del vértice $i$, y, si $a_{ij}=-1$, la arista $i$ muere en el vértice $i$.
+	
+	En el caso de grafos no dirigidos la matriz se define eliminando el caso $a_{ij}=-1$, significando $a_{ij}=1$ que la arista $j$ incide sobre el vértice $i$.
+\end{defi}
+\begin{obs}[Grafos y unimodularidad total]
+	Es evidente que la matriz de incidencia vértices--aristas de un grafo dirigido sin autolazos es totalmente unimodular, ya que cumple las condiciones de la proposición \ref{asig_prop_condicionSuficienteUnim}. Nótese que una de las biparticiones será el vacío mientras que la otra será el total.
+\end{obs}
+\section{Emparejamiento máximo de un grafo bipartito}
+En esta sección usaremos toda la artillería de la anterior para encontrar un algoritmo que encuentre el emparejamiento máximo de un grafo bipartito en un tiempo razonable. En primer lugar, definamos en detalle el problema a resolver, para ello, introduzcamos unas cuantas definiciones.
+\begin{defi}[Emparejamiento]
+	Dado un grafo arbitrario $G$, decimos que un conjunto $M$ de aristas es un \tbi{emparejamiento} en $G$ si para cada par de aristas de $M$, no son adyacentes, es decir, sus conjuntos de vértices adyacentes son disjuntos.
+\end{defi}
+\begin{defi}[Saturación y exposición]
+	Dado un grafo $G$ y un emparejamiento $M$, se dice que un vértice $v$ es \tbi[vértice!$M$--saturado]{$M$--saturado} si hay alguna arista de $M$ que incide sobre $v$. En caso contrario se dice que $v$ es \tbi[vértice!$M$--expuesto]{$M$--expuesto}.
+\end{defi}
+\begin{defi}[Emparejamiento perfecto]
+	Se dice que un emparejamiento $M$ es \tbi[emparejamiento!perfecto]{perfecto} si todo vértice es $M$--saturado. Evidentemente, un emparejamiento es perfecto si y solo si contine tantas aristas como la mitad de vértices de $G$.
+\end{defi}
+\begin{defi}[Cadenas]
+	Dado un grafo $G$, una \tbi{cadena} o \tbi{camino} es una sucesión finita de vértices donde todo vértice está conectado con su antecesor y su predecesor. Si el primer y último vértice de la cadena coinciden, se dice que la cadena es un \tbi{ciclo}.
+\end{defi}
+\begin{defi}[Cadenas alternantes y de aumento]
+	Dado un grafo $G$, un emparejamiento $M$ y una cadena $\sigma$, se dice que $\sigma$ es una \tbi[cadena!$M$--alternante]{cadena $M$--alternante} si las aristas que hay que recorrer para seguir el camino de principio a fin pertenecen a $M$ y a su complementario alternativamente.
+	
+	Si además se verifica que el primer y último vértice de $\sigma$ son diferentes y $M$--expuestos, entonces se dice que $\sigma$ es una \tbi[cadena! de $M$--aumento]{cadena de $M$--aumento}.
+\end{defi}
+\begin{obs}[Justificación del nombre]
+	\label{asig_obs_aumento}
+	Las cadenas de $M$--aumento reciben ese nombre ya que, dada una cadena de $M$--aumento, si quitamos de $M$ las aristas de la cadena pertenecientes a $M$ y ponemos las no pertenecientes a $M$ hemos conseguido aumentar en $1$ el cardinal del emparejamiento $M$.
+\end{obs}
+Veamos a continuación un resultado auxiliar que será de gran utilidad en el futuro inmediato.
+\begin{lem}[Componentes conexas]\label{asig_lem_compon}
+	Dado un grafo $G$ y dos emparejamientos $M_1$ y $M_2$, considerando el grafo $\overline{G}$, idéntico a $G$ salvo por el hecho de que se le han sustraído las aristas que no pertenecen ni a $M_1$ ni a $M_2$ o que pertenecen a ambos emparejamientos.
+	
+	Se tiene que las componentes conexas de $\overline{G}$ son de alguno de los siguientes tipos
+	\begin{enumerate}
+		\item Vértice aislado.
+		\item Ciclo $M_1$--alternante con un número par de vértices.
+		\item Cadena $M_1$--alternante.
+	\end{enumerate}
+\end{lem}
+\begin{proof}
+	Es claro que tanto los ciclos como las cadenas deben ser $M_1$--alternantes (o $M_2$--alternantes), ya que si no, de un vértice saldrían dos aristas de un mismo emparejamiento, lo cual contradice la definición de emparejamiento.
+	
+	Asimismo, si hubiera una componente conexa de cualquier otro tipo, habría un vértice del cual saldrían tres o más aristas, con lo que, por el lema del palomar, al menos dos deben ser de un mismo emparejamiento, lo cual es, de nuevo, absurdo.
+	
+	Por último, si hubiera algún ciclo con un número impar de vértices, habría también un número impar de aristas, por lo que, forzosamente, debe haber dos aristas del mismo emparejamiento adyacentes a algún vértice (contradicción).
+\end{proof}
+\begin{defi}[Emparejamiento de máximo cardinal]
+	Un emparejamiento $M$ se dice \tbi[emparejamiento!de máximo cardinal]{de máximo cardinal} si no hay ningún emparejamiento con más aristas.
+\end{defi}
+A continuación viene uno de los dos teorema importantes de esta sección, un teorema ``con nombre'' que da condiciones necesarias y suficientes para que un emparejamiento sea de máximo cardinal.
+\begin{theo}[Teorema de Berge ($1957$)]
+	Un emparejamiento $M$ es de máximo cardinal si y solo si no existe ninguna cadena de $M$--aumento.
+\end{theo}
+\begin{proof}
+	La implicación a la derecha es evidente. Veamos pues el recíproco, probando el contrarrecíproco (válgame la redundancia).
+	
+	Suponiendo que $M$ no es un emparejamiento de máximo cardinal, supongamos que $M'$ es un emparejamiento más grande que $M$.
+	
+	Considerando el grafo del lema \ref{asig_lem_compon} tenemos que $\overline{G}$ tiene más aristas de $M'$ que de $M$ (compruébese, es claro). Adicionalmente se tiene que debe haber una componente conexa de tipo cadena que tenga más aristas de tipo $M'$ que de tipo $M$.
+	
+	Nótese que no puede ser una componente de tipo ciclo, pues estos deben tener el mismo número de aristas de cada emparejamiento (compruébese).
+	
+	Claramente la cadena debe ser de longitud impar (por la misma razón que la compoente no puede ser de tipo ciclo), y por ser $M'$--alternante y tener más vértices de $M'$ que de $M$, debe ser una cadena de $M$--aumento. 
+\end{proof}
+Antes de pasar a ver el último y más importante teorema de la sección, introduzcamos algunos conceptos nuevos.
+\begin{defi}[Árbol alternante]
+	Dado un grafo $G$ y un empearejamiento $M$, un árbol $T$ de $G$ (subgrafo sin ciclos) se dice \tbi[árbol!$M$--alternante]{$M$--alternante} si al elegir un vértice distinguido $r\in T$ al que llamaremos \ti{\tb{raíz}} se tiene que
+	\begin{itemize}
+		\item $r$ es $M$--expuesto.
+		\item La cadena (se puede demostrar que es única) en $T$ que une cualquier vértice $v$ con la raíz (sin repetir vértices) es $M$--alternante.
+	\end{itemize}
+\end{defi}
+\begin{defi}[Recubrimiento]
+	Un recubrimiento de un grafo es un subconjunto de vértices tales que toda arista del grafo incide sobre alguno de los vértices del conjunto.
+\end{defi}
+\begin{defi}[Grafo bipartito]
+	Un \tbi[grafo!bipartito]{grafo bipartito} es un grafo $G$ tal que contine una bipartición de vértices que verifica que no hay ninguna arista que una dos vértices del mismo conjunto de la partición.
+\end{defi}
+\begin{obs}[Biparticiones]
+	Nótese que la bipartición de una grafo bipartito coincide con la bipartición inducida por la proposición \ref{asig_prop_condicionSuficienteUnim}.
+\end{obs}
+Dicho esto, pasamos a enunciar el teorema y demostrar el teorema prometido, usando todo lo visto hasta ahora, cerrando un círculo virtuoso que nos hará sentirnos en paz con el universo.
+\begin{theo}[Teorema de König ($1931$)]
+	\label{asig_teo_konig}
+	El tamaño del emparejamiento máximo en un grafo bipartito es el mismo que el del recubrimiento mínimo.
+\end{theo}
+\begin{proof}
+	El problema del máximo emparejamiento de grafos bipartitos se puede formular como un problema de programación lineal ``relajado''. Veámoslo.
+	
+	Supongamos que el gráfo tiene $m$ vértices y $n$ aristas. La función objetivo a maximizar es $\sum_{i=1}^{n}x_i$, donde $x_i\in\{0,1\}$. Donde $x_i=0$ representa que la $i$--ésima arista no está en el emparejamiento, mientras que $x_i=1$ representa lo contrario.
+	
+	Las restricciones del problema son que para todo vértice se verifique que no hay más de una arista del emparejamiento incidiendo sobre él. Esto es equivalente a que para vértice se verifique que $\sum_{i\in\delta(v)}x_i\leq 1$, donde $\delta(v)$ es el conjunto de aristas que inciden sobre $v$.
+	
+	Evidentemente esto no es un problema de programación lineal al uso ya que las variables son binarias, es decir, únicamente pueden tomar dos valores. Es por esto que consideramos el problema ``relajado'' en el que símplemente exigimos $x_i\geq0$.
+	
+	Una de las cosas bonitas que suceden es que la matriz de restricciones del problema es exactamente la matriz incidencia vértices--aristas del grafo, y, para colofón, esta matriz es siempre totalmente unimodular para grafos bipartitos (compruébese, de hecho, se da el recíproco), lo cual quiere decir, por la proposición \ref{asig_prop_HoffmanKruskal}, que todos los puntos extremos de este problema son enteros.
+	
+	Además, las restricciones del problema fuerzan a que sean binarios (compruébese), con lo que la ``relajación'' efectuada no supone ninguna pérdida de generalidad (objetivamente bonito).
+	
+	Ahora, nos planteamos el problema dual asociado a este. Este problema tendrá por función objetivo a minimizar $\sum_{j=1}^{m}u_j$. Además, sus restricciones serán que para cada arista $\sum_{j=1}^{m}u_j\geq 1$ con $u_j\geq 0$. 
+	
+	Si miramos esto un poco con lupa nos damos cuenta que esta es una formulación ``relajada'' del problema de la cobertura de vértices donde $u_j=1$ representa que el $j$--ésimo vértice está en la cobertura y $u_j=0$ representa lo contrario.
+	
+	Como el problema primal tiene solución óptima, el problema dual también, y con el mismo valor de función objetivo, luego hemos terminado.
+\end{proof}
+La belleza de esta demostración prueba que, incluso en esta oscuridad que nos envuelve, todavía hay esperanza. Dicho esto, si el lector ha decidido omitir la demostración se le recomienda encarecidamente que vuelva atrás y la lea.
+\begin{obs}[$\mc{NP}$--completitud]
+	Se sabe que el problema de la máxima cobertura de vértices es $\mc{NP}$--completo. Veamos qué pasaría si el problema de la cobertura de vértices también fuera $\mc{NP}$--completo para grafos bipartitos.
+	
+	En tal caso, el teorema \ref{asig_teo_konig} reduce la resolución del problema de la cobertura de vértices a la del emparejamiento máximo de un grafo bipartito, quedando demostrado que el problema del emparejamiento máximo es $\mathcal{NP}$--completo, lo cual quiere decir que si encontramos un algoritmo polinómico para resolver el problema de emparejamiento máximo, habremos demostrado que $\mc{P}=\mc{NP}$ y podremos dedicarnos al crimen.
+	
+	¿Lo hay? La respuesta es sí, este resultado está recogido en un teorema debido a Edmonds ($1965$). Así pues, todo parece indicar que el caso particular del problema de la cobertura de vértices para grafos bipartitos no es $\mc{NP}$--completo. Se anima al lector a investigar más sobre este asunto.
+\end{obs}
+\subsection{Algoritmo de emparejamiento máximo}
+Vamos a desarrollar un algoritmo que, dado un emparejamiento de un grafo bipartito, obtenga el emparejamiento máximo. Por simplicidad, a lo largo de este apartado supondremos que el emparejamiento inicial es vacío, aunque no tendría por qué serlo.
+
+\begin{obs}[Algoritmo alternativo]
+	El teorema \ref{asig_teo_konig} nos dice que podemos aplicar el algoritmo del Símplex corriente y vulgar, no obstante, el algoritmo que presentamos a continuación es mucho más eficiente.
+\end{obs}
+
+La estraregia del algoritmo es construir un árbol alternante para cada vértice de una de las biparticiones del grafo, detectando cadenas alternantes que permitan ampliar el emparejamiento.
+
+En primer lugar, asignaremos a cada vértice dos propiedades. La propiedad de estar o no ``\tb{etiquetado}'' y la propiedad de estar o no ``\tb{examinado}''. Inicialmente, todos los vértices estarán sin examinar y sin etiquetar.
+
+La etiqueta de un vértice se compone de dos componentes, la primera de ellas indica la paridad del vértice, es decir, si quedan un número par o impar de aristas para llegar desde él a la raiz del árbol. La segunda componente indica quién es su predecesor en la cadena que lleva a la raíz.
+
+En nuestra situación inicial, tomamos un vértice arbitrario $r$ (nuestra raíz) y le asignamos la eiqueta $(P,-)$, nótese que no tiene predecesor en la cadena. En este constexto se introduce la definición.
+\begin{defi}[Paridad]
+	Un vértice se dice \tbi[vértice!par]{par} si la primera componente de su etiqueta es $P$, si, por el contrario, la primera componente de la etiqueta es $I$, se dirá que el vértice es \tbi[vértice!impar]{impar}.
+\end{defi}
+Dicho esto, el vértice $r$ pasa a estar etiquetado pero no examinado. A continuación, tomamos el conjunto de vértices adyacentes a $r$ y los etiquetamos con $(I,r)$, quedando $r$ examinado. Ahora escogemos uno de los vértices etiquetados (que están en el árbol) y no examinados (que no son la raíz). 
+
+Entonces es claro que tenemos una cadena de aumento, la formada por la arista que une la raiz con el vértice escogido, de forma que añadimos la arista al emparejamiento y borramos todas las etiquetas (vamos a pasar a construir un árbol para otro vértice, y las etiquetas son información intrínseca del árbol anterior).
+
+En esta segunda iteración del algoritmo lo primero que hay que comprobar es si quedan vértices de la bipartición de las raices sin examinar (que no hayamos construido ya árboles para todos), en caso contrario, todos los vértices de una de las biparticiones serían saturados, siendo el emparejamiento construído ya óptimo.
+
+En caso de que esto último no suceda, repetimos la misma operación de antes, eligiendo una raiz y etiquetando a ella y a sus hijos debidamente, quedando la raiz examinada (nótese que el proceso de examinado, al contrario que el de etiquetado, es irreversible).
+
+Ahora se pueden dar varios casos antes imposibles, pudiera ocurrir que al elegir uno de los adyacentes (supongamos el $i$--ésimo), este fuera saturado (y por tanto inelegible para una cadena de aumento). En este caso examinamos dicho vértice y asignamos la etiqueta $(P,i)$ al vértice emparejado con $i$ mediante el emparejamiento.
+
+Este último etiquetado se realiza por si se da el caso de que no comenzamos con el emparejamiento vacío, en cuyo caso, podría haber vértices saturados en la bipartición de las raíces que no estuvieran examinados.
+
+Una nueva posibilidad que se da en este caso es que al escoger un vértice etiquetado, este sea par, en cuyo caso, etiquetaremos debidamente todos sus adyacentes no etiquetados ya y continuamos el proceso, hasta que escojamos un etiquetado impar no saturado, en cuyo caso detectaríamos una cadena alternante, y, siguiendo la observación \ref{asig_obs_aumento} modificaríamos el emparejamiento y borraríamos todas las etiquetas.
+
+Si este caso no se llegara a dar, es claro que no hay cadenas alternantes para ese vértice raíz, por lo que pasamos a coger otro. En esta situación tenemos que tener cuidado también de que la nueva raíz no esté etiquetada (pues eso indica que es una raíz ``fracasada'').
+
+Repetimos con este nuevo vértice toda la operación teniendo en cuenta que no debemos considerar adyacentes ya etiquetados por la raiz anterior, ya que ya están saturados.
+
+Repetiremos este proceso mientras haya algún vértice en la bipartición escogida que esté no saturado y que no esté etiquetado.
+\begin{obs}[Voraz]
+	Podemos considerar a este algoritmo como un algoritmo voraz que requiere de una prueba de corrección. Obviamente la tiene, y se anima al lector a investigar sobre ello, no obstante, la omitiremos en este texto.
+\end{obs}
+Para terminar vamos a recopilar el todo el ladrillo anterior en forma de algoritmo.
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\REQUIRE Emparejamiento inicial $M$ (puede que vacío).
+		\ENSURE Emparejamiento de máximo cardinal.
+		\REPEAT
+		\STATE Escoger algún vértice no saturado y sin etiquetar.
+		\STATE Etiquetar vértice elegido con $(P,-)$
+		\REPEAT
+		\STATE Escoger un vértice de entre los etiquetados no examinados.
+		\IF{es impar saturado (supongamos vértice $i$)}
+		\STATE Examinar vértice.
+		\STATE Etiquetar vértice adyacente por $M$ con $(P,i)$. 
+		\ELSIF{es par (supongamos vértice $i$)}
+		\STATE Etiquetar los adyacentes sin etiquetar con $(I,i)$
+		\ENDIF
+		\UNTIL{no es impar no saturado ó no quedan vértices etiquetados no examinados}
+		\IF{impar no saturado}
+		\STATE Modificar emparejamiento.
+		\STATE Borrar etiquetas.
+		\ENDIF
+		\UNTIL{no existen más}
+		\RETURN emparejamiento actual (es óptimo).
+	\end{algorithmic}
+	\caption{Algoritmo de emparejamiento máximo en un grafo bipartito.}\label{asig_alg_empMax}
+\end{algorithm}
+Llegados a este punto, ya estamos listos para entrar en el núcleo del capítulo, el problema de asignación.
+\section{Problema de asignación}
+En primer lugar formularemos con sumo cuidado el problema a resolver, tras lo cual daremos un algoritmo de resolución casi totalmente basado en el problema de emparejamiento máximo de un grafo bipartito.
+\subsection{Algoritmo para el problema de asignación}
+\begin{obs}[Método húngaro]
+	Existen diversas variantes para el algoritmo de asignación, entre ellas el método húngaro, que no veremos aquí. El motivo de su omisión es que, a pesar de ser aparentemente más sencillo, su coste computacional es mucho mayor, haciéndolo prácticamente inservible.
+\end{obs}
