@@ -1,0 +1,83 @@
+%Para este capítulo se usará la abreviatura "post".
+\chapter{Post--Optimización}
+\label{post}
+El ``análisis de la sensibilidad'' o post--optimización es una rama de la algoritmia en general que trata de, dado un problema ya resuelto, tratar de resolver otro que es fruto de ``variar ligeramente'' el anterior sin necesidad de resolver el nuevo problema desde el principio, es decir, usando la solución del problema anterior.
+
+Es este uno de los ámbitos donde más sale a relucir la utilidad de la teoría de dualidad desarrollada en el capítulo anterior.
+\section{Post--Optimización primal}
+En esta sección recogeremos métodos de resolución para problemas cuyas modificaciones son tales que no se requiere el uso de ninguna herramienta de dualidad.
+\begin{obs}[Hipótesis generales]
+	A lo largo de todo este capítulo supondremos que disponemos de la tabla óptima del Símplex de nuestro problema original.
+	
+	Adicionalmente supondremos que el problema ha sido resuelto por el método de las dos fases o el método de las penalizaciones, de forma que dentro de la propia tabla disponemos de $B^{-1}$, siendo $B$ la base asociada al punto extremo óptimo del problema.
+\end{obs}
+La estrategia general a seguir es ver qué tenemos esta tabla y cómo podemos calcular la tabla asociada al problema modificado a partir de esta.
+\subsection{Modificación de la función objetivo}
+Es claro que si alteramos la función objetivo, la región factible permanece inalterada, por lo cual el punto extremo que era solución óptima del problema original seguirá siendo un punto extremo en el problema modificado.
+
+De hecho, lo único que cambia de la tabla es su fila inferior, es decir, la que tiene que ver con los costes reducidos y el valor de la función objetivo.
+
+De esta forma, para hallar una tabla válida para el problema modificado, bastará con recalcular la última fila en términos de la nueva función objetivo.
+
+Si además deseamos conocer la solución del problema modificado, bastará con aplicar el algoritmo del Símplex sobre esta nueva tabla (nótese que nuestra base inicial será la base óptima del problema anterior). 
+\subsection{Introducción de nuevas variables}
+Supongamos que introducimos una nueva variable de decisión a las restricciones del problema. En tal caso, es claro que la matriz de coeficientes de las restricciones variará, quedando con una columna más. Análogamente, habrá un nuevo coste reducido a considerar, el asociado a esa nueva columna.
+
+Lo interesante de esto, sin embargo, es que la base óptima del problema original sigue siendo una base de la nueva matriz, es más, sigue estando asociada a un punto extremo. Para ver esto basta observar que, como ni la base $B$ ni el vector independiente $b$ cambian, se sigue verificando que $B^{-1}b\geq 0$ (lo que por hipótesis teníamos antes).
+
+Así pues, si antes teníamos el sistema
+\begin{equation*}
+	Ax=b\sii (B|N)x=b\sii B^{-1}(B|N)x=b\sii (I_m|B^{-1}N)x=B^{-1}b
+\end{equation*}
+donde la última igualdad representa la tabla del Símplex óptima del problema original, ahora tenemos el sistema
+\begin{equation*}
+	(A|a)x=b\sii (B|N|a)x=b\sii (I_m|B^{-1}N|B^{-1}a)x=B^{-1}b
+\end{equation*}
+donde $a$ es la columna adicional fruto de la modificación.
+
+De esto último se desprende que para calcular una tabla del simplex del problema modificado basta con añadir la columna $B^{-1}a$ a la columna anterior y calcular el coste reducido asociado a esta nueva columna (los demás no cambian, compruébese).
+
+Obviamente, si queremos la solución óptima del problema modificado, basta con aplicar el algoritmo del Símplex sobre la nueva tabla obtenida, siendo la base inicial la misma que la base óptima del problema original.
+\section{Post--Optimización dual}
+En esta sección se recopilan los casos en los que, los cambios en el problema son lo suficientemente drásticos para no garantizar que la base óptima del problema original sea una base asociada a un punto extremo en el problema modificado. Es precisamente en estos casos cuando entra el juego el algoritmo dual.
+\subsection{Modificación del vector independiente}
+Al sustituir el vector independiente $b$ por $b'$, ni la matriz de coeficientes de las restricciones ni los costes reducidos se ven alterados.
+
+No obstante, pudiera ocurrir que si $B$ es la base óptima del problema original $B^{-1}b'\not\geq 0$.
+
+De esta forma, si sustituyéramos ``ingenuamente'' la columna $B^{-1}b$ de la tabla original por la columna $B^{-1}b'$ nos encontraríamos con que no podemos aplicar el algoritmo del Símplex, al menos no usando $B$ como base inicial, ya que no está asociada a ningún punto extremo.
+
+Sin embargo, como la tabla orginal es óptima, todos sus costes reducidos son no negativos, con lo cual estamos en las hipótesis de aplicación, no del algoritmo primal, sino del algoritmo dual.
+
+De esta forma, si modificamos el vector independiente deberemos llevar a cabo la ``sustitución ingenua'' y, si queremos obtener la solución óptima, aplicar el algoritmo dual.
+\subsection{Introducción de nuevas restricciones}
+Consideraremos únicamente el caso en el que la restricción añadida es de tipo desigualdad, ya que si añadimos una ``restricción estándar'' esta será redundante por la observación \ref{fund_obs_rango}. Dicho esto, consideramos la nueva restricción ``estandarizada'' (con una variable de holgura).
+
+Podemos ver la tabla del símplex del problema original como la representación de unas restricciones equivalententes a las del problema original, es decir
+\begin{equation*}
+	(B|N)x=b\sii(I_m|B^{-1}N)x=B^{-1}b
+\end{equation*}
+De esta forma, para obtener unas restricciones del problema modificado, podremos añadir la restricción tanto al miembro izquierdo como al miembro derecho de la equivalencia. Hagamos esto último, obteniendo las restricciones.
+\begin{equation*}
+	\left(\begin{array}{c|c|c}
+		I_m&B^{-1}N&0\\\hline
+		a_B&a_N&1
+	\end{array}\right)x=\left(\begin{array}{c}
+	B^{-1}b\\\hline b_a
+\end{array}\right)
+\end{equation*}
+donde $a_B$ representan los coeficientes de la restricción adicional asociados a columnas de la base original $B$. A partir de aquí, como sabemos que las tranformaciones elementales de matrices mantienen las restricciones equivalentes, podemos ``hacer ceros'' en la última fila, obteniendo
+\begin{equation*}
+	\left(\begin{array}{c|c|c}
+		I_m&B^{-1}N&0\\\hline
+		0&\overline{a_N}&1
+	\end{array}\right)x=\left(\begin{array}{c}
+	B^{-1}b\\\hline b_a
+\end{array}\right)
+\end{equation*}
+Pudiendo, por tanto, tomar la matriz identidad (la formada por la primera y última columna de bloques de la matriz) como base inicial del problema modificado.
+
+Por tanto, la ecuación anterior representa una tabla del Símplex válida para el problema modificado. Es sencillo demostrar (se deja al lector) que los costes reducidos del problema modificado se mantienen no negativos, siendo siempre posible la aplicación del algoritmo del Símplex dual para resolver el problema modificado.
+\begin{obs}[Aplicaciones]
+	Esta técnica de post--optimización es una de las más útiles, por poner un ejemplo a nuestro alcance, será usada de forma reiterada en la resolución de problemas de programación entera.
+\end{obs}
