@@ -1,3 +1,61 @@
 %Para este capítulo se usará la abreviatura "nolin".
 \chapter{Problemas no lineales}
+Más allá de la programación lineal y entera, se hallan los problemas de programación no lineal, es decir, el tratar de optimizar una función no lineal (por ejemplo un polinomio de grado $2$ en varias variables) dentro de un recinto cuyas restricciones puedan no ser expresadas como una subvariedad afín (como si había sido posible hasta ahora).
+
+Evidentemente, esta es una rama de las matemáticas amplísima, por lo que normalmente se establecen distintas displinas dentro de esta dependiendo de las condiciones de regularidad que queramos imponer, tanto a la función a optimizar como al recinto.
+
+En esta breve introducción supondremos que tanto la función objetivo como las funciones que definen las restricciones son diferenciables en todo punto.
 \label{nolin}
+\section{Planteamiento del problema}
+Consideraremos una función objetivo $f:\R^n\to\R$ diferenciable en todo $\R^n$. Trataremos de minimizar o maximizar esta función dentro de cierto conjunto $\mc{S}$.
+
+En nuestro caso el conjunto $\mc{S}$ vendrá dado por
+\begin{equation*}
+	\mc{S}:=\{x\in\R^n\midc g_i(x)\leq 0\text{ para todo }i\in\{1,\dots,m\}\}
+\end{equation*}
+donde $g_i$ es una función $\R^n\to\R$ diferenciable en todo $\R^n$.
+\section{Condiciones necesarias de Fritz--John y Kuhn--Tucker}
+Una estrategia relativamente habitual para resolver problemas del tipo planteado se basa en la aplicación de los siguientes teoremas que no demostraremos.
+\begin{theo}[Fritz--John]
+	Si un punto $\overline{x}$ es mínimo local de $f$ en $\mc{S}$, entonces se verifica que existen números $u_0,\dots,u_m$ tales que se cumple
+	\begin{gather*}
+		u_0\nabla f(\overline{x})+\sum_{i=1}^{m}u_i\nabla g_i(\overline{x})=0\\
+		u_ig_i(\overline{x})=0
+	\end{gather*}
+	con $u_i\geq 0$ para todo $i\in\{0,\dots,m\}$ no todos nulos.
+\end{theo}
+\begin{defi}[Multiplicadores]
+	A los escalares $u_i$ se les denomina \tbi{multiplicadores}.
+\end{defi}
+\begin{defi}[Puntos de Fritz--John]
+	A los puntos que verifican las condiciones necesarias de Fritz--John se les denomina, en un alarde de originalidad, \tbi{puntos de Fritz--John}.
+\end{defi}
+Unas condiciones necesarias menos exigentes que estas son las que proporciona el siguiente teorema.
+\begin{theo}[Kuhn--Tucker]
+	Si un punto $\overline{x}$ es mínimo local de $f$ en $\mc{S}$, entonces se verifica que existen números $u_1,\dots,u_m$ tales que se cumple
+	\begin{gather*}
+		\nabla f(\overline{x})+\sum_{i=1}^{m}u_i\nabla g_i(\overline{x})=0\\
+		u_ig_i(\overline{x})=0
+	\end{gather*}
+	con $u_i\geq 0$ para todo $i\in\{1,\dots,m\}$.
+\end{theo}
+\begin{defi}[Puntos de Kuhn--Tucker]
+	Evidentemente, a los puntos que verifican las condiciones de Kuhn-Tucker se les llama \tbi{puntos de Kuhn--Tucker}.
+\end{defi}
+\begin{obs}[Relaciones]
+	Evidentemente, todo punto de Kuhn--Tucker es un punto de Fritz--John (basta asignar $u_0=1$).
+\end{obs}
+\section{Estrategia de resolución}
+Una estrategia estandar para resolver problemas de programación no lineal usando las condiciones de Fritz--John y Kuhn--Tucker es tratar de buscar todos los puntos de Fritz--John.
+
+Para esto usualmente dividimos el recinto $\mc{S}$ en cada uno de los siguientes trozos
+\begin{equation*}
+	\mc{S}_N:=\{x\in\R^n\midc g_i(x)\leq 0\text{ para todo }i\in N,\ g_i(x)\leq 0\text{ para el resto}\}
+\end{equation*}
+para cada $N\subset\{1\dots,m\}$. Y tratamos de buscar estos puntos en cada uno de estos conjuntos.
+
+Esta estrategia es muy poco recomendable para casos en los que tengamos muchas restricciones, pues tendríamos que examinar $2^m$ conjuntos, sin embargo, para problemas con pocas restricciones da buen resultado.
+
+Una vez calculados los puntos, es claro que el mínimo global será el punto de Fritz--John con menor valor por la función objetivo.
+
+Con este último aserto damos por finalizado nuestro viaje en la nave de los misterios de la optimización elemental. ¿Continuará?
