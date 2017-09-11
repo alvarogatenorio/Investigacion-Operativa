@@ -108,7 +108,7 @@ Aunque el lema \ref{ent_lem_chvatal} es sin duda útil, lo que necesitamos para 
 
 Esta hazaña se logra mediante el siguiente teorema debido a Gomory cuya demostración no veremos aquí.
 \begin{theo}[Gomory]
-	Si $x^*$ es un punto extremo no entero de una región factible, entonces existe un cierto vector tal que $x^*$ no vaerifica la restricción de su derivación de Chvátal. 
+	Si $x^*$ es un punto extremo no entero de una región factible, entonces existe un cierto vector tal que $x^*$ no verifica la restricción de su derivación de Chvátal. 
 \end{theo}
 La demostración del teorema no solo nos da esa información sino que también nos dice que hay tantos posibles cortes como componentes no enteras tenga el punto extremo.
 
@@ -116,13 +116,27 @@ En concreto, si la tabla del Símplex se corresponde con el sistema de ecuacione
 
 Por ende, por cada ecuación genratriz de corte obtenemos un corte, de hecho, la demostración del teorema nos chiva quién es ese corte. Este es
 \begin{equation*}
-	\sum_{j=n+1}^{m}(y_{rj}-[y_{rj}])x_j\geq \overline{x_B^r}-[\overline{x_B^r}]
+	\sum_{j=n+1}^{m}(y_{rj}-[y_{rj}])x_j\geq (B^{-1}b)_r-[(B^{-1}b)_r]
 \end{equation*}
-donde $r$ es la componente de $\overline{x_B}$ respecto de la cual se ha elegido el corte.
+donde $r$ es la componente de $B^{-1}b$ respecto de la cual se ha elegido el corte.
 \begin{obs}[Variables de holgura]
 	Nótese que al insertar esta nueva restricción se tiene que, por fuerza, la variable de holgura de la nueva restricción únicamente podrá tomar valores enteros.
 	
 	Esta es una buena propiedad, pues estamos transformando problemas de programación entera pura en problemas de programación entera pura.
 \end{obs}
 \subsection{Corte mixto de Gomory}
-Si no todas las variables de decisión deben ser enteras, tomamos 
+Si no todas las variables de decisión deben ser enteras el corte anterior no es válido (investigar sobre el asunto).
+
+Sin embargo, no todo está perdido, pues hay un resultado (parecido al visto en la sección anterior, que no demostraremos) que nos asegura que, si en un problema de programación lineal tenemos un conjunto $N$ de variables de decisión con la restricción de ser enteras y un conjunto $C$ de variables de decisión sin restricciones de ``enteridad'', entonces, dada la tabla óptima del Símplex del problema relajado, por cada variable básica en $N$ que no sea entera, entonces existe un corte que tal que elimina dicha solución óptima.
+
+Además, dicho corte es
+\begin{equation*}
+	\sum_{\substack{j\in N\\f_j\leq f}}f_jx_j+\frac{f}{1-f}\sum_{\substack{j\in N\\f_j> f}}(1-f_j)x_j+\sum_{\substack{j\in C\\y_{rj}> 0}}y_{rj}x_j-\frac{f}{1-f}\sum_{\substack{j\in C\\y_{rj}< 0}}\geq f
+\end{equation*}
+donde $f:=(B^{-1}b)_r-[(B^{-1}b)_r]$ y $f_j:=y_{rj}-[y_{rj}]$. Es importante puntualizar que todas las variables consideradas en el corte \tb{no} están asociadas a la base.
+\subsubsection{Empates}
+Tanto en este caso como en el anterior, puede (y es habitual) que se de la situación en la que podemos elegir entre varios posibles cortes (tenemos varias ecuaciones generatrices).
+
+La pregunta en este momento es evidente ¿cuál elegir? La respuesta es que existe un criterio (que no probaremos) que nos dice que, si sumamos todos los coeficientes de los cortes y, tras esto, dividimos el resultado por el término independiente, obtenemos un número que, cuanto menor sea, ``mejor'' será el corte.
+
+Así pues, si tuviéramos varios candidatos, calcularíamos el número de cada uno, quedándonos con el corte de menor número.
