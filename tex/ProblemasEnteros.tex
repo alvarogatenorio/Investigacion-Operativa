@@ -1,5 +1,80 @@
 %Para este capítulo se usará la abreviatura "ent".
 \chapter{Problemas enteros}
 \label{ent}
+En el capítulo anterior vimos un tipo de problema entero muy especial. Eran problemas enteros tales que su ``relajación continua'' ofrecía también soluciones óptimas enteras (gracias a la unimodularidad total). En este capítulo nos olvidaremos de todas esas situaciones maravillosas y nos pondremos manos a la obra (de un modo meramente introductorio) a desarrollar métodos generales para resolver problemas de programación entera.
 \section{Ramificación y poda}
+El primero de los métodos que veremos pertenece a la familia de algoritmos de ``ramificación y poda'' ó ``branch \& bound''. Veamos como aplicarlo a este caso. En primer lugar planteamos el problema a resolver.
+\begin{equation*}
+	\begin{array}{c}
+		\min c^tx\\
+		\text{Sujeto a:}\qquad Ax= b,\quad x\geq 0,\quad x_j\in\Z,\quad j\in J\subset\{1,\dots,n\} 
+	\end{array}
+\end{equation*}
+Es decir, un problema de programación lineal en forma estándar salvo por el hecho de que tenemos la restricción de que algunas de las variables de decisión deben tomar valores enteros.
+\begin{obs}[Filosofía]
+	La filosofía de los algoritmos basados en ramificación y poda consiste en ir explorando todas las soluciones posibles a un problema de manera estructurada (usualmente recorriendo un árbol de exploración), dejando de explorar determinada zona de la estructura cuando es claro que la solución óptima no se encuentra ahí. Asimismo, no se explora ``al tuntún'' sino que se elije la zona de la estructura que resulta ``más prometedora''.
+\end{obs}
+La idea general del algoritmo es que, dado un problema de programación entera, lo relajemos (omitamos las restricciones de ``enteridad'') y lo resolvamos. Obviamente, si la solución óptima es entera, hemos terminado, pero esto nunca pasa, salvo en casos muy concretos como los ya vistos en el capítulo anterior.
+
+Lo que haremos pues, en caso de que la solución no será entera, será considerar dos problemas auxiliares (tal y como veremos en detalle en el algoritmo \ref{ent_alg_poda}). Estos problemas auxiliares los iremos almacenando en una especie de ``bolsa'' de problemas, de la cual los iremos sacando para ir resolviendo los más ``prometedores''.
+
+Para esto, se debe establecer un orden entre problemas que nos permita decidir cuál es el mejor de todos. Esto lo haremos asignando a cada problema un número al que llamaremos ``prioridad'', que no será otra cosa que el valor de la solución óptima de dicho problema.
+
+Es claro que la solución óptima de un problema relajado, será una cota inferior de la solución óptima de su problema entero asociado. Por este motivo, si en nuestro proceso de búsqueda encontramos una solución entera podremos descartar todos los problemas de la bolsa cuya prioridad sea peor que la solución entera encontrada.
+
+Vista la filosofía abstracta, pasemos a ver el esquema concreto que seguiremos.
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\REQUIRE Problema original.
+		\ENSURE Solución óptima del problema.
+		\STATE Metemos el problema original en una ``bolsa de problemas''.
+		\WHILE{la bolsa no esté vacía}
+		\STATE Tomar el problema de la bolsa con menor prioridad.
+		\IF{la prioridad no mejora la mejor solución encontrada}
+		\STATE Sacar el problema de la bolsa.
+		\ELSE
+		\STATE Relajar el problema y resolverlo.
+		\IF{es factible}
+		\STATE Tomar su solución óptima como prioridad.
+		\IF{la prioridad no mejora a la mejor solución entera encontrada}
+		\STATE Quitar el problema de la bolsa.
+		\ELSIF{la solución no es entera}
+		\STATE Elegimos alguna de las componentes no enteras de la solución (por ejemplo $\overline{x_j}$) y consideramos los siguientes problemas.
+		\STATE Mismo problema con la restricción $x_j\leq[\overline{x_j}]$
+		\STATE Mismo problema con la restricción $x_j\geq[\overline{x_j}]+1$
+		\STATE Sacamos al problema original de la bolsa y metemos a sus dos problemas derivados, ambos con la misma prioridad que su ``problema padre''.
+		\ELSIF{la solución es entera}
+		\STATE Será la mejor solución entera hasta ahora.
+		\STATE Quitamos el problema de la bolsa.
+		\ENDIF
+		\ELSE
+		\STATE Sacar el problema de la bolsa.
+		\ENDIF
+		\ENDIF
+		\ENDWHILE
+		\IF{no encontramos ninguna solución}
+		\RETURN Infactible.
+		\ELSE \RETURN Mejor solución encontrada.
+		\ENDIF
+	\end{algorithmic}
+	\caption{Esquema general de ramificación y poda.}\label{ent_alg_poda}
+\end{algorithm}
+Aunque pueda parecer un algoritmo largo y complicado, realmente es símple y llanamente una aplicación directa del esquema general de ramificación y poda, por lo que, en el fondo, es más simple que el asa de un cubo.
+\begin{obs}[Complejidad]
+	Una de las cosas bonitas que tiene la programación lineal es que, como acabamos de ver, también sirve para resolver problemas de programación entera (aunque sea aplicándola varias veces).
+	
+	En el caso particular de los algoritmos de ramificación y poda podemos llegar a aplicar el algoritmo del Símplex o del Símplex dual un número absurdamente grande de veces, lo cual sugiere que necesitamos una alternativa.
+\end{obs}
 \section{Hiperplanos de corte}
+Esta sección no pretende ser más que una brevísima introducción al método de los hiperplanos de corte para resolver problemas de programación entera. No se debe tomar más que como un recetario útil.
+
+\begin{obs}[Filosofía]
+	La filosofía de los métodos de hiperplanos de corte es la siguiente. Dada la región factible del problema entero relajado, y su solución óptima $x^*$, si $x^*$ no es solución entera, entonces, mediante diversos métodos, pegar un tajo a la región factible de forma que eliminemos dicho punto extremo pero no nos carguemos ninguna solución entera.
+	
+	De esta forma generamos otro problema de programación lineal, mientras la solución óptima de este siga siendo no entera, volveremos a meter otro corte a la región factible.
+\end{obs}
+No obstante resulta que el problema de ``pegar un corte'' a la región factible de forma que no nos carguemos ninguna solución entera no es trivial. Por fortuna para nosotros, matemáticos como Gomory o Chvátal le dedicaron unas cuantas tardes a este problema, de forma que disponemos de mecanismos explícitos para implementar estos algoritmos.
+\subsection{Corte puro de Gomory}
+
+\subsection{Corte mixto de Gomory}
+Si no todas las variables de decisión deben ser enteras, tomamos 

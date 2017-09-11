@@ -175,7 +175,7 @@ La belleza de esta demostración prueba que, incluso en esta oscuridad que nos e
 	¿Lo hay? La respuesta es sí, este resultado está recogido en un teorema debido a Edmonds ($1965$). Así pues, todo parece indicar que el caso particular del problema de la cobertura de vértices para grafos bipartitos no es $\mc{NP}$--completo. Se anima al lector a investigar más sobre este asunto.
 \end{obs}
 \subsection{Algoritmo de emparejamiento máximo}
-Vamos a desarrollar un algoritmo que, dado un emparejamiento de un grafo bipartito, obtenga el emparejamiento máximo. Por simplicidad, a lo largo de este apartado supondremos que el emparejamiento inicial es vacío, aunque no tendría por qué serlo.
+Vamos a desarrollar un algoritmo que, dado un emparejamiento de un grafo bipartito, obtenga el emparejamiento máximo. Por simplicidad, inicialmente supondremos que el emparejamiento inicial es vacío, aunque pronto abandonaremos esa hipótesis adicional.
 
 \begin{obs}[Algoritmo alternativo]
 	El teorema \ref{asig_teo_konig} nos dice que podemos aplicar el algoritmo del Símplex corriente y vulgar, no obstante, el algoritmo que presentamos a continuación es mucho más eficiente.
@@ -211,7 +211,7 @@ Repetimos con este nuevo vértice toda la operación teniendo en cuenta que no d
 
 Repetiremos este proceso mientras haya algún vértice en la bipartición escogida que esté no saturado y que no esté etiquetado.
 \begin{obs}[Voraz]
-	Podemos considerar a este algoritmo como un algoritmo voraz que requiere de una prueba de corrección. Obviamente la tiene, y se anima al lector a investigar sobre ello, no obstante, la omitiremos en este texto.
+	Podemos considerar a este algoritmo como un algoritmo voraz, requiriendo por tanto de una prueba de corrección. Obviamente la tiene, y se anima al lector a investigar sobre ello, no obstante, la omitiremos aquí al tener este capítulo mero carácter introductorio.
 \end{obs}
 Para terminar vamos a recopilar el todo el ladrillo anterior en forma de algoritmo.
 \begin{algorithm}[H]
@@ -242,7 +242,161 @@ Para terminar vamos a recopilar el todo el ladrillo anterior en forma de algorit
 Llegados a este punto, ya estamos listos para entrar en el núcleo del capítulo, el problema de asignación.
 \section{Problema de asignación}
 En primer lugar formularemos con sumo cuidado el problema a resolver, tras lo cual daremos un algoritmo de resolución casi totalmente basado en el problema de emparejamiento máximo de un grafo bipartito.
+\subsection{Formulación del problema de asignación}
+Consideremos un \tbi[grafo!bipartito completo]{grafo bipartito completo} y \tbi[grafo!valorado]{valorado} $G$, es decir, un grafo bipartito con $n$ vértices en cada conjunto de la bipartición (a partir de ahora los llamaremos $V_1$ y $V_2$) tal que, dado un vértice de $V_1$, este está conectado con todos los vértices de $V_2$ (y viceversa).
+
+Que el grafo sea ``valorado'' significa que cada arista del mismo tiene asociado un valor $c\in\R$, que en la práctica suele ser interpretado o bien como un ``coste'' o bien como un ``beneficio''.
+
+Estas ``valoraciones'' de las aristas se suelen representar con una matriz $C\in\mf{M}_n(\R)$, donde $c_{ij}$ representa el valor asociado con la arista que une el $i$--ésimo vértice de $V_1$ con el $j$--ésimo vértice de $V_2$. A la matriz $C$ se la suele llamar \tbi[matriz! de valoraciones]{matriz de valoraciones}.
+
+Hechos los preámbulos, pasemos a formular el problema.
+\begin{prob}[Problema de asignación]
+	Dado un grafo bipartito completo valorado, queremos obtener el emparejamiento de cardinal $n$ de mínimo coste.
+	
+	Para nosotros una solución a este problema vendrá dado por una $n^2$--tupla $x^t:=(x_{11},x_{12},\dots,x_{nn})$ donde $x_{ij}\in\{0,1\}$. El hecho de que $x_{ij}=1$ representa que la arista que une el $i$--ésimo vértice de $V_1$ con el $j$--ésimo de $V_2$ está en el emparejamiento óptimo, en caso contrario, la arista no pertenece al emparejamiento óptimo.
+	
+	De esta forma, queremos minimizar la función objetivo
+	\begin{equation*}
+		\sum_{i=1}^{n}\left(\sum_{j=1}^{n}c_{ij}x_{ij}\right)
+	\end{equation*}
+	evidentemente, la función a minimizar es una función lineal, de hecho, si definimos $c^t:=(c_{11},c_{12},\dots,c_{nn})$ tenemos que, escrita de forma compacta, la función objetivo es símplemente $c^tx$.
+\end{prob}
+Veamos ahora cómo son las restricciones del problema. Lo único que exigimos es que el emparejamiento óptimo sea un emparejamiento, es decir, que cada vértice tenga exactamente una arista incidiento sobre él. Esto podemos expresarlo mediante las siguientes restricciones lineales.
+\begin{equation*}
+	\begin{array}{cc}
+	\displaystyle{\sum_{j=1}^{n}x_{ij}=1\quad i\in\{1,\dots,n\}}\qquad&\displaystyle{\sum_{i=1}^{n}x_{ij}=1\quad j\in\{1,\dots,n\}}
+	\end{array}
+\end{equation*}
+El primer conjunto de restricciones representa que todos los vértices de $V_1$ tienen una única arista incidente, mientras que el segundo conjunto de restricciones indica lo mismo pero para los vértices de $V_2$. Nótese que ambos conjuntos de restricciones son necesarios.
+
+Si miramos las restricciones con especial cariño nos damos cuenta de que la matriz asociada a todas ellas se corresponde con la matriz de incidencia vértices--arcos de un grafo bipartito completo de orden $n$ (es decir, con $n$ vértices en cada $V_i$). Poniendo esto en detalle
+\begin{equation*}
+	A=\left(\begin{array}{c|c|c|c}
+		\xi_1 & \xi_2 & \cdots & \xi_n\\
+		\hline
+		I_n& I_n & \cdots & I_n
+	\end{array}\right)
+\end{equation*}
+donde $I_n$ es la matriz identidad de orden $n$ y $\xi_i$ es la matriz nula salvo en su $i$--ésima fila, la cual es una fila de unos (compruébese, inducción).
+\begin{obs}[Programación lineal]
+	Nótese que las restricciones asociadas al problema de asignación son rectricciones lineales, luego, evidentemente, nos encontramos ante un problema de programación lineal, con la salvedad de que las variables de decisión son binarias.
+	
+	No obstante, como acabamos de ver, la matriz asociada a las restricciones es la matriz de incidencia vértices--aristas de un grafo bipartito, y, por tanto, totalmente unimodular, lo cual quiere decir que podemos formular el problema ``relajado'', es decir, permitiendo $x_{ij}\in\R$ con $x_{ij}\geq 0$ y todos sus puntos extremos serían enteros, de hecho, por cómo son las restricciones, binarios.
+	
+	De esta forma se concluye que podemos usar el algoritmo del Símplex (nuestro viejo confiable) para resolver el problema de asignación.
+\end{obs}
+\subsubsection{Dualización del problema de asignación}
+Sabiendo lo que sabemos, ahora vamos a dualizar el problema de asignación, para lo cual seguiremos casi los mismos pasos que para dualizar un problema en forma estándar.
+
+Dada la formulación de un problema de asignación
+\begin{equation*}
+	\begin{array}{c}
+		\min c^tx\\
+		\text{Sujeto a:}\qquad Ax= b,\qquad x\geq 0
+	\end{array}
+\end{equation*}
+donde $b$ es un vector formado enteramente por unos, vamos a reformularlo con el procedimiento habitual para que se encuentre en forma canónica de minimización
+\begin{equation*}
+	\begin{array}{c}
+		\min c^tx\\
+		\text{Sujeto a:}\qquad (A^t|-A^t)^tx\geq (b^t|-b^t)^t,\qquad x\geq 0
+	\end{array}
+\end{equation*}
+dualizando este problema obtenemos
+\begin{equation*}
+	\begin{array}{c}
+		\max (b^t|-b^t)(w_1^t|w_2^t)^t\\
+		\text{Sujeto a:}\qquad (A^t|-A^t)(w_1^t|w_2^t)^t\leq c,\qquad (w_1^t|w_2^t)^t\geq 0
+	\end{array}
+\end{equation*}
+reorganizando la expresión se tiene
+\begin{equation*}
+	\begin{array}{c}
+		\max b^tw_1-b^tw_2\\
+		\text{Sujeto a:}\qquad A^tw_1-A^tw_2\leq c,\qquad (w_1^t|w_2^t)^t\geq 0
+	\end{array}
+\end{equation*}
+la clave del asunto está en fijarse en cómo es la matriz $A^t$, y esta es de la forma (compruébese)
+\begin{equation*}
+	A^t=\left(\begin{array}{c|c}
+		\xi_1^t& I_n\\
+		\hline
+		\xi_2^t& I_n\\
+		\hline
+		\cdots&\cdots\\
+		\hline
+		\xi_n^t&I_n
+	\end{array}\right)=:(\Xi|\mc{I})
+\end{equation*}
+reordenando la expresión queda
+\begin{equation*}
+	\begin{array}{c}
+		\max b^t(w_{11}^t|w_{12}^t)^t-b^t(w_{21}^t|w_{22}^t)^t\\
+		\text{Sujeto a:}\qquad (\Xi|\mc{I})(w_{11}^t|w_{12}^t)^t-(\Xi|\mc{I})(w_{21}^t|w_{22}^t)^t\leq c,\qquad (w_1^t|w_2^t)^t\geq 0
+	\end{array}
+\end{equation*}
+desarrollando los productos por bloques y despejando
+\begin{equation*}
+	\begin{array}{c}
+		\max b^t(w_{11}-w_{21})+b^t(w_{12}-w_{22})\\
+		\text{Sujeto a:}\qquad c-\Xi(w_{11}-w_{21})-\mc{I}(w_{12}-w_{22})\geq 0,\qquad (w_1^t|w_2^t)^t\geq 0
+	\end{array}
+\end{equation*}
+Llamando $v:=w_{11}-w_{21}$ y $u:=w_{12}-w_{22}$ tenemos que
+
+\begin{equation*}
+	\begin{array}{c}
+		\max b^tu+b^tv\\
+		\text{Sujeto a:}\qquad c-\Xi v-\mc{I}u\geq 0
+	\end{array}
+\end{equation*}
+Fijándonos en la forma que tienen los bloques podemos obtener una expresión para las restricciones del problema dual ``fila por fila'' (compruébese).
+
+\begin{equation*}
+	\begin{array}{c}
+		\max \sum_{i=1}^{n}u_i+\sum_{i=1}^{n}v_i\\
+		\text{Sujeto a:}\qquad c_{ij}-u_i-v_j\geq 0
+	\end{array}
+\end{equation*}
+Con esto, acabamos de obtener una expresión bastante manejable del problema dual de asignación, expresión que será vital para el dasarollo del algoritmo para resolver este tipo de problemas (uno más eficiente que el viejo Símplex).
 \subsection{Algoritmo para el problema de asignación}
+El algoritmo que presentamos a continuación, del que tampoco comprobaremos su corrección (se deja al lector investigar más acerca del tema, esto es únicamente una introducción) tiene una filosofía similar a la del algoritmo del símplex. Partiendo de una solución factible inicial del problema, irá ``cambiándola ligeramente'' de forma que cada vez se aproxima más a la solución óptima.
+
+Al contrario de lo que ocurría con el algoritmo para el emparejamiento máximo, este no hay ninguna forma elemental de razonar (aunque sea informalmente) sobre su corrección, motivo por el cual lo presentamos directamente en forma de pseudocódigo, comentando después los aspectos más delicados.
+\begin{algorithm}[H]
+	\begin{algorithmic}[1]
+		\REQUIRE Solución factible incial del problema dual $(u,v)$.
+		\ENSURE Asignación óptima (de mínimo coste).
+		\REPEAT
+		\STATE Calculamos la ``matriz auxiliar'' asociada a la solución dual actual $(u,v)$.
+		\STATE Dicha matriz está definida por $c_{ij}':=c_{ij}-u_i-v_j$
+		\STATE Consideramos el grafo original eliminando todas las aristas que no cumplan $c_{ij}'=0$.
+		\STATE Hallar el emparejamiento de máximo cardinal de dicho grafo usando el algoritmo \ref{asig_alg_empMax}.
+		\IF{el cardinal del emparejamiento no es $n$}
+		\STATE Guardar el emparejamiento y sus etiquetas asociadas.
+		\STATE Cambiamos a una nueva solución factible dual, a esto se le suele llamar ``cambio dual''.
+		\STATE Calculamos $\delta:=\min\{c_{ij}'\midc i\in V_1\text{ par },j\in V_2\text{ sin etiquetar}\}$
+		\STATE La nueva solución es $\underline{u_i':=u_i+\delta}$ para $i\in V_1$ par, $\underline{v_j':=v_j-\delta}$ para $j\in V_2$ impar.
+		\STATE Borramos todo lo referente al emparejamiento.
+		\ENDIF
+		\UNTIL{el emparejamiento tiene cardinal $n$.}
+		\RETURN emparejamiento actual (es óptimo).
+	\end{algorithmic}
+	\caption{Algoritmo de emparejamiento máximo en un grafo bipartito.}\label{asig_alg_asig}
+\end{algorithm}
+El único aspecto que el algoritmo no deja del todo claro es cómo calcular la solución dual inicial, cuestión que pasamos a comentar en el siguiente apartado.
+\subsubsection{Solución dual inicial}
+Una forma de encontrar una solución dual inicial es la siguiente. Tomamos
+\begin{equation*}
+	u_i=\min\{c_{ij}\midc j=1,\dots,n\}
+\end{equation*}
+Y, una vez hecho esto, calculamos
+\begin{equation*}
+	v_j=\min\{c_{ij}-v_i\midc i=1\dots,n\}
+\end{equation*}
+Por definición del problema dual esto es, evidentemente, una solución factible dual (compruébese).
+
+Todo este desarrollo teórico puede hacerse exactamente igual para problemas de asignación de maximización. La estrategia de elección de la solución dual inicial variaría ligeramente.
 \begin{obs}[Método húngaro]
-	Existen diversas variantes para el algoritmo de asignación, entre ellas el método húngaro, que no veremos aquí. El motivo de su omisión es que, a pesar de ser aparentemente más sencillo, su coste computacional es mucho mayor, haciéndolo prácticamente inservible.
+	Existen diversas variantes para el algoritmo de asignación, entre ellas el llamado ``método húngaro'', que no veremos aquí. El motivo de su omisión es que, a pesar de ser aparentemente más sencillo, su coste computacional es mucho mayor, haciéndolo prácticamente inservible.
 \end{obs}
