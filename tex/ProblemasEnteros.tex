@@ -74,7 +74,55 @@ Esta sección no pretende ser más que una brevísima introducción al método d
 	De esta forma generamos otro problema de programación lineal, mientras la solución óptima de este siga siendo no entera, volveremos a meter otro corte a la región factible.
 \end{obs}
 No obstante resulta que el problema de ``pegar un corte'' a la región factible de forma que no nos carguemos ninguna solución entera no es trivial. Por fortuna para nosotros, matemáticos como Gomory o Chvátal le dedicaron unas cuantas tardes a este problema, de forma que disponemos de mecanismos explícitos para implementar estos algoritmos.
+
+Antes de introducir los resultados en los que nos apoyaremos, necesitamos la siguiente definición.
+\begin{defi}[Corte]
+	Se llama \tbi{corte} de una región factible $\mc{S}$ a una restricción de la forma
+	\begin{equation*}
+		d^tx\leq d_0
+	\end{equation*}
+	donde $d\in\R^m$. De forma que todas las soluciones factibles enteras de $\mc{S}$ verifican la restricción.
+\end{defi}
+El siguiente lema constituye una ``fábrica de cortes'' de una región factible.
+\begin{lem}[Derivación de Chvátal]
+	\label{ent_lem_chvatal}
+	Dada una región factible de restricciones $Ax=b$, la restricción
+	\begin{equation*}
+		\sum_{i=1}^{n}[u^ta_i]x_i\leq [u^tb]
+	\end{equation*}
+	es un corte de la región factible para todo $u\in\R^m$.
+\end{lem}
+\begin{proof}
+	Si las restricciones de la región factible son $Ax=b$, es claro que para todo $u\in\R^m$ se verifica que $u^tAx=u^tb$ para todo $x$ perteneciente a la región factible.
+	
+	Haciendo juegos de manos con matrices (se deja al lector) podemos expresar la última igualdad como $\sum_{j=1}^{n}u^ta_ix_i=u^tb$. Si un punto verifica esta igualdad es claro que, por la definición de parte entera, cumplirá $\sum_{j=1}^{n}[u^ta_i]x_i\leq u^tb$.
+	
+	Lo que ya no está tan claro es que dicho punto verifique también la desigualdad $\sum_{j=1}^{n}[u^ta_i]x_i\leq [u^tb]$, no obstante, es claro que si el punto disponía únicamente de coordenadas enteras, esta desigualdad también se verifica (definición de parte entera).
+\end{proof}
+\begin{defi}[Derivación de Chvátal]
+	Al corte engendrado por el vector $u$ vía el lema \ref{ent_lem_chvatal} se le denomina \tbi{derivación de Chvátal} de $u$.
+\end{defi}
 \subsection{Corte puro de Gomory}
 
+Aunque el lema \ref{ent_lem_chvatal} es sin duda útil, lo que necesitamos para satisfacer las necesidades de los algoritmos de hiperplanos de corte es un corte cuya restricción sea incumplida por un punto extremo concreto $x^*$.
+
+Esta hazaña se logra mediante el siguiente teorema debido a Gomory cuya demostración no veremos aquí.
+\begin{theo}[Gomory]
+	Si $x^*$ es un punto extremo no entero de una región factible, entonces existe un cierto vector tal que $x^*$ no vaerifica la restricción de su derivación de Chvátal. 
+\end{theo}
+La demostración del teorema no solo nos da esa información sino que también nos dice que hay tantos posibles cortes como componentes no enteras tenga el punto extremo.
+
+En concreto, si la tabla del Símplex se corresponde con el sistema de ecuaciones $\overline{A}x=\overline{x_B}$, llamaremos \tbi{ecuaciones generatrices de corte} a las ecuaciones del sistema asociadas con las componentes no enteras de $\overline{x_B}$.
+
+Por ende, por cada ecuación genratriz de corte obtenemos un corte, de hecho, la demostración del teorema nos chiva quién es ese corte. Este es
+\begin{equation*}
+	\sum_{j=n+1}^{m}(y_{rj}-[y_{rj}])x_j\geq \overline{x_B^r}-[\overline{x_B^r}]
+\end{equation*}
+donde $r$ es la componente de $\overline{x_B}$ respecto de la cual se ha elegido el corte.
+\begin{obs}[Variables de holgura]
+	Nótese que al insertar esta nueva restricción se tiene que, por fuerza, la variable de holgura de la nueva restricción únicamente podrá tomar valores enteros.
+	
+	Esta es una buena propiedad, pues estamos transformando problemas de programación entera pura en problemas de programación entera pura.
+\end{obs}
 \subsection{Corte mixto de Gomory}
 Si no todas las variables de decisión deben ser enteras, tomamos 
