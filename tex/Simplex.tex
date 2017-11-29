@@ -221,7 +221,7 @@ y la matriz asociada a la tabla asociada a la solución óptima del problema art
 \end{equation*}
 luego basta con tomar la misma tabla suprimiendo las columnas asociadas a las variables artificiales.
 
-Puede ocurrir, sin embargo, que, una vez finalizada la primera fase, haya variables artificiales entre las básicas. Si dichas variables toman un valor positivo, por el lema~\ref{simp_lem_testFacti} sabemos que el problema original es infactible. Si, en cambio, tienen valor nulo, el problema es factible. En tal caso, no es deseable que sean básicas, dado que el problema original carece de estas variables artificiales. Luego debemos sacarlas de la base. Pueden darse dos casos. Supongamos que $\overline{x_{ia}}=0$ es una de las variables artificiales básicas. Definimos $I_a$ como el conjunto de índices de las variables artificiales básicas e $I_o$ como el conjunto de índices de las variables originales básicas. Análogamente para las variables no básicas, $J_a, J_o$. Entonces:
+Puede ocurrir, sin embargo, que, una vez finalizada la primera fase, haya variables artificiales entre las básicas. Si dichas variables toman un valor positivo, por el lema~\ref{simp_lem_testFacti} sabemos que el problema original es infactible. Si, en cambio, tienen valor nulo, el problema es factible. En tal caso, no es deseable que sean básicas, dado que el problema original carece de estas variables artificiales. Luego debemos sacarlas de la base antes de pasar a la segunda fase. Pueden darse dos casos. Supongamos que $\overline{x_{ia}}=0$ es una de las variables artificiales básicas. Definimos $I_a$ como el conjunto de índices de las variables artificiales básicas e $I_o$ como el conjunto de índices de las variables originales básicas. Análogamente para las variables no básicas, $J_a, J_o$. Entonces:
 \begin{itemize}
 	\item Si existe algún índice $j\in J_o$ tal que $y_{iaj}$ es no nulo, entonces, pivotando en $y_{iaj}$, obtenemos la misma solución factible con una base distinta que no incluye dicha variable artificial.
 	
@@ -229,7 +229,7 @@ Puede ocurrir, sin embargo, que, una vez finalizada la primera fase, haya variab
 	\begin{equation}
 		\overline{x_s'}=\overline{x_s}-\frac{y_{sj}}{y_{iaj}}\overline{x_{ia}}=\overline{x_s} \qquad \overline{x_j'}=\frac{\overline{x_{ia}}}{y_{iaj}}=0 \qquad c^t_{B'}\overline{x_{B'}}=c^t_B\overline{x_B}+\overline{c_j}\frac{\overline{x_{ia}}}{y_{iaj}}\overline{c_s'}=c^t_B\overline{x_B},
 	\end{equation}
-	con lo que la solución es la misma que en la iteración anterior.
+	con lo que la solución es la misma que en la iteración anterior. Nótese que no es necesario que $y_{iaj}$ sea positivo.
 	
 	\item Si $y_{iaj}$ es nulo para todo $j\in J_o$, entonces la fila $ia$-ésima puede ser suprimida por ser redundante. Veamos esto en un lema.
 \end{itemize}
@@ -264,7 +264,7 @@ Puede ocurrir, sin embargo, que, una vez finalizada la primera fase, haya variab
 		\sum_{i=1}^m\lambda_ib_i=\lambda^t b=e^t_kB^{-1}b=e^t_k\overline{x_B}=\overline{x_k^a}=0.
 	\end{equation*}
 \end{proof}
-Una vez aplicado el caso correspondiente a cada una de las variables artificiales básicas, obtenemos una solución factible sin variables artificiales en la base, con lo que podemos proceder con la segunda fase. Para ello, como hemos indicado antes, basta tomar la misma tabla suprimiendo las columnas asociadas a las variables artificiales. (Este análisis de las redundancias se puede aplicar también al método de las penalizaciones que veremos a continuación).
+Una vez aplicado el caso correspondiente a cada una de las variables artificiales básicas, obtenemos una solución factible sin variables artificiales en la base, con lo que podemos proceder con la segunda fase. Para ello, como hemos indicado antes, basta tomar la misma tabla suprimiendo las columnas asociadas a las variables artificiales.
 
 En cuanto al cálculo de los costes reducidos, aunque ya tenemos invertida la matriz $B$ y podríamos hacerlo ``a capón'', no es recomendable, pues multiplicar matrices es computacionalemente costoso.
 
