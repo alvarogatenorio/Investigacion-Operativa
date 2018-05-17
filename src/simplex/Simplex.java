@@ -12,6 +12,8 @@ public class Simplex {
 	/* Some auxiliary values */
 	private int basicVariables;
 	private int variables;
+	private boolean optimal;
+	private boolean unbounded;
 	/*
 	 * An objective function c_1x_1+\dots+c_nx_n is represented as [c_1,\dots,c_n]
 	 */
@@ -50,10 +52,12 @@ public class Simplex {
 		 * If the minimum reduced cost index is negative, every reduced cost is positive
 		 */
 		this.minimumReducedCostIndex = -1;
+		this.optimal = false;
+		this.unbounded = false;
 	}
 
 	public void getSolution() {
-		if (testOptimality()) {
+		if (optimal) {
 			for (int i = 0; i < basicVariables; i++) {
 				System.out
 						.println("x_" + basicVariablesIndices.get(i) + "=" + restrictionsMatrix.get(i).get(variables));
@@ -76,9 +80,9 @@ public class Simplex {
 		/* Executing the algorithm itself */
 		do {
 			if (testOptimality()) {
-				System.out.println("Optimal solution!");
+				optimal = true;
 			} else if (testUnbounded()) {
-				System.out.println("Unbounded problem!");
+				unbounded = true;
 			} else {
 				/* Improving the solution */
 				pivots++;
@@ -92,8 +96,12 @@ public class Simplex {
 				reducedCosts = table.getReducedCosts();
 				negativeReducedCosts = table.getNegativeReducedCosts();
 			}
-		} while (!testOptimality());
-		System.out.println("Optimal solution!");
+		} while (!optimal && !unbounded);
+		if (optimal) {
+			System.out.println("Optimal solution!");
+		} else {
+			System.out.println("Unbounded solution!");
+		}
 		System.out.println("Pivots needed: " + pivots);
 	}
 
@@ -116,8 +124,10 @@ public class Simplex {
 			reducedCosts.add(aux);
 			if (aux.getNumerator() < 0) {
 				negativeReducedCosts.add(i);
-				minimumReducedCost = Utils.min(minimumReducedCost, reducedCosts.get(i));
-				minimumReducedCostIndex = i;
+				if (Utils.subtract(aux, minimumReducedCost).getNumerator() < 0) {
+					minimumReducedCostIndex = i;
+					minimumReducedCost = aux;
+				}
 			}
 		}
 	}
@@ -148,7 +158,7 @@ public class Simplex {
 			/* If we find someone positive in the column, this is not our column */
 			int i;
 			for (i = 0; i < basicVariables; i++) {
-				if (restrictionsMatrix.get(i).get(j).getNumerator() > 0) {
+				if (restrictionsMatrix.get(i).get(negativeReducedCosts.get(j)).getNumerator() > 0) {
 					break;
 				}
 			}
