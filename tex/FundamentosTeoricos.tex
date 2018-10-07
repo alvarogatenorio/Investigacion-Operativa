@@ -743,13 +743,13 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 		Ax=(B|N)(x_B|x_N)^t=Bx_B+Nx_N=b\sii x_B=B^{-1}b-B^{-1}Nx_N
 	\end{equation}
 	Pasemos $x$ por la función objetivo
-	\begin{multline}
+	\begin{align}
 		\label{fund_eq_funcionObj}
-		c^tx=(c_{B}^t|c_N^t)(x_B|x_N)^t=c_B^tx_B+c_N^tx_N=\\
-		=c_B^t(B^{-1}b-B^{-1}Nx_N)+c_N^tx_N=c_B^tB^{-1}b+(c_N^t-c_B^tB^{-1}N)x_N=\\
-		=c_B^tB^{-1}b+\left(c_N^tx_N-c_B^t\sum_{m+1}^{n}(B^{-1}a_j)x_j\right)=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_jx_j-c_B^tB^{-1}a_jx_j)=\\
-		=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_j-c_B^tB^{-1}a_j)x_j=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\overline{c_j}x_j
-	\end{multline}
+		c^tx&=(c_{B}^t|c_N^t)(x_B|x_N)^t=c_B^tx_B+c_N^tx_N=c_B^t(B^{-1}b-B^{-1}Nx_N)+c_N^tx_N=\nonumber\\
+		&=c_B^tB^{-1}b+(c_N^t-c_B^tB^{-1}N)x_N=c_B^tB^{-1}b+\left(c_N^tx_N-c_B^t\sum_{j=m+1}^{n}(B^{-1}a_j)x_j\right)=\nonumber\\
+		&=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_jx_j-c_B^tB^{-1}a_jx_j)=c_B^tB^{-1}b+\sum_{j=m+1}^{n}(c_j-c_B^tB^{-1}a_j)x_j=\nonumber\\
+		&=c_B^tB^{-1}b+\sum_{j=m+1}^{n}\overline{c_j}x_j
+	\end{align}
 	Como el último sumatorio arroja por hipótesis un resultado positivo tenemos que
 	\begin{equation*}
 		c^tx\geq c_B^tB^{-1}b
