@@ -771,7 +771,7 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 \end{obs}
 \begin{theo}[Test de no acotación]
 	\label{fund_teo_testNoAcotacionSimplex}
-	Dada una región factible no vacía $\mc{S}$ y un punto extremos $\overline{x}$ asociado a la base $B$ de manera que hay algún coste reducido $\overline{c_k}<0$ y se verifica que $B^{-1}a_k\leq 0$, entonces el problema tiene solución no acotada.
+	Dada una región factible no vacía $\mc{S}$ y un punto extremo $\overline{x}$ asociado a la base $B$ de manera que hay algún coste reducido $\overline{c_k}<0$ y se verifica que $B^{-1}a_k\leq 0$, entonces el problema tiene solución no acotada.
 \end{theo}
 \begin{proof}
 	Nótese que $k\in\{m+1,\dots,n\}$ ya que los costes reducidos asociados a las componentes asociadas a $B$ son nulos.
@@ -780,7 +780,7 @@ A continuación vamos a presentar un nuevo test de optimalidad de una solución 
 	
 	De esta forma sabemos que el punto $x_\alpha:=\overline{x}+\alpha d\in\mc{S}$ para todo $\alpha\geq 0$. Veamos cómo se comporta $c^tx_\alpha$ para valores grandes de $\alpha$
 	\begin{equation*}
-		c^tx_\alpha=c^t(\overline{x}+\alpha d)=c^t\overline{x}+\alpha c^td\stackrel{!}{=}c_b^tB^{-1}b+\alpha c^td
+		c^tx_\alpha=c^t(\overline{x}+\alpha d)=c^t\overline{x}+\alpha c^td\stackrel{!}{=}c_B^tB^{-1}b+\alpha c^td
 	\end{equation*}
 	por otra parte tenemos que
 	\begin{equation*}
